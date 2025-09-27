@@ -19,7 +19,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Search, Plus, Edit, Trash2, Eye } from "lucide-react"
+import { MoreHorizontal, Search, Plus, Edit, Trash2, Eye, AlertTriangle } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 interface Column<T = Record<string, unknown>> {
   key: string
@@ -56,6 +64,8 @@ export function DataTable<T = Record<string, unknown>>({
     key: string
     direction: 'asc' | 'desc'
   } | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<T | null>(null)
 
   const filteredData = data.filter((row) =>
     Object.values(row as Record<string, unknown>).some((value) =>
@@ -100,9 +110,33 @@ export function DataTable<T = Record<string, unknown>>({
     return String((row as Record<string, unknown>)[column.key] || '')
   }
 
+  const handleDelete = (row: T) => {
+    setItemToDelete(row)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = () => {
+    if (onDelete && itemToDelete) {
+      onDelete(itemToDelete)
+    }
+    setDeleteDialogOpen(false)
+    setItemToDelete(null)
+  }
+
+  const cancelDelete = () => {
+    setDeleteDialogOpen(false)
+    setItemToDelete(null)
+  }
+
+  // Helper function to get display name for the item
+  const getItemDisplayName = (item: T): string => {
+    const record = item as Record<string, unknown>
+    // Try common name fields
+    return String(record.nama || record.name || record.title || record.kode_guru || record.id || 'item ini')
+  }
+
   return (
     <div className="space-y-4">
-
       <div className="flex items-center space-x-2">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -185,7 +219,7 @@ export function DataTable<T = Record<string, unknown>>({
                           <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                              onClick={() => onDelete(row)}
+                              onClick={() => handleDelete(row)}
                               className="text-destructive"
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
@@ -202,6 +236,45 @@ export function DataTable<T = Record<string, unknown>>({
           </TableBody>
         </Table>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              <span>Konfirmasi Hapus</span>
+            </DialogTitle>
+            <DialogDescription className="text-left">
+              Apakah Anda yakin ingin menghapus <span className="font-semibold text-foreground">
+                {itemToDelete ? getItemDisplayName(itemToDelete) : 'item ini'}
+              </span>?
+              <br />
+              <span className="text-destructive font-medium">
+                Tindakan ini tidak dapat dibatalkan.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={cancelDelete}
+              className="mr-2"
+            >
+              Batal
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={confirmDelete}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Hapus
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

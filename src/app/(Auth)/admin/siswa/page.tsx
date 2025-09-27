@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import type { Siswa } from "@/types/api"
 import { deleteSiswa, getSiswa } from "@/api/admin/siswa/index"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 export default function SiswaManagement() {
   const router = useRouter()
@@ -44,30 +45,26 @@ export default function SiswaManagement() {
   }
 
   const handleAdd = () => {
-    // TODO: Implement add siswa modal/form
-    console.log('Add siswa')
+    router.push('/admin/siswa/buat')
   }
 
   const handleEdit = (row: Siswa) => {
-    // TODO: Implement edit siswa modal/form
-    console.log('Edit siswa:', row)
+    router.push(`/admin/siswa/edit/${row.id}`)
   }
 
   const handleDelete = async (row: Siswa) => {
-    if (confirm(`Are you sure you want to delete ${row.nama_lengkap}?`)) {
-      try {
-        await deleteSiswa(row.id)
-        loadSiswa() // Refresh the list
-      } catch (err) {
-        console.error('Failed to delete siswa:', err)
-        alert('Failed to delete siswa')
-      }
+    try {
+      await deleteSiswa(row.id)
+      toast.success(`Data siswa ${row.nama_lengkap} berhasil dihapus`)
+      loadSiswa() // Refresh the list
+    } catch (err) {
+      console.error('Failed to delete siswa:', err)
+      toast.error('Gagal menghapus data siswa')
     }
   }
 
   const handleView = (row: Siswa) => {
-    // TODO: Implement view siswa details
-    console.log('View siswa:', row)
+    router.push(`/admin/siswa/${row.id}`)
   }
 
   const formatDate = (dateString?: string) => {
@@ -145,8 +142,8 @@ export default function SiswaManagement() {
     <AdminLayout onLogout={handleLogout}>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Siswa Management</h1>
-          <p className="text-gray-600">Manage student accounts and information</p>
+          <h1 className="text-3xl font-bold text-gray-900">Manajemen Siswa</h1>
+          <p className="text-gray-600">Kelola data siswa dan informasi pribadi</p>
         </div>
 
         <DataTable
@@ -156,9 +153,9 @@ export default function SiswaManagement() {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onView={handleView}
-          searchPlaceholder="Search by name, NISN, or class..."
-          title="Siswa List"
-          addButtonText="Add New Siswa"
+          searchPlaceholder="Cari berdasarkan nama, NISN, atau kelas..."
+          title="Daftar Siswa"
+          addButtonText="Tambah Siswa Baru"
         />
       </div>
     </AdminLayout>

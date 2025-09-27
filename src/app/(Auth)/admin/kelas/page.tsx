@@ -6,9 +6,9 @@ import { DataTable } from "@/components/data-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Kelas } from "@/types/api"
-import { deleteKelas } from "@/api/admin/kelas/index"
-import { getKelas } from "@/api/admin/kelas/index"
+import { deleteKelas, getKelas } from "@/api/admin/kelas/index"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 export default function KelasManagement() {
   const router = useRouter()
@@ -47,30 +47,26 @@ export default function KelasManagement() {
   }
 
   const handleAdd = () => {
-    // TODO: Implement add kelas modal/form
-    console.log('Add kelas')
+    router.push('/admin/kelas/buat')
   }
 
   const handleEdit = (row: Kelas) => {
-    // TODO: Implement edit kelas modal/form
-    console.log('Edit kelas:', row)
+    router.push(`/admin/kelas/edit/${row.id}`)
   }
 
   const handleDelete = async (row: Kelas) => {
-    if (confirm(`Are you sure you want to delete ${row.nama}?`)) {
-      try {
-        await deleteKelas(row.id)
-        loadKelas() // Refresh the list
-      } catch (err) {
-        console.error('Failed to delete kelas:', err)
-        alert('Failed to delete kelas')
-      }
+    try {
+      await deleteKelas(row.id)
+      toast.success(`Data kelas ${row.nama} berhasil dihapus`)
+      loadKelas() // Refresh the list
+    } catch (err) {
+      console.error('Failed to delete kelas:', err)
+      toast.error('Gagal menghapus data kelas')
     }
   }
 
   const handleView = (row: Kelas) => {
-    // TODO: Implement view kelas details
-    console.log('View kelas:', row)
+    router.push(`/admin/kelas/${row.id}`)
   }
 
   const formatDate = (dateString: string) => {
@@ -93,12 +89,12 @@ export default function KelasManagement() {
     },
     {
       key: 'created_at',
-      label: 'Created At',
+      label: 'Dibuat Pada',
       render: (value: unknown) => formatDate(value as string),
     },
     {
       key: 'updated_at',
-      label: 'Updated At',
+      label: 'Diperbarui',
       render: (value: unknown) => formatDate(value as string),
     },
   ]
@@ -137,8 +133,8 @@ export default function KelasManagement() {
     <AdminLayout onLogout={handleLogout}>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Kelas Management</h1>
-          <p className="text-gray-600">Manage classes and their assignments</p>
+          <h1 className="text-3xl font-bold text-gray-900">Manajemen Kelas</h1>
+          <p className="text-gray-600">Kelola kelas dan penugasannya</p>
         </div>
 
         <DataTable
@@ -148,9 +144,9 @@ export default function KelasManagement() {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onView={handleView}
-          searchPlaceholder="Search by nama kelas or jurusan..."
-          title="Kelas List"
-          addButtonText="Add New Kelas"
+          searchPlaceholder="Cari berdasarkan nama kelas atau jurusan..."
+          title="Daftar Kelas"
+          addButtonText="Tambah Kelas Baru"
         />
       </div>
     </AdminLayout>

@@ -44,7 +44,7 @@ const decryptData = (encryptedData: string): string | null => {
 
 // Membuat instance axios dengan konfigurasi dasar
 const axiosInstance = axios.create({
-  baseURL: 'http://sispkl.gedanggoreng.com:8000',
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   timeout: 10000, // Timeout 10 detik
   headers: {
     'Content-Type': 'application/json',

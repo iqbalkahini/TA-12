@@ -1,0 +1,367 @@
+'use client'
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { AdminLayout } from "@/components/admin-layout"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { createSiswa } from "@/api/admin/siswa"
+import { ArrowLeft, Save, User, AlertCircle, Calendar, Phone, MapPin, GraduationCap } from "lucide-react"
+import { toast } from "sonner"
+
+interface SiswaFormData {
+    nama_lengkap: string
+    nisn: string
+    kelas_id: number
+    alamat: string
+    no_telp: string
+    tanggal_lahir: string
+}
+
+const initialFormData: SiswaFormData = {
+    nama_lengkap: '',
+    nisn: '',
+    kelas_id: 0,
+    alamat: '',
+    no_telp: '',
+    tanggal_lahir: ''
+}
+
+export default function CreateSiswaPage() {
+    const router = useRouter()
+    const [loading, setLoading] = useState(false)
+    const [formData, setFormData] = useState<SiswaFormData>(initialFormData)
+    const [errors, setErrors] = useState<Partial<Record<keyof SiswaFormData, string>>>({})
+
+    const handleLogout = async () => {
+        try {
+            localStorage.removeItem('accessToken')
+            localStorage.removeItem('refreshToken')
+            router.push('/login')
+        } catch (err) {
+            console.error('Logout failed:', err)
+            localStorage.removeItem('accessToken')
+            localStorage.removeItem('refreshToken')
+            router.push('/login')
+        }
+    }
+
+    const handleInputChange = (field: keyof SiswaFormData, value: string | number) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: value
+        }))
+
+        // Clear error when user starts typing
+        if (errors[field]) {
+            setErrors(prev => ({
+                ...prev,
+                [field]: undefined
+            }))
+        }
+    }
+
+    const validateForm = () => {
+        const newErrors: Partial<Record<keyof SiswaFormData, string>> = {}
+
+        // Required fields validation
+        const requiredFields = ['nama_lengkap', 'nisn', 'kelas_id', 'alamat', 'tanggal_lahir']
+
+        requiredFields.forEach(field => {
+            const fieldKey = field as keyof SiswaFormData
+            if (!formData[fieldKey] || (field === 'kelas_id' && formData.kelas_id === 0)) {
+                newErrors[fieldKey] = 'Field ini wajib diisi'
+            }
+        })
+
+        // NISN validation (10 digits)
+        if (formData.nisn && !/^\d{10}$/.test(formData.nisn)) {
+            newErrors.nisn = 'NISN harus terdiri dari 10 digit angka'
+        }
+
+        // Phone validation (optional)
+        if (formData.no_telp && !/^[0-9+\-\s()]+$/.test(formData.no_telp)) {
+            newErrors.no_telp = 'Format nomor telepon tidak valid'
+        }
+
+        // Date validation
+        if (formData.tanggal_lahir) {
+            const birthDate = new Date(formData.tanggal_lahir)
+            const today = new Date()
+            const age = today.getFullYear() - birthDate.getFullYear()
+            
+            if (birthDate > today) {
+                newErrors.tanggal_lahir = 'Tanggal lahir tidak boleh di masa depan'
+            } else if (age > 25) {
+                newErrors.tanggal_lahir = 'Tanggal lahir tidak valid (terlalu tua)'
+            } else if (age < 5) {
+                newErrors.tanggal_lahir = 'Tanggal lahir tidak valid (terlalu muda)'
+            }
+        }
+
+        // Kelas ID validation
+        if (formData.kelas_id && (formData.kelas_id < 1 || formData.kelas_id > 999)) {
+            newErrors.kelas_id = 'ID Kelas harus antara 1-999'
+        }
+
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        if (!validateForm()) {
+            toast.error('Mohon periksa kembali data yang diisi')
+            return
+        }
+
+        try {
+            setLoading(true)
+
+            // Transform formData to match API expected format
+            const siswaData = {
+                ...formData,
+                // Required API fields
+                id: 0,
+                created_at: '',
+                updated_at: ''
+            }
+
+            const response = await createSiswa(siswaData)
+
+            if (response) {
+                toast.success('Data siswa berhasil dibuat!')
+                router.push('/admin/siswa')
+            } else {
+                toast.error('Gagal membuat data siswa')
+            }
+        } catch (error) {
+            console.error('Create siswa error:', error)
+            toast.error('Terjadi kesalahan saat membuat data siswa')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleReset = () => {
+        setFormData(initialFormData)
+        setErrors({})
+        toast.info('Form telah direset')
+    }
+
+    const handleBack = () => {
+        if (Object.values(formData).some(value => value !== '' && value !== 0)) {
+            if (confirm('Ada data yang belum disimpan. Yakin ingin kembali?')) {
+                router.push('/admin/siswa')
+            }
+        } else {
+            router.push('/admin/siswa')
+        }
+    }
+
+    return (
+        <AdminLayout onLogout={handleLogout}>
+            <div className="space-y-6 max-w-4xl mx-auto">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleBack}
+                            className="flex items-center space-x-2"
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                            <span>Kembali</span>
+                        </Button>
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900">Buat Data Siswa</h1>
+                            <p className="text-gray-600">Tambahkan data siswa baru ke sistem</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Basic Information */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center space-x-2">
+                                <User className="h-5 w-5" />
+                                <span>Informasi Pribadi</span>
+                            </CardTitle>
+                            <CardDescription>
+                                Data pribadi siswa untuk sistem
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="nama_lengkap">
+                                        Nama Lengkap <span className="text-red-500">*</span>
+                                    </Label>
+                                    <Input
+                                        id="nama_lengkap"
+                                        type="text"
+                                        value={formData.nama_lengkap}
+                                        onChange={(e) => handleInputChange('nama_lengkap', e.target.value)}
+                                        placeholder="Masukkan nama lengkap siswa"
+                                        className={errors.nama_lengkap ? 'border-red-500' : ''}
+                                    />
+                                    {errors.nama_lengkap && (
+                                        <p className="text-sm text-red-500 flex items-center">
+                                            <AlertCircle className="h-4 w-4 mr-1" />
+                                            {errors.nama_lengkap}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="nisn">
+                                        NISN <span className="text-red-500">*</span>
+                                    </Label>
+                                    <Input
+                                        id="nisn"
+                                        type="text"
+                                        value={formData.nisn}
+                                        onChange={(e) => handleInputChange('nisn', e.target.value.replace(/\D/g, ''))}
+                                        placeholder="10 digit angka"
+                                        maxLength={10}
+                                        className={errors.nisn ? 'border-red-500' : ''}
+                                    />
+                                    {errors.nisn && (
+                                        <p className="text-sm text-red-500 flex items-center">
+                                            <AlertCircle className="h-4 w-4 mr-1" />
+                                            {errors.nisn}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="kelas_id" className="flex items-center space-x-1">
+                                        <GraduationCap className="h-4 w-4" />
+                                        <span>ID Kelas <span className="text-red-500">*</span></span>
+                                    </Label>
+                                    <Input
+                                        id="kelas_id"
+                                        type="number"
+                                        value={formData.kelas_id || ''}
+                                        onChange={(e) => handleInputChange('kelas_id', parseInt(e.target.value) || 0)}
+                                        placeholder="Masukkan ID kelas"
+                                        min={1}
+                                        max={999}
+                                        className={errors.kelas_id ? 'border-red-500' : ''}
+                                    />
+                                    {errors.kelas_id && (
+                                        <p className="text-sm text-red-500 flex items-center">
+                                            <AlertCircle className="h-4 w-4 mr-1" />
+                                            {errors.kelas_id}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="tanggal_lahir" className="flex items-center space-x-1">
+                                        <Calendar className="h-4 w-4" />
+                                        <span>Tanggal Lahir <span className="text-red-500">*</span></span>
+                                    </Label>
+                                    <Input
+                                        id="tanggal_lahir"
+                                        type="date"
+                                        value={formData.tanggal_lahir}
+                                        onChange={(e) => handleInputChange('tanggal_lahir', e.target.value)}
+                                        className={errors.tanggal_lahir ? 'border-red-500' : ''}
+                                    />
+                                    {errors.tanggal_lahir && (
+                                        <p className="text-sm text-red-500 flex items-center">
+                                            <AlertCircle className="h-4 w-4 mr-1" />
+                                            {errors.tanggal_lahir}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="no_telp" className="flex items-center space-x-1">
+                                        <Phone className="h-4 w-4" />
+                                        <span>No. Telepon</span>
+                                    </Label>
+                                    <Input
+                                        id="no_telp"
+                                        type="tel"
+                                        value={formData.no_telp}
+                                        onChange={(e) => handleInputChange('no_telp', e.target.value)}
+                                        placeholder="e.g., 081234567890"
+                                        className={errors.no_telp ? 'border-red-500' : ''}
+                                    />
+                                    {errors.no_telp && (
+                                        <p className="text-sm text-red-500 flex items-center">
+                                            <AlertCircle className="h-4 w-4 mr-1" />
+                                            {errors.no_telp}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="alamat" className="flex items-center space-x-1">
+                                    <MapPin className="h-4 w-4" />
+                                    <span>Alamat <span className="text-red-500">*</span></span>
+                                </Label>
+                                <Textarea
+                                    id="alamat"
+                                    value={formData.alamat}
+                                    onChange={(e) => handleInputChange('alamat', e.target.value)}
+                                    placeholder="Masukkan alamat lengkap siswa"
+                                    rows={3}
+                                    className={errors.alamat ? 'border-red-500' : ''}
+                                />
+                                {errors.alamat && (
+                                    <p className="text-sm text-red-500 flex items-center">
+                                        <AlertCircle className="h-4 w-4 mr-1" />
+                                        {errors.alamat}
+                                    </p>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Submit Buttons */}
+                    <div className="flex justify-end">
+                        <div className="flex space-x-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleReset}
+                                disabled={loading}
+                                className="mr-2"
+                            >
+                                Reset Form
+                            </Button>
+                        </div>
+
+                        <Button
+                            type="submit"
+                            disabled={loading}
+                            className="flex items-center space-x-2 min-w-[150px]"
+                        >
+                            {loading ? (
+                                <>
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                    <span>Menyimpan...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Save className="h-4 w-4" />
+                                    <span>Simpan Data Siswa</span>
+                                </>
+                            )}
+                        </Button>
+                    </div>
+                </form>
+            </div>
+        </AdminLayout>
+    )
+}
