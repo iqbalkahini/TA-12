@@ -78,6 +78,7 @@ export function LoginForm({
       toast.error("Login gagal", {
         description: errorMessage
       })
+      console.log(errorMessage)
     } finally {
       setLoading(false)
     }
