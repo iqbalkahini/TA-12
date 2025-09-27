@@ -129,7 +129,8 @@ const refreshAccessToken = async (): Promise<string> => {
 
   try {
     // Melakukan request untuk mendapatkan access token baru
-    const response = await axios.post(`${axiosInstance.defaults.baseURL}/auth/refresh`, {
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://sispkl.gedanggoreng.com:8000';
+    const response = await axios.post(`${baseURL}/auth/refresh`, {
       refreshToken: refreshToken
     });
 
