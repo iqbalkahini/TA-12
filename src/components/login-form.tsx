@@ -8,10 +8,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { GuruLoginRequest, SiswaLoginRequest } from "@/types/api"
 import { useRouter } from 'next/navigation'
 import axiosInstance, { setTokens } from '@/utils/axios'
 import { toast } from "sonner"
+import axios from 'axios'
 
 // Type untuk error handling
 interface ApiError {
@@ -40,10 +40,10 @@ export function LoginForm({
     setLoading(true)
     
     try {
-      const response = await axiosInstance.post('/auth/login', {
+      const response = await axiosInstance.post('/api/login', {
         username: adminData.username,
-        password: adminData.password
-      })
+        password: adminData.password,
+      });
       
       if (response.data && response.data.access_token && response.data.refresh_token) {
         try {
@@ -85,88 +85,12 @@ export function LoginForm({
 
   const handleGuruSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    
-    try {
-      const response = await axiosInstance.post('/auth/guru/login', {
-        kode_guru: guruData.kode_guru,
-        password: guruData.password
-      } as GuruLoginRequest)
-
-      if (response.data && response.data.access_token && response.data.refresh_token) {
-        setTokens(response.data.access_token, response.data.refresh_token)
-        
-        toast.success("Login berhasil!", {
-          description: "Selamat datang di dashboard guru"
-        })
-        
-        router.push('/admin')
-      } else {
-        throw new Error('Response tidak memiliki format yang benar')
-      }
-    } catch (err: unknown) {
-      console.error('Guru login error:', err)
-      
-      let errorMessage = 'Kode guru atau password salah'
-      
-      const apiError = err as ApiError
-      if (apiError.response) {
-        errorMessage = apiError.response.data?.message || apiError.response.data?.error || errorMessage
-      } else if (apiError.request) {
-        errorMessage = 'Tidak dapat terhubung ke server'
-      } else if (apiError.message) {
-        errorMessage = apiError.message
-      }
-      
-      toast.error("Login gagal", {
-        description: errorMessage
-      })
-    } finally {
-      setLoading(false)
-    }
+    toast.info("Segera hadir")
   }
 
   const handleSiswaSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    
-    try {
-      const response = await axiosInstance.post('/auth/siswa/login', {
-        nama_lengkap: siswaData.nama_lengkap,
-        nisn: siswaData.nisn
-      } as SiswaLoginRequest)
-      
-      if (response.data && response.data.access_token && response.data.refresh_token) {
-        setTokens(response.data.access_token, response.data.refresh_token)
-        
-        toast.success("Login berhasil!", {
-          description: "Selamat datang di dashboard siswa"
-        })
-        
-        router.push('/admin')
-      } else {
-        throw new Error('Response tidak memiliki format yang benar')
-      }
-    } catch (err: unknown) {
-      console.error('Siswa login error:', err)
-      
-      let errorMessage = 'Nama lengkap atau NISN salah'
-      
-      const apiError = err as ApiError
-      if (apiError.response) {
-        errorMessage = apiError.response.data?.message || apiError.response.data?.error || errorMessage
-      } else if (apiError.request) {
-        errorMessage = 'Tidak dapat terhubung ke server'
-      } else if (apiError.message) {
-        errorMessage = apiError.message
-      }
-      
-      toast.error("Login gagal", {
-        description: errorMessage
-      })
-    } finally {
-      setLoading(false)
-    }
+    toast.info("Segera hadir")
   }
 
   return (
