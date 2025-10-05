@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import axios, { AxiosRequestConfig } from 'axios';
-import CryptoJS from 'crypto-js';
+import axios, { AxiosRequestConfig } from "axios";
+import CryptoJS from "crypto-js";
 
 // Kunci enkripsi untuk token (dalam production, sebaiknya dari environment variable)
 const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY as string;
@@ -9,16 +9,16 @@ const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY as string;
 // Fungsi untuk mengenkripsi data
 const encryptData = (data: string): string => {
   if (!data) {
-    throw new Error('Data tidak boleh kosong untuk enkripsi');
+    throw new Error("Data tidak boleh kosong untuk enkripsi");
   }
   if (!ENCRYPTION_KEY) {
-    throw new Error('ENCRYPTION_KEY tidak tersedia');
+    throw new Error("ENCRYPTION_KEY tidak tersedia");
   }
   try {
     return CryptoJS.AES.encrypt(data, ENCRYPTION_KEY).toString();
   } catch (error) {
-    console.error('Error saat enkripsi data:', error);
-    throw new Error('Gagal mengenkripsi data');
+    console.error("Error saat enkripsi data:", error);
+    throw new Error("Gagal mengenkripsi data");
   }
 };
 
@@ -28,7 +28,7 @@ const decryptData = (encryptedData: string): string | null => {
     return null;
   }
   if (!ENCRYPTION_KEY) {
-    console.error('ENCRYPTION_KEY tidak tersedia untuk dekripsi');
+    console.error("ENCRYPTION_KEY tidak tersedia untuk dekripsi");
     return null;
   }
   try {
@@ -36,7 +36,7 @@ const decryptData = (encryptedData: string): string | null => {
     const decrypted = bytes.toString(CryptoJS.enc.Utf8);
     return decrypted || null;
   } catch (error) {
-    console.error('Error saat dekripsi data:', error);
+    console.error("Error saat dekripsi data:", error);
     // Jika dekripsi gagal, return null
     return null;
   }
@@ -46,37 +46,41 @@ const decryptData = (encryptedData: string): string | null => {
 const getBaseURL = () => {
   // Priority 1: Environment variable (Vercel setting)
   if (process.env.NEXT_PUBLIC_API_BASE_URL) {
-    console.log('🔧 Using environment variable:', process.env.NEXT_PUBLIC_API_BASE_URL);
+    console.log(
+      "🔧 Using environment variable:",
+      process.env.NEXT_PUBLIC_API_BASE_URL
+    );
     return process.env.NEXT_PUBLIC_API_BASE_URL;
   }
-  
+
   // Priority 2: Detect if in browser
-  if (typeof window !== 'undefined') {
-    const isLocal = window.location.hostname === 'localhost' || 
-                   window.location.hostname === '127.0.0.1';
-    
+  if (typeof window !== "undefined") {
+    const isLocal =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+
     if (isLocal) {
       // Development: langsung ke API HTTP
-      console.log('🏠 Development mode: direct API call');
-      return 'http://sispkl.gedanggoreng.com:8000';
+      console.log("🏠 Development mode: direct API call");
+      return "http://sispkl.gedanggoreng.com:8000";
     } else {
       // Production (Vercel): WAJIB gunakan proxy route
-      console.log('☁️ Production mode: using proxy route');
-      return '/api/proxy';
+      console.log("☁️ Production mode: using proxy route");
+      return "/api/proxy";
     }
   }
-  
+
   // Priority 3: Server-side rendering - always use proxy
-  console.log('🖥️ Server-side: using proxy route');
-  return '/api/proxy';
+  console.log("🖥️ Server-side: using proxy route");
+  return "/api/proxy";
 };
 
 // Membuat instance axios dengan konfigurasi dasar
 const axiosInstance = axios.create({
-  // Tidak set baseURL di sini, akan di-set dinamis
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   timeout: 10000, // Timeout 10 detik
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -99,24 +103,24 @@ const processQueue = (error: Error | null, token: string | null = null) => {
       resolve(token);
     }
   });
-  
+
   failedQueue = [];
 };
 
 // Fungsi untuk mendapatkan access token dari localStorage (terenkripsi)
 const getAccessToken = (): string | null => {
-  const encryptedToken = localStorage.getItem('accessToken');
+  const encryptedToken = localStorage.getItem("accessToken");
   if (!encryptedToken) return null;
-  
+
   // Dekripsi token sebelum digunakan
   return decryptData(encryptedToken);
 };
 
 // Fungsi untuk mendapatkan refresh token dari localStorage (terenkripsi)
 const getRefreshToken = (): string | null => {
-  const encryptedToken = localStorage.getItem('refreshToken');
+  const encryptedToken = localStorage.getItem("refreshToken");
   if (!encryptedToken) return null;
-  
+
   // Dekripsi token sebelum digunakan
   return decryptData(encryptedToken);
 };
@@ -125,49 +129,49 @@ const getRefreshToken = (): string | null => {
 const setTokens = (accessToken: string, refreshToken: string) => {
   try {
     if (!accessToken || !refreshToken) {
-      throw new Error('Access token dan refresh token harus tersedia');
+      throw new Error("Access token dan refresh token harus tersedia");
     }
-    
+
     // Enkripsi kedua token sebelum disimpan
     const encryptedAccessToken = encryptData(accessToken);
     const encryptedRefreshToken = encryptData(refreshToken);
-    
-    localStorage.setItem('accessToken', encryptedAccessToken);
-    localStorage.setItem('refreshToken', encryptedRefreshToken);
-    
-    console.log('✅ Token berhasil disimpan ke localStorage');
+
+    localStorage.setItem("accessToken", encryptedAccessToken);
+    localStorage.setItem("refreshToken", encryptedRefreshToken);
+
+    console.log("✅ Token berhasil disimpan ke localStorage");
   } catch (error) {
-    console.error('❌ Error saat menyimpan token:', error);
+    console.error("❌ Error saat menyimpan token:", error);
     throw error; // Re-throw error agar bisa ditangani di level atas
   }
 };
 
 // Fungsi untuk menghapus kedua token dari localStorage
 const clearTokens = () => {
-  localStorage.removeItem('accessToken');
-  localStorage.removeItem('refreshToken');
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
 };
 
 // Fungsi untuk refresh access token menggunakan refresh token terenkripsi
 const refreshAccessToken = async (): Promise<string> => {
   const refreshToken = getRefreshToken();
-  
+
   if (!refreshToken) {
-    throw new Error('Refresh token tidak tersedia');
+    throw new Error("Refresh token tidak tersedia");
   }
 
   try {
     // Melakukan request untuk mendapatkan access token baru
     const baseURL = getBaseURL();
     const response = await axios.post(`${baseURL}/auth/refresh`, {
-      refreshToken: refreshToken
+      refreshToken: refreshToken,
     });
 
     const { accessToken, refreshToken: newRefreshToken } = response.data;
-    
+
     // Menyimpan kedua token baru ke localStorage (terenkripsi)
     setTokens(accessToken, newRefreshToken);
-    
+
     return accessToken;
   } catch (error) {
     // Jika refresh token juga expired, hapus semua token
@@ -182,17 +186,17 @@ axiosInstance.interceptors.request.use(
     // Set baseURL secara dinamis di setiap request
     const dynamicBaseURL = getBaseURL();
     config.baseURL = dynamicBaseURL;
-    
-    console.log('🚀 Axios request to:', dynamicBaseURL + config.url);
-    
+
+    console.log("🚀 Axios request to:", dynamicBaseURL + config.url);
+
     // Mengambil access token dari localStorage
     const accessToken = getAccessToken();
-    
+
     // Jika access token tersedia, tambahkan ke header Authorization
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-    
+
     return config;
   },
   (error) => {
@@ -207,7 +211,9 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error) => {
-    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as AxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
     // Jika error 401 (Unauthorized) dan belum pernah di-retry
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -215,15 +221,17 @@ axiosInstance.interceptors.response.use(
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        }).then(token => {
-          // Setelah refresh selesai, ulangi request dengan token baru
-          if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-          }
-          return axiosInstance(originalRequest);
-        }).catch(err => {
-          return Promise.reject(err);
-        });
+        })
+          .then((token) => {
+            // Setelah refresh selesai, ulangi request dengan token baru
+            if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+            }
+            return axiosInstance(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
       }
 
       // Tandai bahwa request ini sudah pernah di-retry
@@ -233,29 +241,31 @@ axiosInstance.interceptors.response.use(
       try {
         // Coba refresh access token
         const newAccessToken = await refreshAccessToken();
-        
+
         // Proses semua request yang ada di antrian dengan token baru
         processQueue(null, newAccessToken);
-        
+
         // Update header Authorization dengan token baru
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         }
-        
+
         // Ulangi request original dengan token baru
         return axiosInstance(originalRequest);
-        
       } catch (refreshError) {
         // Jika refresh token juga gagal, proses antrian dengan error
-        const error = refreshError instanceof Error ? refreshError : new Error('Token refresh failed');
+        const error =
+          refreshError instanceof Error
+            ? refreshError
+            : new Error("Token refresh failed");
         processQueue(error, null);
-        
+
         // Hapus semua token dan redirect ke login
         clearTokens();
-        
+
         // Di sini Anda bisa menambahkan logic untuk redirect ke halaman login
         // window.location.href = '/login';
-        
+
         return Promise.reject(refreshError);
       } finally {
         // Reset status refreshing

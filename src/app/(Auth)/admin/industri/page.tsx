@@ -7,11 +7,15 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Industri } from "@/types/api"
 import { deleteIndustri, getIndustri } from "@/api/admin/industri"
+import { getJurusan } from "@/api/admin/jurusan"
+import type { Jurusan } from "@/types/api"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 export default function IndustriManagement() {
   const router = useRouter()
   const [industri, setIndustri] = useState<Industri[]>([])
+  const [jurusan, setJurusan] = useState<Jurusan[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -20,10 +24,26 @@ export default function IndustriManagement() {
   }, [])
 
   const loadIndustri = async () => {
+    setLoading(true)
+    setError(null)
     try {
-      setLoading(true)
-      const response = await getIndustri()
-      setIndustri(response.data.data || [])
+      // Load both industri and jurusan data in parallel
+      const [industriResponse, jurusanResponse] = await Promise.all([
+        getIndustri(),
+        getJurusan()
+      ])
+
+      if (industriResponse && industriResponse.data) {
+        setIndustri(industriResponse.data.data || [])
+      } else {
+        setError('Failed to load industri data')
+      }
+
+      if (jurusanResponse && jurusanResponse.data) {
+        const jurusanData = jurusanResponse.data.data || []
+        setJurusan(jurusanData)
+        console.log('Jurusan data set in industri page:', jurusanData)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load industri data')
     } finally {
@@ -45,32 +65,36 @@ export default function IndustriManagement() {
   }
 
   const handleAdd = () => {
-    // TODO: Implement add industri modal/form
-    console.log('Add industri')
+    router.push('/admin/industri/buat')
   }
 
   const handleEdit = (row: Industri) => {
-    // TODO: Implement edit industri modal/form
-    console.log('Edit industri:', row)
+    router.push(`/admin/industri/edit/${row.id}`)
   }
 
   const handleDelete = async (row: Industri) => {
-    if (confirm(`Are you sure you want to delete ${row.nama}?`)) {
-      try {
-        await deleteIndustri(row.id)
-        loadIndustri() // Refresh the list
-      } catch (err) {
-        console.error('Failed to delete industri:', err)
-        alert('Failed to delete industri')
-      }
+    try {
+      await deleteIndustri(row.id)
+      toast.success(`Data industri ${row.nama} berhasil dihapus`)
+      loadIndustri() // Refresh the list
+    } catch (err) {
+      console.error('Failed to delete industri:', err)
+      toast.error('Gagal menghapus data industri')
     }
   }
 
   const handleView = (row: Industri) => {
-    // TODO: Implement view industri details
-    console.log('View industri:', row)
+    router.push(`/admin/industri/${row.id}`)
   }
 
+  // Helper function to get jurusan name by id
+  const getJurusanName = (jurusanId: number) => {
+    console.log('Looking for jurusanId in industri page:', jurusanId, 'in jurusan:', jurusan)
+    const jurusanItem = jurusan.find(j => j.id === jurusanId)
+    const result = jurusanItem ? jurusanItem.nama : `Jurusan ID: ${jurusanId}`
+    console.log('getJurusanName result in industri page:', result)
+    return result
+  }
 
   const columns = [
     {
@@ -93,11 +117,13 @@ export default function IndustriManagement() {
     },
     {
       key: 'jurusan_id',
-      label: 'Jurusan ID',
+      label: 'Jurusan',
       sortable: true,
-      render: (value: unknown) => (
-        <Badge variant="outline">Jurusan {value as number}</Badge>
-      ),
+      render: (value: unknown) => {
+        const jurusanId = value as number
+        const jurusanName = getJurusanName(jurusanId)
+        return <Badge variant="outline">{jurusanName}</Badge>
+      },
     },
     {
       key: 'email',
@@ -149,8 +175,8 @@ export default function IndustriManagement() {
     <AdminLayout onLogout={handleLogout}>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Industri Management</h1>
-          <p className="text-gray-600">Manage industry partners and placements</p>
+          <h1 className="text-3xl font-bold text-gray-900">Manajemen Industri</h1>
+          <p className="text-gray-600">Kelola mitra industri dan penempatan kerja</p>
         </div>
 
         <DataTable
@@ -160,9 +186,9 @@ export default function IndustriManagement() {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onView={handleView}
-          searchPlaceholder="Search by nama, alamat, or bidang..."
-          title="Industri List"
-          addButtonText="Add New Industri"
+          searchPlaceholder="Cari berdasarkan nama, alamat, atau bidang..."
+          title="Daftar Industri"
+          addButtonText="Tambah Industri Baru"
         />
       </div>
     </AdminLayout>

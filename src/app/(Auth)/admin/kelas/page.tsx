@@ -6,13 +6,16 @@ import { DataTable } from "@/components/data-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Kelas } from "@/types/api"
-import { deleteKelas } from "@/api/admin/kelas/index"
-import { getKelas } from "@/api/admin/kelas/index"
+import { deleteKelas, getKelas } from "@/api/admin/kelas/index"
+import type { Jurusan } from "@/types/api"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { getJurusan } from "@/api/admin/jurusan"
 
 export default function KelasManagement() {
   const router = useRouter()
   const [kelas, setKelas] = useState<Kelas[]>([])
+  const [jurusan, setJurusan] = useState<Jurusan[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -21,10 +24,24 @@ export default function KelasManagement() {
   }, [])
 
   const loadKelas = async () => {
+    setLoading(true)
+    setError(null)
     try {
-      setLoading(true)
-      const response = await getKelas()
-      setKelas(response.data.data || [])
+      // Load both kelas and jurusan data in parallel
+      const [kelasResponse, jurusanResponse] = await Promise.all([
+        getKelas(),
+        getJurusan()
+      ])
+
+      if (kelasResponse && kelasResponse.data) {
+        setKelas(kelasResponse.data.data || [])
+      } else {
+        setError('Failed to load kelas data')
+      }
+
+      if (jurusanResponse && jurusanResponse.data) {
+        setJurusan(jurusanResponse.data.data || [])
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load kelas data')
     } finally {
@@ -47,34 +64,37 @@ export default function KelasManagement() {
   }
 
   const handleAdd = () => {
-    // TODO: Implement add kelas modal/form
-    console.log('Add kelas')
+    router.push('/admin/kelas/buat')
   }
 
   const handleEdit = (row: Kelas) => {
-    // TODO: Implement edit kelas modal/form
-    console.log('Edit kelas:', row)
+    router.push(`/admin/kelas/edit/${row.id}`)
   }
 
   const handleDelete = async (row: Kelas) => {
-    if (confirm(`Are you sure you want to delete ${row.nama}?`)) {
-      try {
-        await deleteKelas(row.id)
-        loadKelas() // Refresh the list
-      } catch (err) {
-        console.error('Failed to delete kelas:', err)
-        alert('Failed to delete kelas')
-      }
+    try {
+      await deleteKelas(row.id)
+      toast.success(`Data kelas ${row.nama} berhasil dihapus`)
+      loadKelas() // Refresh the list
+    } catch (err) {
+      console.error('Failed to delete kelas:', err)
+      toast.error('Gagal menghapus data kelas')
     }
   }
 
   const handleView = (row: Kelas) => {
-    // TODO: Implement view kelas details
-    console.log('View kelas:', row)
+    router.push(`/admin/kelas/${row.id}`)
   }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('id-ID')
+  }
+
+  // Helper function to get jurusan name by id
+  const getJurusanName = (jurusanId: number) => {
+    const jurusanItem = jurusan.find(j => j.id === jurusanId)
+    const result = jurusanItem ? jurusanItem.nama : `Jurusan ID: ${jurusanId}`
+    return result
   }
 
   const columns = [
@@ -85,20 +105,22 @@ export default function KelasManagement() {
     },
     {
       key: 'jurusan_id',
-      label: 'Jurusan ID',
+      label: 'Jurusan',
       sortable: true,
-      render: (value: unknown) => (
-        <Badge variant="outline">Jurusan {value as number}</Badge>
-      ),
+      render: (value: unknown) => {
+        const jurusanId = value as number
+        const jurusanName = getJurusanName(jurusanId)
+        return <Badge variant="outline">{jurusanName}</Badge>
+      },
     },
     {
       key: 'created_at',
-      label: 'Created At',
+      label: 'Dibuat Pada',
       render: (value: unknown) => formatDate(value as string),
     },
     {
       key: 'updated_at',
-      label: 'Updated At',
+      label: 'Diperbarui',
       render: (value: unknown) => formatDate(value as string),
     },
   ]
@@ -137,8 +159,8 @@ export default function KelasManagement() {
     <AdminLayout onLogout={handleLogout}>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Kelas Management</h1>
-          <p className="text-gray-600">Manage classes and their assignments</p>
+          <h1 className="text-3xl font-bold text-gray-900">Manajemen Kelas</h1>
+          <p className="text-gray-600">Kelola kelas dan penugasannya</p>
         </div>
 
         <DataTable
@@ -148,9 +170,9 @@ export default function KelasManagement() {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onView={handleView}
-          searchPlaceholder="Search by nama kelas or jurusan..."
-          title="Kelas List"
-          addButtonText="Add New Kelas"
+          searchPlaceholder="Cari berdasarkan nama kelas atau jurusan..."
+          title="Daftar Kelas"
+          addButtonText="Tambah Kelas Baru"
         />
       </div>
     </AdminLayout>

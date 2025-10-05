@@ -6,8 +6,9 @@ import { DataTable } from "@/components/data-table"
 import { Button } from "@/components/ui/button"
 import type { Jurusan } from "@/types/api"
 import { useRouter } from "next/navigation"
-import { getJurusan } from "@/api/admin/jurusan/index."
-import { deleteJurusan } from "@/api/admin/jurusan/index."
+import { getJurusan, deleteJurusan } from "@/api/admin/jurusan"
+import { toast } from "sonner"
+import { formatDate } from "@/utils/date"
 
 export default function JurusanManagement() {
   const router = useRouter()
@@ -46,35 +47,28 @@ export default function JurusanManagement() {
   }
 
   const handleAdd = () => {
-    // TODO: Implement add jurusan modal/form
-    console.log('Add jurusan')
+    router.push('/admin/jurusan/buat')
   }
 
   const handleEdit = (row: Jurusan) => {
-    // TODO: Implement edit jurusan modal/form
-    console.log('Edit jurusan:', row)
+    router.push(`/admin/jurusan/edit/${row.id}`)
   }
 
   const handleDelete = async (row: Jurusan) => {
-    if (confirm(`Are you sure you want to delete ${row.nama}?`)) {
-      try {
-        await deleteJurusan(row.id)
-        loadJurusan() // Refresh the list
-      } catch (err) {
-        console.error('Failed to delete jurusan:', err)
-        alert('Failed to delete jurusan')
-      }
+    try {
+      await deleteJurusan(row.id)
+      toast.success(`Data jurusan ${row.nama} berhasil dihapus`)
+      loadJurusan() // Refresh the list
+    } catch (err) {
+      console.error('Failed to delete jurusan:', err)
+      toast.error('Gagal menghapus data jurusan')
     }
   }
 
   const handleView = (row: Jurusan) => {
-    // TODO: Implement view jurusan details
-    console.log('View jurusan:', row)
+    router.push(`/admin/jurusan/${row.id}`)
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID')
-  }
 
   const columns = [
     {
@@ -89,12 +83,12 @@ export default function JurusanManagement() {
     },
     {
       key: 'created_at',
-      label: 'Created At',
+      label: 'Dibuat Pada',
       render: (value: unknown) => formatDate(value as string),
     },
     {
       key: 'updated_at',
-      label: 'Updated At',
+      label: 'Diperbarui',
       render: (value: unknown) => formatDate(value as string),
     },
   ]
@@ -133,8 +127,8 @@ export default function JurusanManagement() {
     <AdminLayout onLogout={handleLogout}>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Jurusan Management</h1>
-          <p className="text-gray-600">Manage study programs and departments</p>
+          <h1 className="text-3xl font-bold text-gray-900">Manajemen Jurusan</h1>
+          <p className="text-gray-600">Kelola program studi dan departemen</p>
         </div>
 
         <DataTable
@@ -144,9 +138,9 @@ export default function JurusanManagement() {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onView={handleView}
-          searchPlaceholder="Search by kode or nama..."
-          title="Jurusan List"
-          addButtonText="Add New Jurusan"
+          searchPlaceholder="Cari berdasarkan kode atau nama..."
+          title="Daftar Jurusan"
+          addButtonText="Tambah Jurusan Baru"
         />
       </div>
     </AdminLayout>

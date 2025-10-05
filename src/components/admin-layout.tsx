@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -50,8 +50,43 @@ const navigation = [
 export function AdminLayout({ children, onLogout, user }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
+  const [isHydrated, setIsHydrated] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
+
+  // Load collapsed state from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedCollapsed = localStorage.getItem('sidebar-collapsed')
+      if (savedCollapsed !== null) {
+        try {
+          const isCollapsed = JSON.parse(savedCollapsed)
+          setCollapsed(isCollapsed)
+          // Apply CSS class immediately to prevent flicker
+          document.documentElement.setAttribute('data-sidebar-collapsed', isCollapsed.toString())
+        } catch {
+          // If parsing fails, reset to default
+          localStorage.removeItem('sidebar-collapsed')
+          setCollapsed(false)
+          document.documentElement.setAttribute('data-sidebar-collapsed', 'false')
+        }
+      } else {
+        document.documentElement.setAttribute('data-sidebar-collapsed', 'false')
+      }
+      // Mark as hydrated after loading state
+      setIsHydrated(true)
+    }
+  }, [])
+
+  // Save collapsed state to localStorage whenever it changes
+  const handleToggleCollapsed = () => {
+    const newCollapsed = !collapsed
+    setCollapsed(newCollapsed)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sidebar-collapsed', JSON.stringify(newCollapsed))
+      document.documentElement.setAttribute('data-sidebar-collapsed', newCollapsed.toString())
+    }
+  }
 
   // Function to check if current path matches navigation item
   const isActive = (href: string) => {
@@ -61,7 +96,38 @@ export function AdminLayout({ children, onLogout, user }: AdminLayoutProps) {
     return pathname.startsWith(href)
   }
 
-  const sidebarWidth = collapsed ? "w-16" : "w-64"
+  // Sidebar width is now controlled by CSS classes
+
+  // Show loading or prevent flicker until hydrated
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen bg-gray-50/40">
+        {/* Desktop sidebar - fixed width to prevent layout shift */}
+        <div className="fixed inset-y-0 left-0 z-40 hidden bg-white shadow-sm lg:block w-64">
+          <div className="flex h-full flex-col border-r border-gray-200">
+            {/* Placeholder content */}
+            <div className="flex h-16 items-center justify-between px-4 border-b">
+              <div className="flex items-center space-x-3">
+                <div className="animate-pulse bg-gray-200 h-7 w-24 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Main content with fixed margin */}
+        <div className="lg:pl-64">
+          <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-white px-4 shadow-sm sm:px-6 lg:px-8">
+            <div className="animate-pulse bg-gray-200 h-6 w-32 rounded"></div>
+          </header>
+          <main className="flex-1 p-6">
+            <div className="mx-auto max-w-7xl">
+              <div className="animate-pulse bg-gray-200 h-64 w-full rounded"></div>
+            </div>
+          </main>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50/40">
@@ -133,16 +199,13 @@ export function AdminLayout({ children, onLogout, user }: AdminLayoutProps) {
       </div>
 
       {/* Desktop sidebar */}
-      <div className={cn(
-        "fixed inset-y-0 left-0 z-40 hidden bg-white shadow-sm transition-all duration-300 lg:block",
-        sidebarWidth
-      )}>
+      <div className="sidebar-container fixed inset-y-0 left-0 z-40 hidden bg-white shadow-sm lg:block">
         <div className="flex h-full flex-col border-r border-gray-200">
           {/* Desktop header */}
           <div className="flex h-16 items-center justify-between px-4 border-b">
             <div className={cn(
               "flex items-center space-x-3 transition-opacity duration-200",
-              collapsed ? "opacity-0" : "opacity-100"
+              collapsed ? "hidden" : "block"
             )}>
               <Image
                 src="/logo/logo_magangHub.png"
@@ -156,7 +219,7 @@ export function AdminLayout({ children, onLogout, user }: AdminLayoutProps) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setCollapsed(!collapsed)}
+              onClick={handleToggleCollapsed}
               className="h-8 w-8 p-0"
             >
               {collapsed ? (
@@ -193,7 +256,7 @@ export function AdminLayout({ children, onLogout, user }: AdminLayoutProps) {
                   )} />
                   <span className={cn(
                     "transition-opacity duration-200",
-                    collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+                    collapsed ? "hidden" : "block"
                   )}>
                     {item.name}
                   </span>
@@ -201,39 +264,11 @@ export function AdminLayout({ children, onLogout, user }: AdminLayoutProps) {
               )
             })}
           </nav>
-
-          {/* Sidebar footer */}
-          <div className="border-t p-3">
-            <div className={cn(
-              "flex items-center space-x-3 rounded-lg p-2 transition-colors hover:bg-gray-100",
-              collapsed && "justify-center"
-            )}>
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="" alt={user?.username} />
-                <AvatarFallback>
-                  <User className="h-4 w-4" />
-                </AvatarFallback>
-              </Avatar>
-              {!collapsed && (
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {user?.username}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {user?.role}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Main content */}
-      <div className={cn(
-        "transition-all duration-300",
-        collapsed ? "lg:pl-16" : "lg:pl-64"
-      )}>
+      <div className="main-content">
         {/* Top bar */}
         <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-white px-4 shadow-sm sm:px-6 lg:px-8">
           <Button

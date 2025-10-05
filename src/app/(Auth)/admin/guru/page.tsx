@@ -46,30 +46,25 @@ export default function GuruManagement() {
   }
 
   const handleAdd = () => {
-    // TODO: Implement add guru modal/form
-    console.log('Add guru')
+    router.push('/admin/guru/buat')
   }
 
   const handleEdit = (row: Guru) => {
-    // TODO: Implement edit guru modal/form
-    console.log('Edit guru:', row)
+    router.push(`/admin/guru/edit/${row.id}`)
   }
 
   const handleDelete = async (row: Guru) => {
-    if (confirm(`Are you sure you want to delete ${row.nama}?`)) {
-      try {
-        await deleteGuru(row.id)
-        loadGuru() // Refresh the list
-      } catch (err) {
-        console.error('Failed to delete guru:', err)
-        alert('Failed to delete guru')
-      }
+    try {
+      await deleteGuru(row.id)
+      loadGuru() // Refresh the list
+    } catch (err) {
+      console.error('Failed to delete guru:', err)
+      alert('Failed to delete guru')
     }
   }
 
   const handleView = (row: Guru) => {
-    // TODO: Implement view guru details
-    console.log('View guru:', row)
+    router.push(`/admin/guru/${row.id}`)
   }
 
   const columns = [

@@ -174,3 +174,39 @@
 .animate-fade-in-delay-2 {
   animation: fadeInDelay2 1.6s ease-out;
 }
+
+/* Sidebar anti-flicker CSS */
+:root {
+  --sidebar-width: 16rem; /* w-64 = 256px = 16rem */
+  --sidebar-width-collapsed: 4rem; /* w-16 = 64px = 4rem */
+}
+
+/* Default expanded state */
+.sidebar-container {
+  width: var(--sidebar-width);
+}
+
+.main-content {
+  padding-left: var(--sidebar-width);
+}
+
+/* Collapsed state via data attribute */
+[data-sidebar-collapsed="true"] .sidebar-container {
+  width: var(--sidebar-width-collapsed);
+}
+
+[data-sidebar-collapsed="true"] .main-content {
+  padding-left: var(--sidebar-width-collapsed);
+}
+
+/* Smooth transitions */
+.sidebar-container,
+.main-content {
+  transition: width 0.3s ease-in-out, padding-left 0.3s ease-in-out;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    padding-left: 0 !important;
+  }
+}

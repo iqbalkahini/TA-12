@@ -24,7 +24,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-sidebar-collapsed="true">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Prevent sidebar flicker by setting initial state before React hydration
+              (function() {
+                try {
+                  const collapsed = localStorage.getItem('sidebar-collapsed');
+                  if (collapsed !== null) {
+                    document.documentElement.setAttribute('data-sidebar-collapsed', collapsed);
+                  } else {
+                    document.documentElement.setAttribute('data-sidebar-collapsed', 'false');
+                  }
+                } catch (e) {
+                  document.documentElement.setAttribute('data-sidebar-collapsed', 'false');
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         cz-shortcut-listen="true"
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
