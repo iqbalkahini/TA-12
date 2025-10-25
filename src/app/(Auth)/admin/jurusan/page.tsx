@@ -34,19 +34,19 @@ export default function JurusanManagement() {
       const response = await getJurusan(search, page)
       const data = response.data.data || []
       const totalAll = response.data.total_all || 0
-      
+
       // Calculate total pages (10 items per page)
       const calculatedTotalPages = Math.ceil(totalAll / 10)
       setTotalPages(calculatedTotalPages)
       setCurrentPage(page)
-      
+
       // Sort data by name (ascending)
       const sortedData = [...data].sort((a, b) => {
         const nameA = (a.nama || '').toLowerCase()
         const nameB = (b.nama || '').toLowerCase()
         return nameA.localeCompare(nameB)
       })
-      
+
       setJurusan(sortedData)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load jurusan data')
@@ -132,7 +132,7 @@ export default function JurusanManagement() {
 
   if (loading) {
     return (
-      <AdminLayout onLogout={handleLogout}>
+      <AdminLayout>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -145,7 +145,7 @@ export default function JurusanManagement() {
 
   if (error) {
     return (
-      <AdminLayout onLogout={handleLogout}>
+      <AdminLayout>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="text-red-600 text-6xl mb-4">⚠️</div>
@@ -161,7 +161,7 @@ export default function JurusanManagement() {
   }
 
   return (
-    <AdminLayout onLogout={handleLogout}>
+    <AdminLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Manajemen Jurusan</h1>

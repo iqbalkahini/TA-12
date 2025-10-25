@@ -7,12 +7,12 @@ import { StatisticsCard } from "@/components/statistics-card"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { DashboardStats } from "@/types/api"
-import { 
-  Users, 
-  GraduationCap, 
-  BookOpen, 
-  School, 
-  Building2, 
+import {
+  Users,
+  GraduationCap,
+  BookOpen,
+  School,
+  Building2,
   UserCheck,
   TrendingUp,
   Clock
@@ -37,7 +37,6 @@ function AdminDashboard() {
       setLoading(true)
       const response = await axiosInstance.get('/api/admin/dashboard')
       setStats(response.data.data)
-      console.log(response.data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load dashboard stats')
     } finally {
@@ -48,14 +47,14 @@ function AdminDashboard() {
   const handleLogout = async () => {
     try {
       // await apiService.logout()
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
+      const { clearTokens } = await import('@/utils/axios')
+      clearTokens()
       router.push('/login')
     } catch (err) {
       console.error('Logout failed:', err)
       // Still redirect even if logout fails
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
+      const { clearTokens } = await import('@/utils/axios')
+      clearTokens()
       router.push('/login')
     }
   }
@@ -73,7 +72,7 @@ function AdminDashboard() {
 
   if (loading) {
     return (
-      <AdminLayout onLogout={handleLogout}>
+      <AdminLayout>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -86,13 +85,13 @@ function AdminDashboard() {
 
   if (error) {
     return (
-      <AdminLayout onLogout={handleLogout}>
+      <AdminLayout>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="text-red-600 text-6xl mb-4">⚠️</div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Dashboard</h2>
             <p className="text-gray-600 mb-4">{error}</p>
-            <button 
+            <button
               onClick={loadDashboardStats}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
@@ -106,7 +105,7 @@ function AdminDashboard() {
 
   if (!stats) {
     return (
-      <AdminLayout onLogout={handleLogout}>
+      <AdminLayout>
         <div className="flex items-center justify-center h-64">
           <p className="text-gray-600">No data available</p>
         </div>
@@ -115,8 +114,7 @@ function AdminDashboard() {
   }
 
   return (
-    <AdminLayout 
-      onLogout={handleLogout}
+    <AdminLayout
       user={user ? {
         username: user.username || 'Admin',
         role: user.role || 'adm'

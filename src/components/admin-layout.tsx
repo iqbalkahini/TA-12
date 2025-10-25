@@ -5,33 +5,21 @@ import { usePathname, useRouter } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { 
-  LayoutDashboard, 
-  Users, 
-  GraduationCap, 
-  Building2, 
-  BookOpen, 
+  LayoutDashboard,
+  Users,
+  GraduationCap,
+  BookOpen,
   School,
-  LogOut,
-  Menu,
+  Building2,
   X,
-  User,
   ChevronLeft,
   ChevronRight
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Header } from "@/components/header"
 
 interface AdminLayoutProps {
   children: React.ReactNode
-  onLogout?: () => void
   user?: {
     username: string
     role: string
@@ -47,7 +35,7 @@ const navigation = [
   { name: 'Industri', href: '/admin/industri', icon: Building2 },
 ]
 
-export function AdminLayout({ children, onLogout, user }: AdminLayoutProps) {
+export function AdminLayout({ children, user }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const [isHydrated, setIsHydrated] = useState(false)
@@ -113,7 +101,7 @@ export function AdminLayout({ children, onLogout, user }: AdminLayoutProps) {
             </div>
           </div>
         </div>
-        
+
         {/* Main content with fixed margin */}
         <div className="lg:pl-64">
           <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-white px-4 shadow-sm sm:px-6 lg:px-8">
@@ -133,9 +121,9 @@ export function AdminLayout({ children, onLogout, user }: AdminLayoutProps) {
     <div className="min-h-screen bg-gray-50/40">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/80 lg:hidden" 
-          onClick={() => setSidebarOpen(false)} 
+        <div
+          className="fixed inset-0 z-50 bg-black/80 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
         />
       )}
 
@@ -270,47 +258,10 @@ export function AdminLayout({ children, onLogout, user }: AdminLayoutProps) {
       {/* Main content */}
       <div className="main-content">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-white px-4 shadow-sm sm:px-6 lg:px-8">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="lg:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-
-          <div className="flex flex-1 items-center justify-end gap-4">
-            {/* User menu - Always in top right */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                  <Avatar className="h-9 w-9">
-                    <AvatarImage src="" alt={user?.username} />
-                    <AvatarFallback>
-                      <User className="h-4 w-4" />
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user?.username}</p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user?.role}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onLogout} className="text-red-600 focus:text-red-600">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </header>
+        <Header
+          user={user}
+          onMenuClick={() => setSidebarOpen(true)}
+        />
 
         {/* Page content */}
         <main className="flex-1 p-6">

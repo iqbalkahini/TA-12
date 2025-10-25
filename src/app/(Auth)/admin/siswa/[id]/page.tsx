@@ -36,7 +36,7 @@ export default function ViewSiswaPage() {
     const router = useRouter()
     const params = useParams()
     const id = params.id as string
-    
+
     const [loading, setLoading] = useState(true)
     const [siswaData, setSiswaData] = useState<SiswaData | null>(null)
     const [kelasData, setKelasData] = useState<KelasData | null>(null)
@@ -60,11 +60,11 @@ export default function ViewSiswaPage() {
             try {
                 setLoading(true)
                 const response = await getSiswaById(parseInt(id))
-                
+
                 if (response && response.data) {
                     const siswa = response.data
                     setSiswaData(siswa)
-                    
+
                     // Load kelas data if kelas_id exists
                     if (siswa.kelas_id) {
                         const kelasResponse = await getKelasById(siswa.kelas_id)
@@ -102,7 +102,7 @@ export default function ViewSiswaPage() {
 
     if (loading) {
         return (
-            <AdminLayout onLogout={handleLogout}>
+            <AdminLayout>
                 <div className="flex items-center justify-center h-64">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -115,7 +115,7 @@ export default function ViewSiswaPage() {
 
     if (!siswaData) {
         return (
-            <AdminLayout onLogout={handleLogout}>
+            <AdminLayout>
                 <div className="flex items-center justify-center h-64">
                     <div className="text-center">
                         <div className="text-red-600 text-6xl mb-4">⚠️</div>
@@ -131,7 +131,7 @@ export default function ViewSiswaPage() {
     }
 
     return (
-        <AdminLayout onLogout={handleLogout}>
+        <AdminLayout>
             <div className="space-y-6 max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between">
@@ -294,7 +294,7 @@ export default function ViewSiswaPage() {
                         <ArrowLeft className="h-4 w-4" />
                         <span>Kembali ke Daftar</span>
                     </Button>
-                    
+
                     <Button
                         onClick={handleEdit}
                         className="flex items-center space-x-2"

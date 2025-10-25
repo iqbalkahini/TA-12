@@ -92,7 +92,7 @@ export default function ViewJurusanPage() {
 
     if (loading) {
         return (
-            <AdminLayout onLogout={handleLogout}>
+            <AdminLayout>
                 <div className="flex items-center justify-center h-64">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -105,7 +105,7 @@ export default function ViewJurusanPage() {
 
     if (!jurusanData) {
         return (
-            <AdminLayout onLogout={handleLogout}>
+            <AdminLayout>
                 <div className="flex items-center justify-center h-64">
                     <div className="text-center">
                         <div className="text-red-600 text-6xl mb-4">⚠️</div>
@@ -121,7 +121,7 @@ export default function ViewJurusanPage() {
     }
 
     return (
-        <AdminLayout onLogout={handleLogout}>
+        <AdminLayout>
             <div className="space-y-6 max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between">

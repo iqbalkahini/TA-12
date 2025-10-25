@@ -157,7 +157,7 @@ export default function CreateGuruPage() {
     }
 
     return (
-        <AdminLayout onLogout={handleLogout}>
+        <AdminLayout>
             <div className="space-y-6 max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between">

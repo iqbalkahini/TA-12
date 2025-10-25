@@ -38,7 +38,7 @@ export default function EditSiswaPage() {
     const router = useRouter()
     const params = useParams()
     const id = params.id as string
-    
+
     const [loading, setLoading] = useState(false)
     const [loadingData, setLoadingData] = useState(true)
     const [formData, setFormData] = useState<SiswaFormData>(initialFormData)
@@ -85,7 +85,7 @@ export default function EditSiswaPage() {
             try {
                 setLoadingData(true)
                 const response = await getSiswaById(parseInt(id))
-                
+
                 if (response && response.data) {
                     const siswaData = response.data
                     setFormData({
@@ -157,7 +157,7 @@ export default function EditSiswaPage() {
             const birthDate = new Date(formData.tanggal_lahir)
             const today = new Date()
             const age = today.getFullYear() - birthDate.getFullYear()
-            
+
             if (birthDate > today) {
                 newErrors.tanggal_lahir = 'Tanggal lahir tidak boleh di masa depan'
             } else if (age > 25) {
@@ -217,7 +217,7 @@ export default function EditSiswaPage() {
 
     if (loadingData) {
         return (
-            <AdminLayout onLogout={handleLogout}>
+            <AdminLayout>
                 <div className="flex items-center justify-center h-64">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -229,7 +229,7 @@ export default function EditSiswaPage() {
     }
 
     return (
-        <AdminLayout onLogout={handleLogout}>
+        <AdminLayout>
             <div className="space-y-6 max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between">
@@ -305,60 +305,60 @@ export default function EditSiswaPage() {
                                     )}
                                 </div>
 
-                                 <div className="space-y-2">
-                                     <Label htmlFor="kelas_id" className="flex items-center space-x-1">
-                                         <GraduationCap className="h-4 w-4" />
-                                         <span>Kelas <span className="text-red-500">*</span></span>
-                                     </Label>
-                                     <Popover open={open} onOpenChange={setOpen}>
-                                         <PopoverTrigger asChild>
-                                             <Button
-                                                 variant="outline"
-                                                 role="combobox"
-                                                 aria-expanded={open}
-                                                 className={`w-full justify-between ${errors.kelas_id ? 'border-red-500' : ''} ${!formData.kelas_id || formData.kelas_id === 0 ? 'text-muted-foreground' : ''}`}
-                                                 disabled={kelasLoading}
-                                             >
-                                                 {formData.kelas_id && formData.kelas_id !== 0
-                                                     ? kelasList.find((kelas) => kelas.id === formData.kelas_id)?.nama
-                                                     : kelasLoading
-                                                         ? "Memuat kelas..."
-                                                         : "Pilih kelas..."}
-                                                 <GraduationCap className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                             </Button>
-                                         </PopoverTrigger>
-                                         <PopoverContent className="w-full p-0">
-                                             <Command>
-                                                 <CommandInput placeholder="Cari kelas..." />
-                                                 <CommandList>
-                                                     <CommandEmpty>Kelas tidak ditemukan.</CommandEmpty>
-                                                     <CommandGroup>
-                                                         {kelasList.map((kelas) => (
-                                                             <CommandItem
-                                                                 key={kelas.id}
-                                                                 value={kelas.nama}
-                                                                 onSelect={() => {
-                                                                     handleInputChange('kelas_id', kelas.id)
-                                                                     setOpen(false)
-                                                                 }}
-                                                             >
-                                                                 <Check className={`mr-2 h-4 w-4 ${formData.kelas_id === kelas.id ? 'opacity-100' : 'opacity-0'}`} />
-                                                                 <GraduationCap className="mr-2 h-4 w-4" />
-                                                                 {kelas.nama}
-                                                             </CommandItem>
-                                                         ))}
-                                                     </CommandGroup>
-                                                 </CommandList>
-                                             </Command>
-                                         </PopoverContent>
-                                     </Popover>
-                                     {errors.kelas_id && (
-                                         <p className="text-sm text-red-500 flex items-center">
-                                             <AlertCircle className="h-4 w-4 mr-1" />
-                                             {errors.kelas_id}
-                                         </p>
-                                     )}
-                                 </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="kelas_id" className="flex items-center space-x-1">
+                                        <GraduationCap className="h-4 w-4" />
+                                        <span>Kelas <span className="text-red-500">*</span></span>
+                                    </Label>
+                                    <Popover open={open} onOpenChange={setOpen}>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                aria-expanded={open}
+                                                className={`w-full justify-between ${errors.kelas_id ? 'border-red-500' : ''} ${!formData.kelas_id || formData.kelas_id === 0 ? 'text-muted-foreground' : ''}`}
+                                                disabled={kelasLoading}
+                                            >
+                                                {formData.kelas_id && formData.kelas_id !== 0
+                                                    ? kelasList.find((kelas) => kelas.id === formData.kelas_id)?.nama
+                                                    : kelasLoading
+                                                        ? "Memuat kelas..."
+                                                        : "Pilih kelas..."}
+                                                <GraduationCap className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-full p-0">
+                                            <Command>
+                                                <CommandInput placeholder="Cari kelas..." />
+                                                <CommandList>
+                                                    <CommandEmpty>Kelas tidak ditemukan.</CommandEmpty>
+                                                    <CommandGroup>
+                                                        {kelasList.map((kelas) => (
+                                                            <CommandItem
+                                                                key={kelas.id}
+                                                                value={kelas.nama}
+                                                                onSelect={() => {
+                                                                    handleInputChange('kelas_id', kelas.id)
+                                                                    setOpen(false)
+                                                                }}
+                                                            >
+                                                                <Check className={`mr-2 h-4 w-4 ${formData.kelas_id === kelas.id ? 'opacity-100' : 'opacity-0'}`} />
+                                                                <GraduationCap className="mr-2 h-4 w-4" />
+                                                                {kelas.nama}
+                                                            </CommandItem>
+                                                        ))}
+                                                    </CommandGroup>
+                                                </CommandList>
+                                            </Command>
+                                        </PopoverContent>
+                                    </Popover>
+                                    {errors.kelas_id && (
+                                        <p className="text-sm text-red-500 flex items-center">
+                                            <AlertCircle className="h-4 w-4 mr-1" />
+                                            {errors.kelas_id}
+                                        </p>
+                                    )}
+                                </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_lahir" className="flex items-center space-x-1">

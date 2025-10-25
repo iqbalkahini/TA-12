@@ -190,7 +190,7 @@ export default function CreateSiswaPage() {
     }
 
     return (
-        <AdminLayout onLogout={handleLogout}>
+        <AdminLayout>
             <div className="space-y-6 max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between">
@@ -271,48 +271,48 @@ export default function CreateSiswaPage() {
                                         <GraduationCap className="h-4 w-4" />
                                         <span>Kelas <span className="text-red-500">*</span></span>
                                     </Label>
-                                     <Popover open={open} onOpenChange={setOpen}>
-                                         <PopoverTrigger asChild>
-                                             <Button
-                                                 variant="outline"
-                                                 role="combobox"
-                                                 aria-expanded={open}
-                                                 className={`w-[200px] justify-between ${errors.kelas_id ? 'border-red-500' : ''} ${!formData.kelas_id || formData.kelas_id === 0 ? 'text-muted-foreground' : ''}`}
-                                                 disabled={kelasLoading}
-                                             >
-                                                 {formData.kelas_id && formData.kelas_id !== 0
-                                                     ? kelasList.find((kelas) => kelas.id === formData.kelas_id)?.nama
-                                                     : kelasLoading
-                                                         ? "Memuat kelas..."
-                                                         : "Pilih kelas..."}
-                                                 <GraduationCap className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                             </Button>
-                                         </PopoverTrigger>
-                                         <PopoverContent className="w-[200px] p-0">
-                                             <Command>
-                                                 <CommandInput placeholder="Cari kelas..." />
-                                                 <CommandList>
-                                                     <CommandEmpty>Kelas tidak ditemukan.</CommandEmpty>
-                                                     <CommandGroup>
-                                                         {kelasList.map((kelas) => (
-                                                              <CommandItem
-                                                                  key={kelas.id}
-                                                                  value={kelas.nama}
-                                                                  onSelect={() => {
-                                                                      handleInputChange('kelas_id', kelas.id)
-                                                                      setOpen(false)
-                                                                  }}
-                                                              >
-                                                                  <Check className={`mr-2 h-4 w-4 ${formData.kelas_id === kelas.id ? 'opacity-100' : 'opacity-0'}`} />
-                                                                  <GraduationCap className="mr-2 h-4 w-4" />
-                                                                  {kelas.nama}
-                                                              </CommandItem>
-                                                         ))}
-                                                     </CommandGroup>
-                                                 </CommandList>
-                                             </Command>
-                                         </PopoverContent>
-                                     </Popover>
+                                    <Popover open={open} onOpenChange={setOpen}>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                aria-expanded={open}
+                                                className={`w-[200px] justify-between ${errors.kelas_id ? 'border-red-500' : ''} ${!formData.kelas_id || formData.kelas_id === 0 ? 'text-muted-foreground' : ''}`}
+                                                disabled={kelasLoading}
+                                            >
+                                                {formData.kelas_id && formData.kelas_id !== 0
+                                                    ? kelasList.find((kelas) => kelas.id === formData.kelas_id)?.nama
+                                                    : kelasLoading
+                                                        ? "Memuat kelas..."
+                                                        : "Pilih kelas..."}
+                                                <GraduationCap className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-[200px] p-0">
+                                            <Command>
+                                                <CommandInput placeholder="Cari kelas..." />
+                                                <CommandList>
+                                                    <CommandEmpty>Kelas tidak ditemukan.</CommandEmpty>
+                                                    <CommandGroup>
+                                                        {kelasList.map((kelas) => (
+                                                            <CommandItem
+                                                                key={kelas.id}
+                                                                value={kelas.nama}
+                                                                onSelect={() => {
+                                                                    handleInputChange('kelas_id', kelas.id)
+                                                                    setOpen(false)
+                                                                }}
+                                                            >
+                                                                <Check className={`mr-2 h-4 w-4 ${formData.kelas_id === kelas.id ? 'opacity-100' : 'opacity-0'}`} />
+                                                                <GraduationCap className="mr-2 h-4 w-4" />
+                                                                {kelas.nama}
+                                                            </CommandItem>
+                                                        ))}
+                                                    </CommandGroup>
+                                                </CommandList>
+                                            </Command>
+                                        </PopoverContent>
+                                    </Popover>
                                     {errors.kelas_id && (
                                         <p className="text-sm text-red-500 flex items-center">
                                             <AlertCircle className="h-4 w-4 mr-1" />

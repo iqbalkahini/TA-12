@@ -33,7 +33,7 @@ export default function GuruManagement() {
       const response = await getGuru(search, page)
       const data = response.data.data || []
       const totalAll = response.data.total_all || 0
-      
+
       // Calculate total pages (10 items per page)
       const calculatedTotalPages = Math.ceil(totalAll / 10)
       setTotalPages(calculatedTotalPages)
@@ -150,7 +150,7 @@ export default function GuruManagement() {
 
   if (loading) {
     return (
-      <AdminLayout onLogout={handleLogout}>
+      <AdminLayout>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -163,7 +163,7 @@ export default function GuruManagement() {
 
   if (error) {
     return (
-      <AdminLayout onLogout={handleLogout}>
+      <AdminLayout>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="text-red-600 text-6xl mb-4">⚠️</div>
@@ -179,7 +179,7 @@ export default function GuruManagement() {
   }
 
   return (
-    <AdminLayout onLogout={handleLogout}>
+    <AdminLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Guru Management</h1>

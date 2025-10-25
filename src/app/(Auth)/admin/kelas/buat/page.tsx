@@ -170,7 +170,7 @@ export default function CreateKelasPage() {
     }
 
     return (
-        <AdminLayout onLogout={handleLogout}>
+        <AdminLayout>
             <div className="space-y-6 max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between">
@@ -259,23 +259,23 @@ export default function CreateKelasPage() {
                                                         <CommandEmpty>Jurusan tidak ditemukan.</CommandEmpty>
                                                         <CommandGroup>
                                                             {jurusanOptions.map((jurusan) => (
-                                                                 <CommandItem
-                                                                     key={jurusan.id}
-                                                                     value={`${jurusan.kode} ${jurusan.nama}`}
-                                                                     onSelect={() => {
-                                                                         handleInputChange('jurusan_id', jurusan.id)
-                                                                         setOpen(false)
-                                                                     }}
-                                                                 >
-                                                                     <Check className={`mr-2 h-4 w-4 ${formData.jurusan_id === jurusan.id ? 'opacity-100' : 'opacity-0'}`} />
-                                                                     <div className="flex items-center space-x-2">
-                                                                         <span className="font-mono text-sm font-semibold">
-                                                                             {jurusan.kode}
-                                                                         </span>
-                                                                         <span>-</span>
-                                                                         <span>{jurusan.nama}</span>
-                                                                     </div>
-                                                                 </CommandItem>
+                                                                <CommandItem
+                                                                    key={jurusan.id}
+                                                                    value={`${jurusan.kode} ${jurusan.nama}`}
+                                                                    onSelect={() => {
+                                                                        handleInputChange('jurusan_id', jurusan.id)
+                                                                        setOpen(false)
+                                                                    }}
+                                                                >
+                                                                    <Check className={`mr-2 h-4 w-4 ${formData.jurusan_id === jurusan.id ? 'opacity-100' : 'opacity-0'}`} />
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <span className="font-mono text-sm font-semibold">
+                                                                            {jurusan.kode}
+                                                                        </span>
+                                                                        <span>-</span>
+                                                                        <span>{jurusan.nama}</span>
+                                                                    </div>
+                                                                </CommandItem>
                                                             ))}
                                                         </CommandGroup>
                                                     </CommandList>

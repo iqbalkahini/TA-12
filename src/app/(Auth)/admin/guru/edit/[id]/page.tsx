@@ -40,7 +40,7 @@ export default function EditGuruPage() {
     const router = useRouter()
     const params = useParams()
     const id = params.id as string
-    
+
     const [loading, setLoading] = useState(false)
     const [loadingData, setLoadingData] = useState(true)
     const [showPassword, setShowPassword] = useState(false)
@@ -66,7 +66,7 @@ export default function EditGuruPage() {
             try {
                 setLoadingData(true)
                 const response = await getGuruById(parseInt(id))
-                
+
                 if (response && response.data) {
                     const guru = response.data
                     setFormData({
@@ -174,7 +174,7 @@ export default function EditGuruPage() {
             }
 
             // Add password only if provided
-            const finalGuruData = formData.password 
+            const finalGuruData = formData.password
                 ? { ...baseGuruData, password: formData.password }
                 : baseGuruData
 
@@ -207,7 +207,7 @@ export default function EditGuruPage() {
 
     if (loadingData) {
         return (
-            <AdminLayout onLogout={handleLogout}>
+            <AdminLayout>
                 <div className="flex items-center justify-center h-64">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -219,7 +219,7 @@ export default function EditGuruPage() {
     }
 
     return (
-        <AdminLayout onLogout={handleLogout}>
+        <AdminLayout>
             <div className="space-y-6 max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between">

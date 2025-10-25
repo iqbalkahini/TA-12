@@ -44,19 +44,19 @@ export default function IndustriManagement() {
       if (industriResponse && industriResponse.data) {
         const industriData = industriResponse.data.data || []
         const totalAll = industriResponse.data.total_all || 0
-        
+
         // Calculate total pages (10 items per page)
         const calculatedTotalPages = Math.ceil(totalAll / 10)
         setTotalPages(calculatedTotalPages)
         setCurrentPage(page)
-        
+
         // Sort industri by name (ascending)
         const sortedIndustri = [...industriData].sort((a, b) => {
           const nameA = (a.nama || '').toLowerCase()
           const nameB = (b.nama || '').toLowerCase()
           return nameA.localeCompare(nameB)
         })
-        
+
         setIndustri(sortedIndustri)
       } else {
         setError('Failed to load industri data')
@@ -180,7 +180,7 @@ export default function IndustriManagement() {
 
   if (loading) {
     return (
-      <AdminLayout onLogout={handleLogout}>
+      <AdminLayout>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -193,7 +193,7 @@ export default function IndustriManagement() {
 
   if (error) {
     return (
-      <AdminLayout onLogout={handleLogout}>
+      <AdminLayout>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="text-red-600 text-6xl mb-4">⚠️</div>
@@ -209,7 +209,7 @@ export default function IndustriManagement() {
   }
 
   return (
-    <AdminLayout onLogout={handleLogout}>
+    <AdminLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Manajemen Industri</h1>

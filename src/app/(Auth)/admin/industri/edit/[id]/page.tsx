@@ -235,7 +235,7 @@ export default function EditIndustriPage() {
 
     if (loadingData) {
         return (
-            <AdminLayout onLogout={handleLogout}>
+            <AdminLayout>
                 <div className="flex items-center justify-center h-64">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -247,7 +247,7 @@ export default function EditIndustriPage() {
     }
 
     return (
-        <AdminLayout onLogout={handleLogout}>
+        <AdminLayout>
             <div className="space-y-6 max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between">
@@ -328,58 +328,58 @@ export default function EditIndustriPage() {
                                     <Label htmlFor="jurusan_id">
                                         Jurusan Terkait <span className="text-red-500">*</span>
                                     </Label>
-                                     {loadingJurusan ? (
-                                         <div className="flex items-center justify-center h-10 border rounded-md bg-gray-50">
-                                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
-                                             <span className="ml-2 text-sm text-gray-500">Memuat jurusan...</span>
-                                         </div>
-                                     ) : (
-                                         <Popover open={open} onOpenChange={setOpen}>
-                                             <PopoverTrigger asChild>
-                                                 <Button
-                                                     variant="outline"
-                                                     role="combobox"
-                                                     aria-expanded={open}
-                                                     className={`w-full justify-between ${errors.jurusan_id ? 'border-red-500' : ''} ${!formData.jurusan_id || formData.jurusan_id === 0 ? 'text-muted-foreground' : ''}`}
-                                                     disabled={loadingJurusan}
-                                                 >
-                                                     {formData.jurusan_id && formData.jurusan_id !== 0
-                                                         ? jurusanOptions.find((jurusan) => jurusan.id === formData.jurusan_id)?.nama
-                                                         : "Pilih jurusan..."}
-                                                     <Building className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                                 </Button>
-                                             </PopoverTrigger>
-                                             <PopoverContent className="w-full p-0">
-                                                 <Command>
-                                                     <CommandInput placeholder="Cari jurusan..." />
-                                                     <CommandList>
-                                                         <CommandEmpty>Jurusan tidak ditemukan.</CommandEmpty>
-                                                         <CommandGroup>
-                                                             {jurusanOptions.map((jurusan) => (
-                                                                 <CommandItem
-                                                                     key={jurusan.id}
-                                                                     value={`${jurusan.kode} ${jurusan.nama}`}
-                                                                     onSelect={() => {
-                                                                         handleInputChange('jurusan_id', jurusan.id)
-                                                                         setOpen(false)
-                                                                     }}
-                                                                 >
-                                                                     <Check className={`mr-2 h-4 w-4 ${formData.jurusan_id === jurusan.id ? 'opacity-100' : 'opacity-0'}`} />
-                                                                     <div className="flex items-center space-x-2">
-                                                                         <span className="font-mono text-sm font-semibold">
-                                                                             {jurusan.kode}
-                                                                         </span>
-                                                                         <span>-</span>
-                                                                         <span>{jurusan.nama}</span>
-                                                                     </div>
-                                                                 </CommandItem>
-                                                             ))}
-                                                         </CommandGroup>
-                                                     </CommandList>
-                                                 </Command>
-                                             </PopoverContent>
-                                         </Popover>
-                                     )}
+                                    {loadingJurusan ? (
+                                        <div className="flex items-center justify-center h-10 border rounded-md bg-gray-50">
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
+                                            <span className="ml-2 text-sm text-gray-500">Memuat jurusan...</span>
+                                        </div>
+                                    ) : (
+                                        <Popover open={open} onOpenChange={setOpen}>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    role="combobox"
+                                                    aria-expanded={open}
+                                                    className={`w-full justify-between ${errors.jurusan_id ? 'border-red-500' : ''} ${!formData.jurusan_id || formData.jurusan_id === 0 ? 'text-muted-foreground' : ''}`}
+                                                    disabled={loadingJurusan}
+                                                >
+                                                    {formData.jurusan_id && formData.jurusan_id !== 0
+                                                        ? jurusanOptions.find((jurusan) => jurusan.id === formData.jurusan_id)?.nama
+                                                        : "Pilih jurusan..."}
+                                                    <Building className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-full p-0">
+                                                <Command>
+                                                    <CommandInput placeholder="Cari jurusan..." />
+                                                    <CommandList>
+                                                        <CommandEmpty>Jurusan tidak ditemukan.</CommandEmpty>
+                                                        <CommandGroup>
+                                                            {jurusanOptions.map((jurusan) => (
+                                                                <CommandItem
+                                                                    key={jurusan.id}
+                                                                    value={`${jurusan.kode} ${jurusan.nama}`}
+                                                                    onSelect={() => {
+                                                                        handleInputChange('jurusan_id', jurusan.id)
+                                                                        setOpen(false)
+                                                                    }}
+                                                                >
+                                                                    <Check className={`mr-2 h-4 w-4 ${formData.jurusan_id === jurusan.id ? 'opacity-100' : 'opacity-0'}`} />
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <span className="font-mono text-sm font-semibold">
+                                                                            {jurusan.kode}
+                                                                        </span>
+                                                                        <span>-</span>
+                                                                        <span>{jurusan.nama}</span>
+                                                                    </div>
+                                                                </CommandItem>
+                                                            ))}
+                                                        </CommandGroup>
+                                                    </CommandList>
+                                                </Command>
+                                            </PopoverContent>
+                                        </Popover>
+                                    )}
                                     {errors.jurusan_id && (
                                         <p className="text-sm text-red-500 flex items-center">
                                             <AlertCircle className="h-4 w-4 mr-1" />
