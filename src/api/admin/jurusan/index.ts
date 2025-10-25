@@ -1,58 +1,57 @@
-import { Jurusan } from "@/types/api"
-import axiosInstance from "@/utils/axios"
+import { Jurusan } from "@/types/api";
+import axiosInstance from "@/utils/axios";
 
-export const getJurusan = async (search?: string, page: number = 1) => {
-    try {
-        const params = new URLSearchParams()
-        if (search) params.append('search', search)
-        params.append('page', page.toString())
-        
-        const url = `/api/jurusan?${params.toString()}`
-        const response = await axiosInstance.get(url)
-        return response.data
-    } catch (error) {
-        console.error('Get jurusan failed:', error)
-        return null
-    }
-}
+export const getJurusan = async (search?: string, page?: number) => {
+  try {
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    if (page) params.append("page", page?.toString());
 
+    const url = `/api/jurusan?${params.toString()}`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Get jurusan failed:", error);
+    return null;
+  }
+};
 
 export const getJurusanById = async (id: number) => {
-    try {
-        const response = await axiosInstance.get(`/api/jurusan/${id}`)
-        return response.data
-    } catch (error) {
-        console.error('Get jurusan by id failed:', error)
-        return null
-    }
-}
+  try {
+    const response = await axiosInstance.get(`/api/jurusan/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Get jurusan by id failed:", error);
+    return null;
+  }
+};
 
 export const createJurusan = async (data: Jurusan) => {
-    try {
-        const response = await axiosInstance.post('/api/jurusan', data)
-        return response.data
-    } catch (error) {
-        console.error('Create jurusan failed:', error)
-        return null
-    }
-}
+  try {
+    const response = await axiosInstance.post("/api/jurusan", data);
+    return response.data;
+  } catch (error) {
+    console.error("Create jurusan failed:", error);
+    return null;
+  }
+};
 
 export const updateJurusan = async (id: number, data: Jurusan) => {
-    try {
-        const response = await axiosInstance.put(`/api/jurusan/${id}`, data)
-        return response.data
-    } catch (error) {
-        console.error('Update jurusan failed:', error)
-        return null
-    }
-}
+  try {
+    const response = await axiosInstance.put(`/api/jurusan/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Update jurusan failed:", error);
+    return null;
+  }
+};
 
 export const deleteJurusan = async (id: number) => {
-    try {
-        const response = await axiosInstance.delete(`/api/jurusan/${id}`)
-        return response.data
-    } catch (error) {
-        console.error('Delete jurusan failed:', error)
-        return null
-    }
-}
+  try {
+    const response = await axiosInstance.delete(`/api/jurusan/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Delete jurusan failed:", error);
+    return null;
+  }
+};
