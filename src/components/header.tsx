@@ -86,7 +86,7 @@ export function Header({ user, onMenuClick }: HeaderProps) {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={logout}>Continue</AlertDialogAction>
+              <AlertDialogAction className="bg-red-500 hover:bg-red-600 text-white" onClick={logout}>Continue</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
