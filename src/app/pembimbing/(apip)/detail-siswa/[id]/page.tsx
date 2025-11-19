@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { Home, FileText, AlertCircle, Calendar, FileCheck, Bell, Settings } from 'lucide-react';
 
 export default function DetailSiswaPKL() {
