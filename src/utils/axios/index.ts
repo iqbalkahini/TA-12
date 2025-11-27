@@ -156,18 +156,20 @@ const setTokens = (accessToken: string, refreshToken: string) => {
   }
 };
 
+const clearGuruData = () => {
+  localStorage.removeItem("guruData");
+};
+
 // Fungsi untuk menghapus kedua token dari localStorage dan cookie
 const clearTokens = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
 
+  clearGuruData();
+
   // Hapus cookie dengan set expires ke masa lalu
   document.cookie = "accessToken=; path=/; max-age=0; SameSite=Strict";
   document.cookie = "refreshToken=; path=/; max-age=0; SameSite=Strict";
-};
-
-const clearGuruData = () => {
-  localStorage.removeItem("guruData");
 };
 
 // Fungsi untuk refresh access token menggunakan refresh token terenkripsi

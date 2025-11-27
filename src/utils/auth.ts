@@ -1,61 +1,61 @@
-import { getAccessToken, clearTokens } from './axios'
+import { getAccessToken, clearTokens } from "./axios";
 
 // Interface untuk user data
 export interface User {
-  id: string
-  username?: string
-  kode_guru?: string
-  nama_lengkap?: string
-  nisn?: string
-  role: 'adm' | 'gru' | 'ssw'
+  id: string;
+  username?: string;
+  kode_guru?: string;
+  nama_lengkap?: string;
+  nisn?: string;
+  role: "adm" | "gru" | "ssw";
 }
 
 // Fungsi untuk mengecek apakah user sudah login
 export const isAuthenticated = (): boolean => {
-  if (typeof window === 'undefined') return false
-  
-  const token = getAccessToken()
-  
+  if (typeof window === "undefined") return false;
+
+  const token = getAccessToken();
+
   if (!token) {
-    return false
+    return false;
   }
-  
+
   try {
     // Decode JWT token untuk mengecek expiry
-    const payload = JSON.parse(atob(token.split('.')[1]))
-    const currentTime = Math.floor(Date.now() / 1000)
-    
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const currentTime = Math.floor(Date.now() / 1000);
+
     // Cek apakah token sudah expired
-    const isValid = payload.exp > currentTime
+    const isValid = payload.exp > currentTime;
     if (!isValid) {
-      clearTokens()
+      clearTokens();
     }
-    return isValid
+    return isValid;
   } catch {
     // Jika error saat decode, hapus token dan return false
-    clearTokens()
-    return false
+    clearTokens();
+    return false;
   }
-}
+};
 
 // Fungsi untuk mendapatkan data user dari token
 export const getCurrentUser = (): User | null => {
-  if (typeof window === 'undefined') return null
-  
-  const token = getAccessToken()
-  if (!token) return null
-  
+  if (typeof window === "undefined") return null;
+
+  const token = getAccessToken();
+  if (!token) return null;
+
   try {
     // Decode JWT token untuk mendapatkan user data
-    const payload = JSON.parse(atob(token.split('.')[1]))
-    
+    const payload = JSON.parse(atob(token.split(".")[1]));
+
     // Cek apakah token masih valid
-    const currentTime = Math.floor(Date.now() / 1000)
+    const currentTime = Math.floor(Date.now() / 1000);
     if (payload.exp <= currentTime) {
-      clearTokens()
-      return null
+      clearTokens();
+      return null;
     }
-    
+
     // Return user data dari payload
     const userData = {
       id: payload.sub || payload.id,
@@ -63,79 +63,82 @@ export const getCurrentUser = (): User | null => {
       kode_guru: payload.kode_guru,
       nama_lengkap: payload.nama_lengkap,
       nisn: payload.nisn,
-      role: payload.rl || payload.role || 'adm'
-    }
-    
-    return userData
+      role: payload.rl || payload.role || "adm",
+    };
+
+    return userData;
   } catch {
     // Jika error saat decode, hapus token
-    clearTokens()
-    return null
+    clearTokens();
+    return null;
   }
-}
+};
 
 // Fungsi untuk mendapatkan role user
-export const getUserRole = (): 'adm' | 'gru' | 'ssw' | null => {
-  const user = getCurrentUser()
-  return user?.role || null
-}
+export const getUserRole = (): "adm" | "gru" | "ssw" | null => {
+  const user = getCurrentUser();
+  return user?.role || null;
+};
 
 // Fungsi untuk logout
 export const logout = (): void => {
-  clearTokens()
-  
+  clearTokens();
   // Redirect ke halaman login
-  if (typeof window !== 'undefined') {
-    window.location.href = '/login'
+  if (typeof window !== "undefined") {
+    window.location.href = "/login";
   }
-}
+};
 
 // Fungsi untuk mengecek apakah user memiliki role tertentu
-export const hasRole = (requiredRole: 'adm' | 'gru' | 'ssw'): boolean => {
-  const userRole = getUserRole()
-  return userRole === requiredRole
-}
+export const hasRole = (requiredRole: "adm" | "gru" | "ssw"): boolean => {
+  const userRole = getUserRole();
+  return userRole === requiredRole;
+};
 
 // Fungsi untuk mengecek apakah user memiliki salah satu dari beberapa role
-export const hasAnyRole = (roles: ('adm' | 'gru' | 'ssw')[]): boolean => {
-  const userRole = getUserRole()
-  return userRole ? roles.includes(userRole) : false
-}
+export const hasAnyRole = (roles: ("adm" | "gru" | "ssw")[]): boolean => {
+  const userRole = getUserRole();
+  return userRole ? roles.includes(userRole) : false;
+};
 
 // Higher-order component untuk proteksi route
 export const requireAuth = () => {
-  if (typeof window === 'undefined') return true // Server-side, biarkan middleware handle
-  
+  if (typeof window === "undefined") return true; // Server-side, biarkan middleware handle
+
   if (!isAuthenticated()) {
     // Redirect ke login jika belum login
-    const currentPath = window.location.pathname
-    window.location.href = `/login?returnUrl=${encodeURIComponent(currentPath)}`
-    return false
+    const currentPath = window.location.pathname;
+    window.location.href = `/login?returnUrl=${encodeURIComponent(
+      currentPath
+    )}`;
+    return false;
   }
-  
-  return true
-}
+
+  return true;
+};
 
 // Higher-order component untuk proteksi berdasarkan role
-export const requireRole = (requiredRole: 'adm' | 'gru' | 'ssw') => {
-  if (typeof window === 'undefined') return true // Server-side, biarkan middleware handle
-  
+export const requireRole = (requiredRole: "adm" | "gru" | "ssw") => {
+  if (typeof window === "undefined") return true; // Server-side, biarkan middleware handle
+
   if (!isAuthenticated()) {
-    const currentPath = window.location.pathname
-    window.location.href = `/login?returnUrl=${encodeURIComponent(currentPath)}`
-    return false
+    const currentPath = window.location.pathname;
+    window.location.href = `/login?returnUrl=${encodeURIComponent(
+      currentPath
+    )}`;
+    return false;
   }
-  
+
   if (!hasRole(requiredRole)) {
     // Redirect ke halaman tidak authorized atau dashboard sesuai role
-    const userRole = getUserRole()
+    const userRole = getUserRole();
     if (userRole) {
-      window.location.href = `/${userRole}`
+      window.location.href = `/${userRole}`;
     } else {
-      window.location.href = '/login'
+      window.location.href = "/login";
     }
-    return false
+    return false;
   }
-  
-  return true
-}
+
+  return true;
+};
