@@ -1,13 +1,18 @@
 "use client"
 
 import RoleBasedLayout from "@/components/role-based-layout"
-import { useGuruData } from "@/hooks/useGuruData"
+import { useRoleAccess } from "@/hooks/useRoleAccess"
 
 export default function PembimbingLayout({ children, pathname }: { children: React.ReactNode, pathname: string }) {
-    const { guruData, loading } = useGuruData()
+    const { hasAccess, loading, guruData } = useRoleAccess('pembimbing')
 
     if (loading) {
         return <div className="flex items-center justify-center h-screen">Loading...</div>
+    }
+
+    // Jika tidak punya akses, useRoleAccess sudah handle redirect
+    if (!hasAccess) {
+        return null
     }
 
     return (

@@ -141,6 +141,11 @@ export function LoginForm({
 
       setTokens(response.data.access_token, response.data.refresh_token)
 
+      router.push('/siswa/dashboard')
+      toast.success("Login berhasil!", {
+        description: "Selamat datang di dashboard"
+      })
+
     } catch (error: unknown) {
       const apiError = error as ApiError
       if (apiError.response?.data?.error?.code == "SISWA_VALIDATION_ERROR") {
