@@ -11,13 +11,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useRouter } from 'next/navigation'
 import axiosInstance, { setTokens } from '@/utils/axios'
 import { toast } from "sonner"
+import { getGuruDefaultPath } from '@/utils/roleHelpers'
 
 // Type untuk error handling
 interface ApiError {
   response?: {
     data?: {
       message?: string
-      error?: string
+      error?: {
+        code?: string
+      }
     }
   }
   request?: unknown
@@ -37,47 +40,37 @@ export function LoginForm({
   const handleAdminSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    
+
     try {
       const response = await axiosInstance.post('/auth/login', {
         username: adminData.username,
         password: adminData.password,
       });
-      
+
       if (response.data && response.data.access_token && response.data.refresh_token) {
-        try {
-          setTokens(response.data.access_token, response.data.refresh_token)
-          
-          toast.success("Login berhasil!", {
-            description: "Selamat datang di dashboard admin"
-          })
-          
-          router.push('/admin')
-        } catch (tokenError) {
-          console.error('Error saat menyimpan token:', tokenError)
-          throw new Error('Gagal menyimpan token login')
-        }
-      } else {
-        throw new Error('Response tidak memiliki format yang benar')
+        setTokens(response.data.access_token, response.data.refresh_token)
+
+        toast.success("Login berhasil!", {
+          description: "Selamat datang di dashboard admin"
+        })
+
+        router.push('/admin')
       }
     } catch (err: unknown) {
-      console.error('Login error:', err)
-      
       let errorMessage = 'Username atau password salah'
-      
+
       const apiError = err as ApiError
-      if (apiError.response) {
-        errorMessage = apiError.response.data?.message || apiError.response.data?.error || errorMessage
+      if (apiError.response?.data?.error?.code == "INVALID_CREDENTIALS") {
+        errorMessage = 'Username atau password salah'
       } else if (apiError.request) {
         errorMessage = 'Tidak dapat terhubung ke server'
       } else if (apiError.message) {
         errorMessage = apiError.message
       }
-      
+
       toast.error("Login gagal", {
-        description: errorMessage
+        description: "Invalid Credentials"
       })
-      console.log(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -85,12 +78,82 @@ export function LoginForm({
 
   const handleGuruSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    toast.info("Segera hadir")
+    setLoading(true)
+
+    try {
+      const response = await axiosInstance.post('/auth/guru/login', {
+        kode_guru: guruData.kode_guru,
+        password: guruData.password,
+      });
+
+      if (response.data && response.data.access_token && response.data.refresh_token) {
+        setTokens(response.data.access_token, response.data.refresh_token)
+
+        console.log(response.data)
+
+        // Get guru role data from response.data.user
+        const guruRoleData = {
+          is_kaprog: response.data.user?.is_kaprog || false,
+          is_koordinator: response.data.user?.is_koordinator || false,
+          is_wali_kelas: response.data.user?.is_wali_kelas || false,
+          is_pembimbing: response.data.user?.is_pembimbing || false,
+        }
+
+        // Save guru data to localStorage for role switcher
+        if (response.data.user) {
+          localStorage.setItem('guruData', JSON.stringify(response.data.user))
+        }
+
+        // Get redirect path based on role priority
+        const redirectPath = getGuruDefaultPath(guruRoleData)
+
+        toast.success("Login berhasil!", {
+          description: "Selamat datang di dashboard"
+        })
+
+        router.push(redirectPath)
+      }
+    } catch (err: unknown) {
+      let errorMessage = 'Kode guru atau password salah'
+
+      const apiError = err as ApiError
+      if (apiError.response?.data?.error?.code == "INVALID_CREDENTIALS") {
+        errorMessage = 'Kode guru atau password salah'
+      } else if (apiError.request) {
+        errorMessage = 'Tidak dapat terhubung ke server'
+      } else if (apiError.message) {
+        errorMessage = apiError.message
+      }
+
+      toast.error("Login gagal", {
+        description: errorMessage
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleSiswaSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    toast.info("Segera hadir")
+    try {
+      const response = await axiosInstance.post('/auth/siswa/login', {
+        nama_lengkap: siswaData.nama_lengkap,
+        nisn: siswaData.nisn,
+      });
+
+      setTokens(response.data.access_token, response.data.refresh_token)
+
+      console.log(response.data)
+
+    } catch (error: unknown) {
+      const apiError = error as ApiError
+      if (apiError.response?.data?.error?.code == "SISWA_VALIDATION_ERROR") {
+        toast.warning("Data siswa tidak ditemukan")
+      } else {
+        toast.error("Terjadi Kesalahan")
+      }
+      console.log(apiError.response?.data?.error?.code)
+    }
   }
 
   return (
@@ -147,9 +210,9 @@ export function LoginForm({
                           required
                         />
                       </div>
-                      <Button 
-                        type="submit" 
-                        className="w-full bg-[#641E20] hover:bg-[#641E20]/90 text-white" 
+                      <Button
+                        type="submit"
+                        className="w-full bg-[#641E20] hover:bg-[#641E20]/90 text-white"
                         disabled={loading}
                       >
                         {loading ? 'Masuk...' : 'Masuk sebagai Admin'}
@@ -183,9 +246,9 @@ export function LoginForm({
                           required
                         />
                       </div>
-                      <Button 
-                        type="submit" 
-                        className="w-full bg-[#641E20] hover:bg-[#641E20]/90 text-white" 
+                      <Button
+                        type="submit"
+                        className="w-full bg-[#641E20] hover:bg-[#641E20]/90 text-white"
                         disabled={loading}
                       >
                         {loading ? 'Masuk...' : 'Masuk sebagai Guru'}
@@ -219,9 +282,9 @@ export function LoginForm({
                           required
                         />
                       </div>
-                      <Button 
-                        type="submit" 
-                        className="w-full bg-[#641E20] hover:bg-[#641E20]/90 text-white" 
+                      <Button
+                        type="submit"
+                        className="w-full bg-[#641E20] hover:bg-[#641E20]/90 text-white"
                         disabled={loading}
                       >
                         {loading ? 'Masuk...' : 'Masuk sebagai Siswa'}
@@ -232,7 +295,7 @@ export function LoginForm({
               </Tabs>
             </div>
           </div>
-          
+
           <div className="bg-muted relative hidden md:block">
             <div className="absolute inset-0 bg-gradient-to-br from-[#641E20] to-[#8B2635] opacity-90" />
             <div className="absolute inset-0 flex items-center justify-center p-8">
@@ -246,7 +309,7 @@ export function LoginForm({
           </div>
         </CardContent>
       </Card>
-      
+
       <div className="text-muted-foreground text-center text-xs text-balance">
         Dengan melanjutkan, Anda menyetujui{" "}
         <a href="#" className="underline underline-offset-4 hover:text-primary">

@@ -1,6 +1,7 @@
 'use client'
 
 import { AdminLayout } from "@/components/admin-layout"
+import UnauthorizedPage from "@/components/unauthorized"
 import { useAuth } from "@/hooks/useAuth"
 
 export default function AdminLayoutWrapper({
@@ -9,6 +10,8 @@ export default function AdminLayoutWrapper({
   children: React.ReactNode
 }) {
   const { user } = useAuth()
+
+  if (user && user?.role !== "adm") return <UnauthorizedPage />
 
   return (
     <AdminLayout

@@ -2,27 +2,13 @@
 
 import * as React from "react"
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  CalendarCheck,
-  Command,
-  FileUp,
-  Frame,
   GalleryVerticalEnd,
-  Home,
-  Inbox,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-  TriangleAlert,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
+import { RoleSwitcher } from "@/components/role-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -30,157 +16,67 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import path from "path"
+import { getMenusByRole, type SidebarMenuItem } from "@/config/sidebar-menus"
+import { useAuth } from "@/hooks/useAuth"
 
-// This is sample data.
-const data = {
-  user: {
-    name: "Sopyan",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Dashboard",
-      url: "/pembimbing/dashboard",
-      icon: Home,
-      pathName: ["dashboard", "data-industri", "data-siswa", "detail-siswa"],
-    },
-    {
-      name: "Bukti",
-      url: "#",
-      icon: FileUp,
-      pathName: ["bukti"],
-    },
-    {
-      name: "Permasalahan",
-      url: "#",
-      icon: TriangleAlert,
-      pathName: ["permasalahan"],
-    },
-    {
-      name: "Perizinan",
-      url: "#",
-      icon: CalendarCheck,
-      pathName: []
-    },
-    {
-      name: "Persetujuan Pindah",
-      url: "#",
-      icon: Inbox,
-      pathName: []
-    },
-  ],
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  role?: string
+  guruData?: {
+    is_koordinator?: boolean
+    is_pembimbing?: boolean
+    is_wali_kelas?: boolean
+    is_kaprog?: boolean
+  }
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [pathName, setPathName] = React.useState("");
+// Sample teams data
+const teams = [
+  {
+    name: "MagangHub",
+    logo: GalleryVerticalEnd,
+    plan: "SMK",
+  },
+]
+
+export function AppSidebar({ role, guruData, ...props }: AppSidebarProps) {
+  const [pathName, setPathName] = React.useState("")
+  const [menus, setMenus] = React.useState<SidebarMenuItem[]>([])
+  const { user } = useAuth()
 
   React.useEffect(() => {
-    const url = new URL(window.location.href);
-    setPathName(url.pathname.split("/")[2]);
-  }, []);
+    const url = new URL(window.location.href)
+    const segments = url.pathname.split("/")
+    setPathName(segments[2] || "")
+  }, [])
+
+  React.useEffect(() => {
+    // Gunakan role dari props atau dari user
+    const currentRole = role || user?.role || 'gru'
+    const currentGuruData = guruData || {
+      is_pembimbing: true, // default fallback
+    }
+
+    console.log(guruData)
+
+    const roleMenus = getMenusByRole(currentRole, currentGuruData)
+    setMenus(roleMenus)
+  }, [role, guruData, user])
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={teams} />
+        <RoleSwitcher guruData={guruData} />
       </SidebarHeader>
       <SidebarContent>
-        {/* <NavMain items={data.navMain} /> */}
-        <NavProjects projects={data.projects} pathName={pathName || ""} />
+        <NavProjects projects={menus} pathName={pathName} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{
+          name: user?.username || "User",
+          email: "user@maganghub.id",
+          avatar: "/avatars/default.jpg",
+        }} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

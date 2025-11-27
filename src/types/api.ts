@@ -44,6 +44,25 @@ export interface GuruLoginRequest {
   password: string
 }
 
+export interface GuruLoginResponse {
+  access_token: string
+  refresh_token: string
+  token_type: string
+  expires_in: number
+  expires_at: string
+  user: {
+    id: number
+    kode_guru: string
+    nama: string
+    role: string
+    is_active: boolean
+    is_koordinator: boolean
+    is_pembimbing: boolean
+    is_wali_kelas: boolean
+    is_kaprog: boolean
+  }
+}
+
 export interface SiswaLoginRequest {
   nama_lengkap: string
   nisn: string
