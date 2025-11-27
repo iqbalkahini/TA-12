@@ -65,7 +65,6 @@ export default function IndustriManagement() {
       if (jurusanResponse && jurusanResponse.data) {
         const jurusanData = jurusanResponse.data.data || []
         setJurusan(jurusanData)
-        console.log('Jurusan data set in industri page:', jurusanData)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load industri data')
@@ -113,10 +112,8 @@ export default function IndustriManagement() {
 
   // Helper function to get jurusan name by id
   const getJurusanName = (jurusanId: number) => {
-    console.log('Looking for jurusanId in industri page:', jurusanId, 'in jurusan:', jurusan)
     const jurusanItem = jurusan.find(j => j.id === jurusanId)
     const result = jurusanItem ? jurusanItem.nama : `Jurusan ID: ${jurusanId}`
-    console.log('getJurusanName result in industri page:', result)
     return result
   }
 

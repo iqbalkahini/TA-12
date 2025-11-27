@@ -15,6 +15,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { getMenusByRole, type SidebarMenuItem } from "@/config/sidebar-menus"
 import { useAuth } from "@/hooks/useAuth"
@@ -41,7 +42,8 @@ const teams = [
 export function AppSidebar({ role, guruData, ...props }: AppSidebarProps) {
   const [pathName, setPathName] = React.useState("")
   const [menus, setMenus] = React.useState<SidebarMenuItem[]>([])
-  const { user } = useAuth()
+  const { user, } = useAuth()
+  const { open } = useSidebar()
 
   React.useEffect(() => {
     const url = new URL(window.location.href)
@@ -65,8 +67,8 @@ export function AppSidebar({ role, guruData, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={teams} />
-        <RoleSwitcher guruData={guruData} />
+        <TeamSwitcher teams={teams} open={open} />
+        <RoleSwitcher guruData={guruData} open={open} />
       </SidebarHeader>
       <SidebarContent>
         <NavProjects projects={menus} pathName={pathName} />

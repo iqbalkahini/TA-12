@@ -18,12 +18,14 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { getGuruRoles, hasMultipleRoles, type GuruRoleData } from "@/utils/roleHelpers"
+import { cn } from "@/lib/utils"
 
 interface RoleSwitcherProps {
   guruData?: GuruRoleData
+  open: boolean
 }
 
-export function RoleSwitcher({ guruData }: RoleSwitcherProps) {
+export function RoleSwitcher({ guruData, open }: RoleSwitcherProps) {
   const router = useRouter()
   const pathname = usePathname()
 
@@ -43,7 +45,7 @@ export function RoleSwitcher({ guruData }: RoleSwitcherProps) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex flex-1 flex-col gap-0.5 leading-none">
+              <div className={`flex flex-1 flex-col gap-0.5 leading-none ${!open && 'hidden'}`}>
                 <span className="font-semibold">
                   {currentRole?.label || "Pilih Role"}
                 </span>
@@ -51,7 +53,7 @@ export function RoleSwitcher({ guruData }: RoleSwitcherProps) {
                   Switch role
                 </span>
               </div>
-              <ChevronsUpDown className="ml-auto" />
+              <ChevronsUpDown className="mx-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

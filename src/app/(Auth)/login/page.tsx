@@ -13,7 +13,6 @@ export default function LoginPage() {
   useEffect(() => {
     // Jika user sudah login, redirect ke admin dashboard
     if (!loading && isLoggedIn) {
-      console.log('✅ User already logged in, redirecting to admin...')
       router.push('/admin')
     }
   }, [isLoggedIn, loading, router])

@@ -89,8 +89,6 @@ export function LoginForm({
       if (response.data && response.data.access_token && response.data.refresh_token) {
         setTokens(response.data.access_token, response.data.refresh_token)
 
-        console.log(response.data)
-
         // Get guru role data from response.data.user
         const guruRoleData = {
           is_kaprog: response.data.user?.is_kaprog || false,
@@ -142,8 +140,6 @@ export function LoginForm({
       });
 
       setTokens(response.data.access_token, response.data.refresh_token)
-
-      console.log(response.data)
 
     } catch (error: unknown) {
       const apiError = error as ApiError
