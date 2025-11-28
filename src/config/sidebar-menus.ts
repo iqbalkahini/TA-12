@@ -13,18 +13,18 @@ import {
   Printer,
   MapPin,
   type LucideIcon,
-} from "lucide-react"
+} from "lucide-react";
 
 export interface SidebarMenuItem {
-  name: string
-  url: string
-  icon: LucideIcon
-  pathName: string[]
+  name: string;
+  url: string;
+  icon: LucideIcon;
+  pathName: string[];
 }
 
 export interface SidebarConfig {
-  role: string
-  menus: SidebarMenuItem[]
+  role: string;
+  menus: SidebarMenuItem[];
 }
 
 // Menu untuk Pembimbing
@@ -59,7 +59,7 @@ export const pembimbingMenus: SidebarMenuItem[] = [
     icon: Inbox,
     pathName: ["persetujuan-pindah"],
   },
-]
+];
 
 // Menu untuk Koordinator
 export const koordinatorMenus: SidebarMenuItem[] = [
@@ -105,7 +105,7 @@ export const koordinatorMenus: SidebarMenuItem[] = [
     icon: Users,
     pathName: ["pembimbing"],
   },
-]
+];
 
 // Menu untuk Wali Kelas
 export const waliKelasMenus: SidebarMenuItem[] = [
@@ -121,7 +121,7 @@ export const waliKelasMenus: SidebarMenuItem[] = [
     icon: TriangleAlert,
     pathName: ["permasalahan-siswa"],
   },
-]
+];
 
 // Menu untuk Kapro (Kepala Program)
 export const kaproMenus: SidebarMenuItem[] = [
@@ -167,7 +167,7 @@ export const kaproMenus: SidebarMenuItem[] = [
     icon: Inbox,
     pathName: ["pindah-pkl"],
   },
-]
+];
 
 // Menu untuk Siswa
 export const siswaMenus: SidebarMenuItem[] = [
@@ -178,8 +178,8 @@ export const siswaMenus: SidebarMenuItem[] = [
     pathName: ["dashboard"],
   },
   {
-    name: "Upload Bukti",
-    url: "/siswa/bukti",
+    name: "Pengajuan PKL",
+    url: "/siswa/pengajuan-pkl",
     icon: FileUp,
     pathName: ["bukti"],
   },
@@ -201,61 +201,67 @@ export const siswaMenus: SidebarMenuItem[] = [
     icon: Inbox,
     pathName: ["pindah"],
   },
-]
+];
 
 // Fungsi helper untuk mendapatkan menu berdasarkan role
-export const getMenusByRole = (role: string, guruData?: {
-  is_koordinator?: boolean
-  is_pembimbing?: boolean
-  is_wali_kelas?: boolean
-  is_kaprog?: boolean
-}): SidebarMenuItem[] => {
-  // Untuk guru, cek role spesifiknya
-  if (role === 'gru' && guruData) {
-    if (guruData.is_kaprog) return kaproMenus
-    if (guruData.is_koordinator) return koordinatorMenus
-    if (guruData.is_wali_kelas) return waliKelasMenus
-    if (guruData.is_pembimbing) return pembimbingMenus
+export const getMenusByRole = (
+  role: string,
+  guruData?: {
+    is_koordinator?: boolean;
+    is_pembimbing?: boolean;
+    is_wali_kelas?: boolean;
+    is_kaprog?: boolean;
   }
-  
+): SidebarMenuItem[] => {
+  // Untuk guru, cek role spesifiknya
+  if (role === "gru" && guruData) {
+    if (guruData.is_kaprog) return kaproMenus;
+    if (guruData.is_koordinator) return koordinatorMenus;
+    if (guruData.is_wali_kelas) return waliKelasMenus;
+    if (guruData.is_pembimbing) return pembimbingMenus;
+  }
+
   // Role spesifik
   switch (role) {
-    case 'pembimbing':
-      return pembimbingMenus
-    case 'koordinator':
-      return koordinatorMenus
-    case 'wali-kelas':
-      return waliKelasMenus
-    case 'kapro':
-      return kaproMenus
-    case 'ssw':
-    case 'siswa':
-      return siswaMenus
+    case "pembimbing":
+      return pembimbingMenus;
+    case "koordinator":
+      return koordinatorMenus;
+    case "wali-kelas":
+      return waliKelasMenus;
+    case "kapro":
+      return kaproMenus;
+    case "ssw":
+    case "siswa":
+      return siswaMenus;
     default:
-      return pembimbingMenus // Default fallback
+      return pembimbingMenus; // Default fallback
   }
-}
+};
 
 // Fungsi untuk mendapatkan base path berdasarkan role
-export const getBasePathByRole = (role: string, guruData?: {
-  is_koordinator?: boolean
-  is_pembimbing?: boolean
-  is_wali_kelas?: boolean
-  is_kaprog?: boolean
-}): string => {
-  if (role === 'gru' && guruData) {
-    if (guruData.is_kaprog) return '/kapro'
-    if (guruData.is_koordinator) return '/koordinator'
-    if (guruData.is_wali_kelas) return '/wali-kelas'
-    if (guruData.is_pembimbing) return '/pembimbing'
+export const getBasePathByRole = (
+  role: string,
+  guruData?: {
+    is_koordinator?: boolean;
+    is_pembimbing?: boolean;
+    is_wali_kelas?: boolean;
+    is_kaprog?: boolean;
   }
-  
+): string => {
+  if (role === "gru" && guruData) {
+    if (guruData.is_kaprog) return "/kapro";
+    if (guruData.is_koordinator) return "/koordinator";
+    if (guruData.is_wali_kelas) return "/wali-kelas";
+    if (guruData.is_pembimbing) return "/pembimbing";
+  }
+
   switch (role) {
-    case 'adm':
-      return '/admin'
-    case 'ssw':
-      return '/siswa'
+    case "adm":
+      return "/admin";
+    case "ssw":
+      return "/siswa";
     default:
-      return '/pembimbing'
+      return "/pembimbing";
   }
-}
+};

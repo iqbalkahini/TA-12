@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useGuruData } from "@/hooks/useGuruData"
 import { getGuruDefaultPath, getGuruRoles } from "@/utils/roleHelpers"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function UnauthorizedPage() {
   const router = useRouter()
   const { guruData } = useGuruData()
   const [availableRoles, setAvailableRoles] = useState<string[]>([])
+  const { user } = useAuth()
 
   useEffect(() => {
     if (guruData) {
@@ -35,7 +37,7 @@ export default function UnauthorizedPage() {
       })
       router.push(defaultPath)
     } else {
-      router.push('/login')
+      router.push(user?.role == "ssw" ? '/siswa/dashboard' : '/login')
     }
   }
 

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useGuruData } from "./useGuruData";
+import { useAuth } from "./useAuth";
 // import { getGuruDefaultPath } from "@/utils/roleHelpers";
 
 type GuruRole = "kapro" | "koordinator" | "wali-kelas" | "pembimbing";
@@ -10,12 +11,18 @@ type GuruRole = "kapro" | "koordinator" | "wali-kelas" | "pembimbing";
 // Hook untuk cek dan enforce hak akses berdasarkan role
 export const useRoleAccess = (requiredRole: GuruRole) => {
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
   const { guruData, loading } = useGuruData();
 
   useEffect(() => {
     if (loading) return;
 
     // Jika tidak ada guruData, redirect ke login
+    if (!guruData && isLoggedIn) {
+      router.push("/unauthorized");
+      return;
+    }
+
     if (!guruData) {
       router.push("/login");
       return;
@@ -42,7 +49,7 @@ export const useRoleAccess = (requiredRole: GuruRole) => {
 
       router.push("/unauthorized");
     }
-  }, [guruData, loading, requiredRole, router]);
+  }, [guruData, loading, requiredRole, router, isLoggedIn]);
 
   return {
     hasAccess: guruData ? checkRoleAccess(guruData, requiredRole) : false,

@@ -141,6 +141,10 @@ export function LoginForm({
 
       setTokens(response.data.access_token, response.data.refresh_token)
 
+      if (response.data.user) {
+        localStorage.setItem('siswaData', JSON.stringify(response.data.user))
+      }
+
       router.push('/siswa/dashboard')
       toast.success("Login berhasil!", {
         description: "Selamat datang di dashboard"

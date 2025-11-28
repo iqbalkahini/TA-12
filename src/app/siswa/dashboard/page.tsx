@@ -20,7 +20,7 @@ export default function Dashboard() {
                     <p className="text-sm text-gray-500 mb-6">Informasi Pribadi</p>
 
                     <div className="flex items-center gap-4 mb-6">
-                        <Image src="https://i.pravatar.cc/80" alt="logo" width={80} height={80} />
+                        <Image src="/logo/logo_header.png" alt="logo" width={80} height={80} />
                         <div>
                             <p className="font-medium text-gray-800">Sarah Johnson</p>
                         </div>
