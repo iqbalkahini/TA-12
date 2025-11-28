@@ -170,6 +170,47 @@ export interface DaftarGuruPembimbing {
   no_telp: string;
 }
 
+export interface DaftarIndustriPreview {
+  industri_id: number;
+  nama: string;
+  kuota_siswa: number | null;
+  pending_applications: number;
+  approved_applications: number;
+  active_students: number;
+  remaining_slots: number | null;
+}
+
+export interface DaftarPermohonanPKL {
+  application: {
+    id: number;
+    siswa_id: number;
+    industri_id: number;
+    status: string;
+    tanggal_permohonan: string;
+    tanggal_mulai: string | null;
+    tanggal_selesai: string | null;
+    catatan: string | null;
+    kaprog_note: string | null;
+    pembimbing_guru_id: number | null;
+    decided_at: string | null;
+    processed_by: number | null;
+  };
+  siswa_username: string;
+  siswa_nisn: string;
+  kelas_id: number;
+  kelas_nama: string;
+  jurusan_id: number;
+  jurusan_nama: string;
+  industri_nama: string;
+}
+
+export interface FormDataPermohonanKapro {
+  catatan: string;
+  pembimbing_guru_id?: number;
+  tanggal_mulai?: string;
+  tanggal_selesai?: string;
+}
+
 export type GuruListResponse = ListResponse<Guru>;
 export type SiswaListResponse = ListResponse<Siswa>;
 export type JurusanListResponse = ListResponse<Jurusan>;

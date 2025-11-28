@@ -29,7 +29,7 @@ const DataPembimbingPKL = () => {
                     <p className="text-sm text-gray-500">Daftar guru pembimbing praktik kerja lapangan</p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                {/* <div className="flex items-center gap-3">
                     <div className="relative">
                         <input
                             type="text"
@@ -38,7 +38,7 @@ const DataPembimbingPKL = () => {
                         />
                         <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
                     </div>
-                </div>
+                </div> */}
             </div>
 
             <div className="overflow-x-auto">
