@@ -205,6 +205,10 @@
   transition: width 0.3s ease-in-out, padding-left 0.3s ease-in-out;
 }
 
+button {
+  cursor: pointer;
+}
+
 @media (max-width: 1024px) {
   .main-content {
     padding-left: 0 !important;

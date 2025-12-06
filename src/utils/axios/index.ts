@@ -142,8 +142,12 @@ const setTokens = (accessToken: string, refreshToken: string) => {
 
     // Simpan juga ke cookie agar middleware bisa akses
     // Cookie expires dalam 7 hari (sesuaikan dengan kebutuhan)
-    document.cookie = `accessToken=${encryptedAccessToken}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Strict`;
-    document.cookie = `refreshToken=${encryptedRefreshToken}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Strict`;
+    document.cookie = `accessToken=${encryptedAccessToken}; path=/; max-age=${
+      7 * 24 * 60 * 60
+    }; SameSite=Strict`;
+    document.cookie = `refreshToken=${encryptedRefreshToken}; path=/; max-age=${
+      7 * 24 * 60 * 60
+    }; SameSite=Strict`;
 
     console.log("✅ Token berhasil disimpan ke localStorage dan cookie");
   } catch (error) {
@@ -152,11 +156,21 @@ const setTokens = (accessToken: string, refreshToken: string) => {
   }
 };
 
+const clearGuruData = () => {
+  localStorage.removeItem("guruData");
+};
+const clearSiswaData = () => {
+  localStorage.removeItem("siswaData");
+};
+
 // Fungsi untuk menghapus kedua token dari localStorage dan cookie
 const clearTokens = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
-  
+
+  clearGuruData();
+  clearSiswaData();
+
   // Hapus cookie dengan set expires ke masa lalu
   document.cookie = "accessToken=; path=/; max-age=0; SameSite=Strict";
   document.cookie = "refreshToken=; path=/; max-age=0; SameSite=Strict";
@@ -271,6 +285,7 @@ axiosInstance.interceptors.response.use(
         processQueue(error, null);
 
         // Hapus semua token dan redirect ke login
+        clearGuruData();
         clearTokens();
 
         // Di sini Anda bisa menambahkan logic untuk redirect ke halaman login

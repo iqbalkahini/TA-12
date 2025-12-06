@@ -1,11 +1,16 @@
 import { Industri } from "@/types/api";
 import axiosInstance from "@/utils/axios";
 
-export const getIndustri = async (search?: string, page?: number) => {
+export const getIndustri = async (
+  search?: string,
+  page?: number,
+  jurusan_id?: number
+) => {
   try {
     const params = new URLSearchParams();
     if (search) params.append("search", search);
     if (page) params.append("page", page.toString());
+    if (jurusan_id) params.append("jurusan_id", jurusan_id.toString());
 
     const url = `/api/industri?${params.toString()}`;
     const response = await axiosInstance.get(url);

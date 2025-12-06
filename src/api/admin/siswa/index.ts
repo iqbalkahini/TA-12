@@ -1,10 +1,15 @@
-import { Siswa } from "@/types/api";
+import { FormDataPermohonan, Siswa } from "@/types/api";
 import axiosInstance from "@/utils/axios";
 
-export const getSiswa = async (search?: string, page?: number) => {
+export const getSiswa = async (
+  search?: string,
+  page?: number,
+  kelas_id?: number
+) => {
   try {
     const params = new URLSearchParams();
     if (search) params.append("search", search);
+    if (kelas_id) params.append("kelas_id", kelas_id.toString());
     if (page) params.append("page", page.toString());
 
     const url = `/api/siswa?${params.toString()}`;
@@ -52,6 +57,26 @@ export const deleteSiswa = async (id: number) => {
     return response.data;
   } catch (error) {
     console.error("Delete siswa failed:", error);
+    return null;
+  }
+};
+
+export const createPengajuan = async (data: FormDataPermohonan) => {
+  try {
+    const response = await axiosInstance.post("/api/pkl/applications", data);
+    return response.data;
+  } catch (error) {
+    console.log("error history pengajuan: ", error);
+    return null;
+  }
+};
+
+export const historyPengajuan = async () => {
+  try {
+    const response = await axiosInstance.get("/api/pkl/applications/me");
+    return response.data;
+  } catch (error) {
+    console.log("error history pengajuan: ", error);
     return null;
   }
 };
