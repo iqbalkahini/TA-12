@@ -160,14 +160,14 @@ export default function Dashboard() {
                     siswa && (
                         <div className="bg-white rounded-2xl p-6 shadow-sm border">
                             <h2 className="text-lg font-semibold mb-4">Profil Peserta didik</h2>
-                            <p className="text-sm text-gray-500 mb-6">Informasi Pribadi</p>
+                            {/* <p className="text-sm text-gray-500 mb-6">Informasi Pribadi</p>
 
                             <div className="flex items-center gap-4 mb-6">
                                 <Image src="/logo/logo_header.png" alt="logo" width={80} height={80} />
                                 <div>
                                     <p className="font-medium text-gray-800">{siswa.nama_lengkap}</p>
                                 </div>
-                            </div>
+                            </div> */}
 
                             <div className="grid grid-cols-2 gap-y-4 text-sm">
                                 <div className="text-gray-500">Nama Lengkap</div>

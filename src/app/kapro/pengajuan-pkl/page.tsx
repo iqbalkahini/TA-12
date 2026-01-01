@@ -42,16 +42,13 @@ export default function PengajuanPKL() {
         async function fetchData() {
             try {
                 setLoading(true);
-                const response = await ListPermohonanPKL();
+                const response = await ListPermohonanPKL(searchQuery);
                 if (!response) {
-                    console.log("error pada saat fetch data permohonan pkl");
                     setDataPermohonanPkl([]);
                 } else {
-                    console.log(response.data);
                     setDataPermohonanPkl(response.data);
                 }
             } catch (error) {
-                console.error("Error fetching permohonan PKL:", error);
                 setDataPermohonanPkl([]);
             } finally {
                 setLoading(false);
@@ -76,10 +73,7 @@ export default function PengajuanPKL() {
         fetchGuruPembimbing();
     }, []);
 
-    const filteredData = dataPermohonanPkl.filter((item) =>
-        item.siswa_username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.siswa_nisn.includes(searchQuery)
-    );
+    const filteredData = dataPermohonanPkl
     const badgeStyle = (status: string) => {
         const statusLower = status.toLowerCase();
         if (statusLower === "pending" || statusLower === "menunggu") return "bg-yellow-100 text-yellow-700";
@@ -179,16 +173,17 @@ export default function PengajuanPKL() {
     return (
         <div className="w-full p-6 space-y-6">
             {/* Search & Filter */}
-            <div className="w-full flex items-center justify-between border rounded-xl p-4 bg-white">
+            <div className="w-full flex items-center justify-between border rounded-xl p-3 bg-white">
                 <div className="flex items-center gap-2 w-full">
                     <Search className="text-gray-400" />
                     <input
                         type="text"
-                        placeholder="Cari nama siswa atau NISN..."
+                        placeholder="Cari nama siswa"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full outline-none"
                     />
+                    <Button onClick={() => setRefresh(!refresh)}>Cari</Button>
                 </div>
             </div>
 

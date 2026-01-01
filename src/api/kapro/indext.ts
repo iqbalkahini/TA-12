@@ -30,7 +30,7 @@ export async function ListIndustri(search?: string) {
 export async function ListPermohonanPKL(search?: string) {
   try {
     const params = new URLSearchParams();
-    if (search) params.append("search", search);
+    if (search) params.append("siswa_username", search);
     const response = await axiosInstance.get(
       `/api/pkl/applications?${params.toString()}`
     );

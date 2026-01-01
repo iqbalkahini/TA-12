@@ -1,4 +1,6 @@
-import React from "react";
+'use client'
+
+import Link from "next/link";
 
 const DashboardAdminPKL = () => {
     const stats = [
@@ -59,9 +61,9 @@ const DashboardAdminPKL = () => {
                             </div>
                         ))}
 
-                        <button className="text-center w-full text-red-700 font-medium mt-3">
+                        <Link href="/kapro/pengajuan-pkl" className="text-center w-full text-red-700 font-medium mt-3">
                             Lihat Semua Pengajuan →
-                        </button>
+                        </Link>
                     </div>
                 </div>
 
