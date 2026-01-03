@@ -1,11 +1,16 @@
 import axiosInstance from "@/utils/axios";
 import { Kelas } from "@/types/api";
 
-export const getKelas = async (search?: string, page?: number) => {
+export const getKelas = async (
+  search?: string,
+  page?: number,
+  jurusan_id?: number
+) => {
   try {
     const params = new URLSearchParams();
     if (search) params.append("search", search);
     if (page) params.append("page", page.toString());
+    if (jurusan_id) params.append("jurusan_id", jurusan_id.toString());
 
     const url = `/api/kelas?${params.toString()}`;
     const response = await axiosInstance.get(url);

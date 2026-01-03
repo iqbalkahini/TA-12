@@ -22,6 +22,11 @@ export default function IndustriManagement() {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [selectedJurusan, setSelectedJurusan] = useState<number>()
+
+  const filterData = {
+    jurusan: jurusan
+  }
 
   useEffect(() => {
     loadIndustri()
@@ -37,7 +42,7 @@ export default function IndustriManagement() {
     try {
       // Load both industri and jurusan data in parallel
       const [industriResponse, jurusanResponse] = await Promise.all([
-        getIndustri(search, page),
+        getIndustri(search, page, selectedJurusan),
         getJurusan()
       ])
 
@@ -210,6 +215,12 @@ export default function IndustriManagement() {
         searchPlaceholder="Cari berdasarkan nama..."
         title="Daftar Industri"
         addButtonText="Tambah Industri Baru"
+        filter={true}
+        filterData={filterData}
+        setSelectedJurusan={setSelectedJurusan}
+        selectedJurusan={selectedJurusan}
+        loadData={() => loadIndustri(searchTerm, currentPage)}
+        loading={loading}
       />
     </div>
   )

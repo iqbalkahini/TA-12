@@ -22,6 +22,11 @@ export default function KelasManagement() {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [selectedJurusan, setSelectedJurusan] = useState<number>()
+
+  const filterData = {
+    jurusan: jurusan
+  }
 
   useEffect(() => {
     loadKelas()
@@ -37,7 +42,7 @@ export default function KelasManagement() {
     try {
       // Load both kelas and jurusan data in parallel
       const [kelasResponse, jurusanResponse] = await Promise.all([
-        getKelas(search, page),
+        getKelas(search, page, selectedJurusan),
         getJurusan()
       ])
 
@@ -180,27 +185,33 @@ export default function KelasManagement() {
 
   return (
     <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Manajemen Kelas</h1>
-          <p className="text-gray-600">Kelola kelas dan penugasannya</p>
-        </div>
-
-        <DataTable
-          data={kelas}
-          columns={columns}
-          onAdd={handleAdd}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onView={handleView}
-          onSearch={handleSearch}
-          isSearching={searchLoading}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-          searchPlaceholder="Cari berdasarkan nama..."
-          title="Daftar Kelas"
-          addButtonText="Tambah Kelas Baru"
-        />
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Manajemen Kelas</h1>
+        <p className="text-gray-600">Kelola kelas dan penugasannya</p>
       </div>
+
+      <DataTable
+        data={kelas}
+        columns={columns}
+        onAdd={handleAdd}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onView={handleView}
+        onSearch={handleSearch}
+        isSearching={searchLoading}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        searchPlaceholder="Cari berdasarkan nama..."
+        title="Daftar Kelas"
+        addButtonText="Tambah Kelas Baru"
+        filter={true}
+        filterData={filterData}
+        setSelectedJurusan={setSelectedJurusan}
+        selectedJurusan={selectedJurusan}
+        loadData={() => loadKelas(searchTerm, currentPage)}
+        loading={loading}
+      />
+    </div>
   )
 }
