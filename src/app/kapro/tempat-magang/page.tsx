@@ -67,14 +67,15 @@ export default function TempatMagangPage() {
     }
 
     return (
-        <div className="bg-white border rounded-2xl p-6 shadow-sm mx-5 mt-5 mb-5">
-            <div className="flex justify-between items-center mb-5">
+
+        <div className="bg-white border rounded-2xl p-4 md:p-6 shadow-sm mx-4 md:mx-5 mt-5 mb-5">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0 mb-5">
                 <div>
                     <h2 className="text-lg font-semibold">Daftar Tempat Magang</h2>
                 </div>
 
-                <div className="flex">
-                    <div className="relative w-72">
+                <div className="flex w-full md:w-auto gap-2">
+                    <div className="relative flex-1 md:w-72">
                         <input
                             type="text"
                             placeholder="Cari tempat magang..."
@@ -89,7 +90,7 @@ export default function TempatMagangPage() {
                         />
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     </div>
-                    <Button className="ml-2" onClick={() => setRefreshing(!refreshing)}>Search</Button>
+                    <Button onClick={() => setRefreshing(!refreshing)}>Search</Button>
                 </div>
             </div>
 
@@ -111,41 +112,51 @@ export default function TempatMagangPage() {
                         {dataIndustri.map((item) => (
                             <div
                                 key={item.industri_id}
-                                className="border rounded-xl p-5 hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50"
+                                className="border rounded-xl p-4 md:p-5 hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50"
                             >
-                                <div className="flex items-start justify-between mb-4">
-                                    <div className="flex gap-3 w-full">
-                                        <div className="bg-blue-100 p-3 rounded-lg">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4 md:gap-0">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-blue-100 p-3 rounded-lg shrink-0">
                                             <Building2 className="h-6 w-6 text-blue-600" />
                                         </div>
                                         <div>
                                             <h3 className="font-semibold text-gray-900 text-lg">{item.nama}</h3>
                                         </div>
-                                        <Button className="ml-auto h-7 text-xs" variant='outline' onClick={() => {
-                                            setSelectedIndustri(item)
-                                            setIsModalOpen(true)
-                                        }}>Update Quota</Button>
                                     </div>
-                                    {item.kuota_siswa !== null && (
-                                        <span
-                                            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ml-2 ${getStatusColor(
-                                                item.remaining_slots,
-                                                item.kuota_siswa
-                                            )}`}
+
+                                    <div className="flex items-center gap-2 pl-[3.25rem] md:pl-0 justify-between md:justify-end w-full md:w-auto">
+                                        <Button
+                                            className="h-8 text-xs"
+                                            variant='outline'
+                                            onClick={() => {
+                                                setSelectedIndustri(item)
+                                                setIsModalOpen(true)
+                                            }}
                                         >
-                                            {item.remaining_slots === 0 ? (
-                                                <>
-                                                    <AlertCircle className="w-3 h-3" />
-                                                    Penuh
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <CheckCircle className="w-3 h-3" />
-                                                    Tersedia
-                                                </>
-                                            )}
-                                        </span>
-                                    )}
+                                            Update Quota
+                                        </Button>
+
+                                        {item.kuota_siswa !== null && (
+                                            <span
+                                                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                                                    item.remaining_slots,
+                                                    item.kuota_siswa
+                                                )}`}
+                                            >
+                                                {item.remaining_slots === 0 ? (
+                                                    <>
+                                                        <AlertCircle className="w-3 h-3" />
+                                                        <span className="hidden sm:inline">Penuh</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <CheckCircle className="w-3 h-3" />
+                                                        <span className="hidden sm:inline">Tersedia</span>
+                                                    </>
+                                                )}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">

@@ -64,8 +64,6 @@ export function NavUser({ avatar
   if (!user) return null; // atau skeleton
 
 
-  console.log(user)
-
   return (
     <>
       <SidebarMenu>

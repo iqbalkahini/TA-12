@@ -4,12 +4,14 @@ import axiosInstance from "@/utils/axios";
 export const getSiswa = async (
   search?: string,
   page?: number,
-  kelas_id?: number
+  kelas_id?: number,
+  jurusan_id?: number
 ) => {
   try {
     const params = new URLSearchParams();
     if (search) params.append("search", search);
     if (kelas_id) params.append("kelas_id", kelas_id.toString());
+    if (jurusan_id) params.append("jurusan_id", jurusan_id.toString());
     if (page) params.append("page", page.toString());
 
     const url = `/api/siswa?${params.toString()}`;

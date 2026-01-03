@@ -3,23 +3,32 @@
 import { useEffect, useState } from "react"
 import { DataTable } from "@/components/data-table"
 import { Button } from "@/components/ui/button"
-import type { Siswa, Kelas } from "@/types/api"
+import type { Siswa, Kelas, Jurusan } from "@/types/api"
 import { deleteSiswa, getSiswa } from "@/api/admin/siswa/index"
 import { getKelas } from "@/api/admin/kelas/index"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { formatDate } from "@/utils/date"
+import { getJurusan } from "@/api/admin/jurusan"
 
 export default function SiswaManagement() {
   const router = useRouter()
   const [siswa, setSiswa] = useState<Siswa[]>([])
   const [kelas, setKelas] = useState<Kelas[]>([])
+  const [jurusan, setJurusan] = useState<Jurusan[]>([])
   const [loading, setLoading] = useState(true)
   const [searchLoading, setSearchLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [selectedKelas, setSelectedKelas] = useState<number>(0)
+  const [selectedJurusan, setSelectedJurusan] = useState<number>(0)
+
+  const filterData = {
+    kelas: kelas,
+    jurusan: jurusan,
+  }
 
   useEffect(() => {
     loadData()
@@ -33,9 +42,10 @@ export default function SiswaManagement() {
         setLoading(true)
       }
       // Load both siswa and kelas data in parallel
-      const [siswaResponse, kelasResponse] = await Promise.all([
-        getSiswa(search, page),
-        getKelas()
+      const [siswaResponse, kelasResponse, jurusanResponse] = await Promise.all([
+        getSiswa(search, page, selectedKelas, selectedJurusan),
+        getKelas(),
+        getJurusan()
       ])
 
       const siswaData = siswaResponse?.data?.data || []
@@ -55,6 +65,7 @@ export default function SiswaManagement() {
 
       setSiswa(sortedSiswa)
       setKelas(kelasResponse?.data?.data || [])
+      setJurusan(jurusanResponse?.data?.data || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load data')
     } finally {
@@ -150,17 +161,6 @@ export default function SiswaManagement() {
     },
   ]
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading siswa data...</p>
-        </div>
-      </div>
-    )
-  }
-
   if (error) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -198,6 +198,14 @@ export default function SiswaManagement() {
         searchPlaceholder="Cari berdasarkan nama..."
         title="Daftar Siswa"
         addButtonText="Tambah Siswa Baru"
+        filter={true}
+        filterData={filterData}
+        setSelectedKelas={setSelectedKelas}
+        setSelectedJurusan={setSelectedJurusan}
+        selectedKelas={selectedKelas}
+        selectedJurusan={selectedJurusan}
+        loadData={loadData}
+        loading={loading}
       />
     </div>
   )
