@@ -1,0 +1,3731 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "S_PKL API",
+    "description": "sistem pkl api(17 September)",
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/admin/dashboard": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Get dashboard statistics for admin(admin role can access)",
+        "operationId": "get_dashboard_stats",
+        "responses": {
+          "200": {
+            "description": "Dashboard statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Admin access required"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guru": {
+      "get": {
+        "tags": [
+          "guru"
+        ],
+        "summary": "List guru with pagination and search",
+        "operationId": "list_guru_handler",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (default: 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Items per page (default: 10, max: 100)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Guru list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListGuruDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "guru"
+        ],
+        "summary": "Create new guru",
+        "operationId": "create_guru_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGuruDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Guru created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuruDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/guru/{id}": {
+      "get": {
+        "tags": [
+          "guru"
+        ],
+        "summary": "Get guru by ID",
+        "operationId": "get_guru_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Guru ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Guru retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuruDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Guru not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "guru"
+        ],
+        "summary": "Update guru by ID",
+        "operationId": "update_guru_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Guru ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGuruDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Guru updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuruDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Guru not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "guru"
+        ],
+        "summary": "Delete guru by ID",
+        "operationId": "delete_guru_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Guru ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Guru deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Guru not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/industri": {
+      "get": {
+        "tags": [
+          "industri"
+        ],
+        "summary": "Get all industri with pagination and search support",
+        "operationId": "list_industri_handler",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (default: 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Items per page (default: 10, max: 100)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "jurusan_id",
+            "in": "query",
+            "description": "Filter by jurusan ID",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Search by name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Industri list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListIndustriDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "industri"
+        ],
+        "summary": "Create a new industri",
+        "operationId": "create_industri_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIndustriDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Industri created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndustriDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/industri/{id}": {
+      "get": {
+        "tags": [
+          "industri"
+        ],
+        "summary": "Get a industri by ID",
+        "operationId": "get_industri_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Industri ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Industri retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndustriDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Industri not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "industri"
+        ],
+        "summary": "Update a industri",
+        "operationId": "update_industri_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Industri ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateIndustriDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Industri updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndustriDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Industri not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "industri"
+        ],
+        "summary": "Delete a industri",
+        "operationId": "delete_industri_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Industri ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Industri deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Industri not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/jurusan": {
+      "get": {
+        "tags": [
+          "jurusan"
+        ],
+        "summary": "Get all jurusan with pagination and search support",
+        "operationId": "list_jurusan_handler",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (default: 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Items per page (default: 10, max: 100)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Search by name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jurusan list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListJurusanDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "jurusan"
+        ],
+        "summary": "Create a new jurusan",
+        "operationId": "create_jurusan_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJurusanDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Jurusan created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JurusanDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/jurusan/kaprog/me": {
+      "get": {
+        "tags": [
+          "jurusan"
+        ],
+        "summary": "List jurusan assigned to authenticated kaprog",
+        "operationId": "list_kaprog_jurusan_handler",
+        "responses": {
+          "200": {
+            "description": "Jurusan kaprog retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListJurusanDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/jurusan/{id}": {
+      "get": {
+        "tags": [
+          "jurusan"
+        ],
+        "summary": "Get a jurusan by ID",
+        "operationId": "get_jurusan_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Jurusan ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jurusan retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JurusanDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Jurusan not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "jurusan"
+        ],
+        "summary": "Update a jurusan",
+        "operationId": "update_jurusan_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Jurusan ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateJurusanDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Jurusan updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JurusanDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Jurusan not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "jurusan"
+        ],
+        "summary": "Delete a jurusan",
+        "operationId": "delete_jurusan_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Jurusan ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jurusan deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Jurusan not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/kelas": {
+      "get": {
+        "tags": [
+          "kelas"
+        ],
+        "summary": "Get all kelas with pagination and search support",
+        "operationId": "list_kelas_handler",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (default: 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Items per page (default: 10, max: 100)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "jurusan_id",
+            "in": "query",
+            "description": "Filter by jurusan ID",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kelas list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListKelasDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "kelas"
+        ],
+        "summary": "Create a new kelas",
+        "operationId": "create_kelas_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateKelasDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Kelas created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KelasDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/kelas/{id}": {
+      "get": {
+        "tags": [
+          "kelas"
+        ],
+        "summary": "Get a kelas by ID",
+        "operationId": "get_kelas_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Kelas ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kelas retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KelasDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Kelas not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "kelas"
+        ],
+        "summary": "Update a kelas",
+        "operationId": "update_kelas_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Kelas ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateKelasDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Kelas updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KelasDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Kelas not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "kelas"
+        ],
+        "summary": "Delete a kelas",
+        "operationId": "delete_kelas_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Kelas ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kelas deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Kelas not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/pkl/active/me": {
+      "get": {
+        "tags": [
+          "PKL - Siswa"
+        ],
+        "operationId": "get_active_pkl_handler",
+        "responses": {
+          "200": {
+            "description": "PKL aktif",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "$ref": "#/components/schemas/PklDto"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/pkl/applications": {
+      "get": {
+        "tags": [
+          "PKL - Kaprog/Admin"
+        ],
+        "summary": "List PKL applications for admin/kaprog review",
+        "operationId": "list_review_pkl_applications_handler",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PklStatus"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "siswa_username",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "industri_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar permohonan PKL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPklApplicationReviewDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "PKL - Siswa"
+        ],
+        "operationId": "create_pkl_application_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePklApplicationDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Permohonan PKL dibuat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PklApplicationDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validasi gagal"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/pkl/applications/me": {
+      "get": {
+        "tags": [
+          "PKL - Siswa"
+        ],
+        "operationId": "list_my_pkl_applications_handler",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar permohonan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPklApplicationDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/pkl/applications/{id}/approve": {
+      "put": {
+        "tags": [
+          "PKL - Kaprog/Admin"
+        ],
+        "operationId": "approve_pkl_application_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID permohonan",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovePklApplicationDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Permohonan disetujui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PklApplicationDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Tidak memiliki akses"
+          },
+          "409": {
+            "description": "Kuota penuh"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/pkl/applications/{id}/reject": {
+      "put": {
+        "tags": [
+          "PKL - Kaprog/Admin"
+        ],
+        "operationId": "reject_pkl_application_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID permohonan",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectPklApplicationDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Permohonan ditolak",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PklApplicationDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Tidak memiliki akses"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/pkl/industri/preview": {
+      "get": {
+        "tags": [
+          "PKL - Kaprog/Admin"
+        ],
+        "operationId": "preview_industri_handler",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Preview industri",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListIndustryPreviewDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Tidak memiliki akses"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/pkl/industri/{id}/quota": {
+      "put": {
+        "tags": [
+          "PKL - Kaprog/Admin"
+        ],
+        "operationId": "update_industry_quota_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID industri",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateIndustryQuotaDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Kuota industri diperbarui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndustryQuotaDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Tidak memiliki akses"
+          },
+          "404": {
+            "description": "Industri tidak ditemukan"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/pkl/pembimbing": {
+      "get": {
+        "tags": [
+          "PKL - Kaprog/Admin"
+        ],
+        "summary": "List guru pembimbing PKL",
+        "operationId": "list_pembimbing_guru_handler",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar guru pembimbing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PembimbingGuruDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/siswa": {
+      "get": {
+        "tags": [
+          "siswa"
+        ],
+        "summary": "list all siswa with search options",
+        "operationId": "list_siswa_handler",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Items per page (max: 100)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kelas_id",
+            "in": "query",
+            "description": "Filter by kelas ID",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "jurusan_id",
+            "in": "query",
+            "description": "Filter by jurusan ID",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Siswa list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSiswaDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "siswa"
+        ],
+        "summary": "Add new siswa",
+        "operationId": "create_siswa_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSiswaDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Siswa created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiswaDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/siswa/{id}": {
+      "get": {
+        "tags": [
+          "siswa"
+        ],
+        "summary": "get siswa by id",
+        "operationId": "get_siswa_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Siswa ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Siswa retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiswaDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Siswa not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "siswa"
+        ],
+        "summary": "update siswa with id",
+        "operationId": "update_siswa_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Siswa ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSiswaDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Siswa updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiswaDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Siswa not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "siswa"
+        ],
+        "summary": "delete siswa by id",
+        "operationId": "delete_siswa_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Siswa ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Siswa deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Siswa not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/guru/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Guru login (Kode guru +  password)",
+        "operationId": "guru_login_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuruLoginReqDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Guru login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuruLoginResDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Admin Login",
+        "operationId": "login_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginReqDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_handler",
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Refresh token",
+        "operationId": "refresh_token_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshReqDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Token refreshed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Invalid refresh token"
+          }
+        }
+      }
+    },
+    "/auth/siswa/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Siswa login (Nama Lengkap + NISN)",
+        "operationId": "siswa_login_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiswaLoginReqDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Siswa login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiswaLoginResDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Health check",
+        "operationId": "health_check_handler",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdminLoginReqDto": {
+        "type": "object",
+        "description": "Admin login request DTO",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "AdminLoginResDto": {
+        "type": "object",
+        "description": "Admin login response DTO (sesuai format yang diminta)",
+        "required": [
+          "access_token",
+          "refresh_token",
+          "user"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/AdminUserDto"
+          }
+        }
+      },
+      "AdminUserDto": {
+        "type": "object",
+        "description": "Admin user info dalam response",
+        "required": [
+          "id",
+          "username",
+          "role",
+          "is_active"
+        ],
+        "properties": {
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "role": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "ApprovePklApplicationDto": {
+        "type": "object",
+        "required": [
+          "tanggal_mulai",
+          "tanggal_selesai",
+          "pembimbing_guru_id"
+        ],
+        "properties": {
+          "catatan": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pembimbing_guru_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tanggal_mulai": {
+            "type": "string",
+            "format": "date"
+          },
+          "tanggal_selesai": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "ChangePwdReqDto": {
+        "type": "object",
+        "description": "Change password request DTO",
+        "required": [
+          "old_pwd",
+          "new_pwd"
+        ],
+        "properties": {
+          "new_pwd": {
+            "type": "string"
+          },
+          "old_pwd": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateGuruDto": {
+        "type": "object",
+        "required": [
+          "kode_guru",
+          "password",
+          "nip",
+          "nama"
+        ],
+        "properties": {
+          "is_kaprog": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "is_koordinator": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "is_pembimbing": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "is_wali_kelas": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "kode_guru": {
+            "type": "string"
+          },
+          "nama": {
+            "type": "string"
+          },
+          "nip": {
+            "type": "string"
+          },
+          "no_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateIndustriDto": {
+        "type": "object",
+        "description": "DTO for creating a new industri",
+        "required": [
+          "jurusan_id",
+          "nama",
+          "alamat"
+        ],
+        "properties": {
+          "alamat": {
+            "type": "string"
+          },
+          "bidang": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "jurusan_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nama": {
+            "type": "string"
+          },
+          "no_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pic": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pic_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "CreateJurusanDto": {
+        "type": "object",
+        "description": "DTO for creating a new jurusan",
+        "required": [
+          "kode",
+          "nama"
+        ],
+        "properties": {
+          "kaprog_guru_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "kode": {
+            "type": "string"
+          },
+          "nama": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateKelasDto": {
+        "type": "object",
+        "description": "DTO for creating a new kelas",
+        "required": [
+          "jurusan_id",
+          "nama"
+        ],
+        "properties": {
+          "jurusan_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nama": {
+            "type": "string"
+          }
+        }
+      },
+      "CreatePklApplicationDto": {
+        "type": "object",
+        "required": [
+          "industri_id"
+        ],
+        "properties": {
+          "catatan": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "industri_id": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "CreateSiswaDto": {
+        "type": "object",
+        "required": [
+          "nama_lengkap",
+          "nisn",
+          "kelas_id"
+        ],
+        "properties": {
+          "alamat": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kelas_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nama_lengkap": {
+            "type": "string"
+          },
+          "nisn": {
+            "type": "string"
+          },
+          "no_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tanggal_lahir": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "DashboardResponseDto": {
+        "type": "object",
+        "description": "Standard response wrapper for dashboard",
+        "required": [
+          "success",
+          "data",
+          "message"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DashboardStatsDto"
+          },
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DashboardStatsDto": {
+        "type": "object",
+        "description": "Dashboard statistics for admin - simple version",
+        "required": [
+          "total_users",
+          "total_guru",
+          "total_siswa",
+          "total_jurusan",
+          "total_kelas",
+          "total_industri",
+          "admin_users",
+          "guru_users",
+          "siswa_users",
+          "last_updated"
+        ],
+        "properties": {
+          "admin_users": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "guru_users": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "last_updated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "siswa_users": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "total_guru": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "total_industri": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "total_jurusan": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "total_kelas": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "total_siswa": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "total_users": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "GuruDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "kode_guru",
+          "nip",
+          "nama",
+          "is_koordinator",
+          "is_pembimbing",
+          "is_wali_kelas",
+          "is_kaprog",
+          "is_active",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "is_kaprog": {
+            "type": "boolean"
+          },
+          "is_koordinator": {
+            "type": "boolean"
+          },
+          "is_pembimbing": {
+            "type": "boolean"
+          },
+          "is_wali_kelas": {
+            "type": "boolean"
+          },
+          "kode_guru": {
+            "type": "string"
+          },
+          "nama": {
+            "type": "string"
+          },
+          "nip": {
+            "type": "string"
+          },
+          "no_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "GuruLoginReqDto": {
+        "type": "object",
+        "required": [
+          "kode_guru",
+          "password"
+        ],
+        "properties": {
+          "kode_guru": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "GuruLoginResDto": {
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token",
+          "token_type",
+          "expires_in",
+          "expires_at",
+          "user"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_in": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/GuruUserDto"
+          }
+        }
+      },
+      "GuruUserDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "kode_guru",
+          "nama",
+          "role",
+          "is_active",
+          "is_koordinator",
+          "is_pembimbing",
+          "is_wali_kelas",
+          "is_kaprog"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "is_kaprog": {
+            "type": "boolean"
+          },
+          "is_koordinator": {
+            "type": "boolean"
+          },
+          "is_pembimbing": {
+            "type": "boolean"
+          },
+          "is_wali_kelas": {
+            "type": "boolean"
+          },
+          "kode_guru": {
+            "type": "string"
+          },
+          "nama": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      },
+      "IndustriDto": {
+        "type": "object",
+        "description": "DTO for industri response",
+        "required": [
+          "id",
+          "jurusan_id",
+          "nama",
+          "alamat",
+          "is_active",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "alamat": {
+            "type": "string"
+          },
+          "bidang": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "jurusan_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nama": {
+            "type": "string"
+          },
+          "no_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pic": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pic_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "IndustryPreviewDto": {
+        "type": "object",
+        "required": [
+          "industri_id",
+          "nama",
+          "pending_applications",
+          "approved_applications",
+          "active_students"
+        ],
+        "properties": {
+          "active_students": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "approved_applications": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "industri_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kuota_siswa": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "nama": {
+            "type": "string"
+          },
+          "pending_applications": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "remaining_slots": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "IndustryQuotaDto": {
+        "type": "object",
+        "required": [
+          "industri_id",
+          "jurusan_id"
+        ],
+        "properties": {
+          "industri_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "jurusan_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kuota_siswa": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "JurusanDto": {
+        "type": "object",
+        "description": "DTO for jurusan response",
+        "required": [
+          "id",
+          "kode",
+          "nama",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kaprog_guru_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "kode": {
+            "type": "string"
+          },
+          "nama": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "KelasDto": {
+        "type": "object",
+        "description": "DTO for kelas response",
+        "required": [
+          "id",
+          "jurusan_id",
+          "nama",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "jurusan_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nama": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ListGuruDto": {
+        "type": "object",
+        "required": [
+          "data",
+          "total_all",
+          "total_this_pagination"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuruDto"
+            }
+          },
+          "total_all": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "total_this_pagination": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "ListIndustriDto": {
+        "type": "object",
+        "description": "List response DTO",
+        "required": [
+          "data",
+          "total_all",
+          "total_this_pagination"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IndustriDto"
+            }
+          },
+          "total_all": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "total_this_pagination": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "ListIndustryPreviewDto": {
+        "type": "object",
+        "required": [
+          "data",
+          "total"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IndustryPreviewDto"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "ListJurusanDto": {
+        "type": "object",
+        "description": "List response DTO",
+        "required": [
+          "data",
+          "total_all",
+          "total_this_pagination"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JurusanDto"
+            }
+          },
+          "total_all": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "total_this_pagination": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "ListKelasDto": {
+        "type": "object",
+        "description": "List response DTO",
+        "required": [
+          "data",
+          "total_all",
+          "total_this_pagination"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KelasDto"
+            }
+          },
+          "total_all": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "total_this_pagination": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "ListPklApplicationDto": {
+        "type": "object",
+        "required": [
+          "data",
+          "total"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PklApplicationDto"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "ListPklApplicationReviewDto": {
+        "type": "object",
+        "required": [
+          "data",
+          "total"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PklApplicationReviewDto"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "ListSiswaDto": {
+        "type": "object",
+        "required": [
+          "data",
+          "total_all",
+          "total_this_pagination"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SiswaDto"
+            }
+          },
+          "total_all": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "total_this_pagination": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "LoginReqDto": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginResDto": {
+        "type": "object",
+        "description": "Login response DTO (with refresh token)",
+        "required": [
+          "access_token",
+          "refresh_token",
+          "token_type",
+          "expires_in",
+          "expires_at",
+          "user"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_in": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UsrInfoDto"
+          }
+        }
+      },
+      "PembimbingGuruDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "nama",
+          "nip"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nama": {
+            "type": "string"
+          },
+          "nip": {
+            "type": "string"
+          },
+          "no_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "PklApplicationDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "siswa_id",
+          "industri_id",
+          "status",
+          "tanggal_permohonan"
+        ],
+        "properties": {
+          "catatan": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "decided_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "industri_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kaprog_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pembimbing_guru_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "processed_by": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "siswa_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PklStatus"
+          },
+          "tanggal_mulai": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "tanggal_permohonan": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tanggal_selesai": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "PklApplicationReviewDto": {
+        "type": "object",
+        "required": [
+          "application",
+          "siswa_username",
+          "siswa_nisn",
+          "kelas_id",
+          "kelas_nama",
+          "jurusan_id",
+          "jurusan_nama",
+          "industri_nama"
+        ],
+        "properties": {
+          "application": {
+            "$ref": "#/components/schemas/PklApplicationDto"
+          },
+          "industri_nama": {
+            "type": "string"
+          },
+          "jurusan_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "jurusan_nama": {
+            "type": "string"
+          },
+          "kelas_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kelas_nama": {
+            "type": "string"
+          },
+          "siswa_nisn": {
+            "type": "string"
+          },
+          "siswa_username": {
+            "type": "string"
+          }
+        }
+      },
+      "PklDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "application_id",
+          "siswa_id",
+          "industri_id",
+          "tanggal_mulai",
+          "tanggal_selesai",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "application_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "industri_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pembimbing_guru_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "siswa_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PklStatus"
+          },
+          "tanggal_mulai": {
+            "type": "string",
+            "format": "date"
+          },
+          "tanggal_selesai": {
+            "type": "string",
+            "format": "date"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PklStatus": {
+        "type": "string",
+        "enum": [
+          "Pending",
+          "Approved",
+          "Rejected",
+          "Completed"
+        ]
+      },
+      "RefreshReqDto": {
+        "type": "object",
+        "description": "Refresh token request DTO",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "access_token": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "RegisterReqDto": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "is_active": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "password": {
+            "type": "string"
+          },
+          "role": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "RejectPklApplicationDto": {
+        "type": "object",
+        "required": [
+          "catatan"
+        ],
+        "properties": {
+          "catatan": {
+            "type": "string"
+          }
+        }
+      },
+      "SiswaDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "nama_lengkap",
+          "nisn",
+          "kelas_id",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "alamat": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kelas_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nama_lengkap": {
+            "type": "string"
+          },
+          "nisn": {
+            "type": "string"
+          },
+          "no_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tanggal_lahir": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SiswaLoginReqDto": {
+        "type": "object",
+        "required": [
+          "nama_lengkap",
+          "nisn"
+        ],
+        "properties": {
+          "nama_lengkap": {
+            "type": "string"
+          },
+          "nisn": {
+            "type": "string"
+          }
+        }
+      },
+      "SiswaLoginResDto": {
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token",
+          "token_type",
+          "expires_in",
+          "expires_at",
+          "user"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_in": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/SiswaUserDto"
+          }
+        }
+      },
+      "SiswaUserDto": {
+        "type": "object",
+        "required": [
+          "id",
+          "nama_lengkap",
+          "role",
+          "is_active",
+          "kelas_id"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "kelas_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nama_lengkap": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      },
+      "SuccessResDto": {
+        "type": "object",
+        "description": "Success response DTO",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "data": {
+
+          },
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TokenResDto": {
+        "type": "object",
+        "description": "Token response DTO (legacy, keeping for compatibility)",
+        "required": [
+          "token",
+          "token_type",
+          "exp_in",
+          "exp_at",
+          "usr"
+        ],
+        "properties": {
+          "exp_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "exp_in": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          },
+          "usr": {
+            "$ref": "#/components/schemas/UsrInfoDto"
+          }
+        }
+      },
+      "UpdateGuruDto": {
+        "type": "object",
+        "properties": {
+          "is_active": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "is_kaprog": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "is_koordinator": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "is_pembimbing": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "is_wali_kelas": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "kode_guru": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nama": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nip": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "no_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "password": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "UpdateIndustriDto": {
+        "type": "object",
+        "description": "DTO for updating an existing industri",
+        "properties": {
+          "alamat": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bidang": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "jurusan_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "nama": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "no_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pic": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pic_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "UpdateIndustryQuotaDto": {
+        "type": "object",
+        "properties": {
+          "kuota_siswa": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "UpdateJurusanDto": {
+        "type": "object",
+        "description": "DTO for updating an existing jurusan",
+        "properties": {
+          "kaprog_guru_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "kode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nama": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "UpdateKelasDto": {
+        "type": "object",
+        "description": "DTO for updating an existing kelas",
+        "properties": {
+          "jurusan_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "nama": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "UpdateSiswaDto": {
+        "type": "object",
+        "properties": {
+          "alamat": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kelas_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "nama_lengkap": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nisn": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "no_telp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tanggal_lahir": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "UsrInfoDto": {
+        "type": "object",
+        "description": "User info in token response",
+        "required": [
+          "id",
+          "username",
+          "role",
+          "is_active"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "role": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Use Authorization: Bearer {token}"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication endpoints and health checks"
+    },
+    {
+      "name": "siswa",
+      "description": "Student management endpoints(admin role can access)"
+    },
+    {
+      "name": "guru",
+      "description": "Teacher management endpoints(admin role can access)"
+    },
+    {
+      "name": "jurusan",
+      "description": "Jurusan management endpoints(Admin role can access)"
+    },
+    {
+      "name": "kelas",
+      "description": "Kelas management endpoints(Admin role can access)"
+    },
+    {
+      "name": "industri",
+      "description": "Industri management endpoints(Admin role can access)"
+    },
+    {
+      "name": "PKL - Siswa",
+      "description": "PKL endpoints for siswa to membuat permohonan, melihat status, dan memantau PKL aktif"
+    },
+    {
+      "name": "PKL - Kaprog/Admin",
+      "description": "PKL endpoints untuk permohonan siswa pkl dan untuk kaprog meninjau, menyetujui, mengelola kuota industri, serta mencari pembimbing"
+    }
+  ]
+}
