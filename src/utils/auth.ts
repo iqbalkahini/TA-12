@@ -13,6 +13,15 @@ export interface User {
   is_wali_kelas: boolean;
 }
 
+export interface UserSiswa {
+  id: number;
+  is_active: boolean;
+  kelas_id: number;
+  nama_lengkap: string;
+  role: "ssw";
+  nisn?: string;
+}
+
 // Fungsi untuk mengecek apakah user sudah login
 export const isAuthenticated = (): boolean => {
   if (typeof window === "undefined") return false;

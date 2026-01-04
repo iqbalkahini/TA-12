@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/hooks/useAuth"
 import { useEffect, useState } from "react"
-import { User } from "@/utils/auth"
+import { User, UserSiswa } from "@/utils/auth"
 
 export function NavUser({ avatar
 }: {
@@ -52,16 +52,29 @@ export function NavUser({ avatar
   const [open, setOpen] = useState(false)
   const { isMobile } = useSidebar()
   const { logout } = useAuth()
-  const [user, setUser] = useState<User | null>(null);
+  const [guru, setGuru] = useState<User | null>(null);
+  const [siswa, setSiswa] = useState<UserSiswa | null>(null);
+  const [userDesc, setUserDesc] = useState({ name: "", sub: "" });
 
   useEffect(() => {
     const data = localStorage.getItem("guruData");
+    const dataSiswa = localStorage.getItem("siswaData");
     if (data) {
-      setUser(JSON.parse(data));
+      const parsedGuru = JSON.parse(data);
+      setGuru(parsedGuru);
+      setUserDesc({ name: parsedGuru.nama, sub: parsedGuru.kode_guru });
+    } else if (dataSiswa) {
+      const parsedSiswa = JSON.parse(dataSiswa);
+      setSiswa(parsedSiswa);
+      setUserDesc({
+        name: parsedSiswa.nama_lengkap,
+        sub: parsedSiswa.nisn || "Siswa"
+      });
     }
   }, []);
 
-  if (!user) return null; // atau skeleton
+
+  if (!guru && !siswa) return null; // atau skeleton
 
 
   return (
@@ -75,12 +88,12 @@ export function NavUser({ avatar
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={avatar} alt={user?.nama} />
+                  <AvatarImage src={avatar} alt={userDesc.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user?.nama}</span>
-                  <span className="truncate text-xs">{user?.kode_guru}</span>
+                  <span className="truncate font-medium">{userDesc.name}</span>
+                  <span className="truncate text-xs">{userDesc.sub}</span>
                 </div>
                 <ChevronsUpDown className="ml-auto size-4" />
               </SidebarMenuButton>
@@ -94,12 +107,12 @@ export function NavUser({ avatar
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={avatar} alt={user?.nama} />
+                    <AvatarImage src={avatar} alt={userDesc.name} />
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user?.nama}</span>
-                    <span className="truncate text-xs">{user?.kode_guru}</span>
+                    <span className="truncate font-medium">{userDesc.name}</span>
+                    <span className="truncate text-xs">{userDesc.sub}</span>
                   </div>
                 </div>
               </DropdownMenuLabel>

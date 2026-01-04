@@ -181,13 +181,7 @@ export const siswaMenus: SidebarMenuItem[] = [
     name: "Pengajuan PKL",
     url: "/siswa/pengajuan-pkl",
     icon: FileUp,
-    pathName: ["bukti"],
-  },
-  {
-    name: "Laporan Masalah",
-    url: "/siswa/permasalahan",
-    icon: TriangleAlert,
-    pathName: ["permasalahan"],
+    pathName: ["pengajuan-pkl"],
   },
   {
     name: "Pengajuan Izin",
@@ -196,10 +190,10 @@ export const siswaMenus: SidebarMenuItem[] = [
     pathName: ["perizinan"],
   },
   {
-    name: "Pengajuan Pindah",
-    url: "/siswa/pindah",
+    name: "Pengajuan Pindah PKL",
+    url: "/siswa/pindah-pkl",
     icon: Inbox,
-    pathName: ["pindah"],
+    pathName: ["pindah-pkl"],
   },
 ];
 
