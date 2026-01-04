@@ -11,6 +11,7 @@ export default function LayoutSiswaWrapper({ children }: { children: React.React
         const url = new URL(window.location.href);
         setPathName(url.pathname.split("/").at(-1) ?? "");
     }, []);
+    if (!pathName) return null;
     return (
         <SiswaLayout pathName={pathName}>
             {children}
