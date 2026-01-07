@@ -55,3 +55,13 @@ export const deleteJurusan = async (id: number) => {
     return null;
   }
 };
+
+export const getJurusanKaproMe = async () => {
+  try {
+    const response = await axiosInstance.get("/api/jurusan/kaprog/me");
+    return response.data;
+  } catch (error) {
+    console.error("Get jurusan by kapro failed:", error);
+    return null;
+  }
+};

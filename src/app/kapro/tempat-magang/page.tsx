@@ -1,14 +1,25 @@
 "use client";
 
 import { ListIndustri } from "@/api/kapro/indext";
+import { deleteIndustri } from "@/api/admin/industri";
 import { DaftarIndustriPreview } from "@/types/api";
 import { useEffect, useState } from "react";
-import { Building2, Users, UserCheck, Clock, CheckCircle, AlertCircle, Search } from "lucide-react";
+import { Building2, Plus, Search, AlertCircle, CheckCircle, Edit, Settings, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import axiosInstance from "@/utils/axios";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
 
 export default function TempatMagangPage() {
     const [dataIndustri, setDataIndustri] = useState<DaftarIndustriPreview[]>([]);
@@ -16,8 +27,18 @@ export default function TempatMagangPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [refreshing, setRefreshing] = useState(false);
     const [selectedIndustri, setSelectedIndustri] = useState<DaftarIndustriPreview | null>(null);
+
+    // Quota Modal States
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [quota, setQuota] = useState<number | null>(null);
+
+    // Delete Modal States
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [industryToDelete, setIndustryToDelete] = useState<DaftarIndustriPreview | null>(null);
+    const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const router = useRouter()
 
     useEffect(() => {
         async function fetchData() {
@@ -40,18 +61,16 @@ export default function TempatMagangPage() {
         fetchData();
     }, [refreshing]);
 
-    const getStatusColor = (remaining: number | null, quota: number | null) => {
-        if (quota === null || remaining === null) return "bg-gray-100 text-gray-700";
-        if (remaining === 0) return "bg-red-100 text-red-700";
-        if (remaining <= quota * 0.3) return "bg-yellow-100 text-yellow-700";
-        return "bg-green-100 text-green-700";
+    const getStockStatus = (remaining: number | null, quota: number | null) => {
+        if (quota === null || remaining === null) return "bg-gray-100 text-gray-700 hover:bg-gray-100/80";
+        if (remaining === 0) return "bg-red-100 text-red-700 hover:bg-red-100/80";
+        if (remaining <= quota * 0.3) return "bg-yellow-100 text-yellow-700 hover:bg-yellow-100/80";
+        return "bg-green-100 text-green-700 hover:bg-green-100/80";
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleQuotaSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            console.log("Updating quota to:", selectedIndustri?.industri_id);
-            console.log("Quota:", quota);
             await axiosInstance.put(`/api/pkl/industri/${selectedIndustri?.industri_id}/quota`, {
                 kuota_siswa: quota
             });
@@ -63,11 +82,42 @@ export default function TempatMagangPage() {
         } finally {
             setIsModalOpen(false);
         }
-        // Logic to update quota goes here
     }
 
-    return (
+    const handleDeleteClick = (item: DaftarIndustriPreview) => {
+        setIndustryToDelete(item);
+        setDeleteConfirmationText("");
+        setIsDeleteModalOpen(true);
+    };
 
+    const handleDeleteSubmit = async () => {
+        if (!industryToDelete) return;
+
+        if (deleteConfirmationText !== industryToDelete.nama) {
+            toast.error("Nama industri tidak cocok!");
+            return;
+        }
+
+        setIsDeleting(true);
+        try {
+            const res = await deleteIndustri(industryToDelete.industri_id);
+            if (res) {
+                toast.success("Industri berhasil dihapus");
+                setRefreshing(!refreshing);
+            } else {
+                toast.error("Gagal menghapus industri");
+            }
+        } catch (error) {
+            console.error("Error deleting industri:", error);
+            toast.error("Terjadi kesalahan saat menghapus industri");
+        } finally {
+            setIsDeleting(false);
+            setIsDeleteModalOpen(false);
+            setIndustryToDelete(null);
+        }
+    };
+
+    return (
         <div className="bg-white border rounded-2xl p-4 md:p-6 shadow-sm mx-4 md:mx-5 mt-5 mb-5">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0 mb-5">
                 <div>
@@ -90,7 +140,8 @@ export default function TempatMagangPage() {
                         />
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     </div>
-                    <Button onClick={() => setRefreshing(!refreshing)}>Search</Button>
+                    <Button onClick={() => setRefreshing(!refreshing)}>Cari</Button>
+                    <Button onClick={() => router.push('/kapro/tempat-magang/tambah')}><Plus className="w-4 h-4 mr-1" /> Tambah</Button>
                 </div>
             </div>
 
@@ -100,133 +151,119 @@ export default function TempatMagangPage() {
                     <span className="ml-3 text-gray-600">Memuat data...</span>
                 </div>
             ) : dataIndustri.length === 0 ? (
-                <div className="text-center py-12">
+                <div className="text-center py-12 border rounded-xl bg-gray-50">
                     <Building2 className="h-12 w-12 mx-auto text-gray-300 mb-3" />
                     <p className="text-gray-500">
                         {searchQuery ? 'Tidak ada data yang sesuai dengan pencarian' : 'Belum ada data tempat magang'}
                     </p>
                 </div>
             ) : (
-                <>
-                    <div className="space-y-4">
-                        {dataIndustri.map((item) => (
-                            <div
-                                key={item.industri_id}
-                                className="border rounded-xl p-4 md:p-5 hover:shadow-md transition-shadow bg-gradient-to-br from-white to-gray-50"
-                            >
-                                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4 md:gap-0">
-                                    <div className="flex items-center gap-3">
-                                        <div className="bg-blue-100 p-3 rounded-lg shrink-0">
-                                            <Building2 className="h-6 w-6 text-blue-600" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold text-gray-900 text-lg">{item.nama}</h3>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-2 pl-[3.25rem] md:pl-0 justify-between md:justify-end w-full md:w-auto">
-                                        <Button
-                                            className="h-8 text-xs"
-                                            variant='outline'
-                                            onClick={() => {
-                                                setSelectedIndustri(item)
-                                                setIsModalOpen(true)
-                                            }}
-                                        >
-                                            Update Quota
-                                        </Button>
-
-                                        {item.kuota_siswa !== null && (
-                                            <span
-                                                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                                                    item.remaining_slots,
-                                                    item.kuota_siswa
-                                                )}`}
-                                            >
-                                                {item.remaining_slots === 0 ? (
-                                                    <>
-                                                        <AlertCircle className="w-3 h-3" />
-                                                        <span className="hidden sm:inline">Penuh</span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <CheckCircle className="w-3 h-3" />
-                                                        <span className="hidden sm:inline">Tersedia</span>
-                                                    </>
-                                                )}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                                    <div className="bg-white rounded-lg p-3 border">
-                                        <div className="flex items-center gap-2 text-gray-600 mb-1">
-                                            <Users className="w-4 h-4" />
-                                            <span className="text-xs font-medium">Kuota</span>
-                                        </div>
-                                        <p className="text-lg font-semibold text-gray-900">
+                <div className="border rounded-xl overflow-hidden">
+                    <Table>
+                        <TableHeader className="bg-gray-50">
+                            <TableRow>
+                                <TableHead className="w-[50px] text-center">No</TableHead>
+                                <TableHead>Nama Industri</TableHead>
+                                <TableHead className="text-center">Kuota</TableHead>
+                                <TableHead className="text-center">Pending</TableHead>
+                                <TableHead className="text-center">Disetujui</TableHead>
+                                <TableHead className="text-center">Aktif</TableHead>
+                                <TableHead className="text-center">Sisa Slot</TableHead>
+                                <TableHead className="text-center">Status</TableHead>
+                                <TableHead className="text-center">Aksi</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {dataIndustri.map((item, index) => (
+                                <TableRow key={item.industri_id} className="hover:bg-gray-50 transition-colors">
+                                    <TableCell className="text-center font-medium text-gray-500">
+                                        {index + 1}
+                                    </TableCell>
+                                    <TableCell className="font-medium text-gray-900">
+                                        {item.nama}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Badge variant="outline" className="bg-white">
                                             {item.kuota_siswa ?? 'N/A'}
-                                        </p>
-                                    </div>
-
-                                    <div className="bg-white rounded-lg p-3 border">
-                                        <div className="flex items-center gap-2 text-gray-600 mb-1">
-                                            <Clock className="w-4 h-4" />
-                                            <span className="text-xs font-medium">Pending</span>
-                                        </div>
-                                        <p className="text-lg font-semibold text-yellow-600">
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium ${item.pending_applications > 0 ? 'bg-yellow-100 text-yellow-700' : 'text-gray-500'}`}>
                                             {item.pending_applications}
-                                        </p>
-                                    </div>
-
-                                    <div className="bg-white rounded-lg p-3 border">
-                                        <div className="flex items-center gap-2 text-gray-600 mb-1">
-                                            <CheckCircle className="w-4 h-4" />
-                                            <span className="text-xs font-medium">Disetujui</span>
-                                        </div>
-                                        <p className="text-lg font-semibold text-green-600">
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium ${item.approved_applications > 0 ? 'bg-green-100 text-green-700' : 'text-gray-500'}`}>
                                             {item.approved_applications}
-                                        </p>
-                                    </div>
-
-                                    <div className="bg-white rounded-lg p-3 border">
-                                        <div className="flex items-center gap-2 text-gray-600 mb-1">
-                                            <UserCheck className="w-4 h-4" />
-                                            <span className="text-xs font-medium">Aktif</span>
-                                        </div>
-                                        <p className="text-lg font-semibold text-blue-600">
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium ${item.active_students > 0 ? 'bg-blue-100 text-blue-700' : 'text-gray-500'}`}>
                                             {item.active_students}
-                                        </p>
-                                    </div>
-
-                                    <div className="bg-white rounded-lg p-3 border">
-                                        <div className="flex items-center gap-2 text-gray-600 mb-1">
-                                            <Users className="w-4 h-4" />
-                                            <span className="text-xs font-medium">Sisa Slot</span>
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className="text-center font-semibold">
+                                        {item.remaining_slots ?? '-'}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        {item.kuota_siswa !== null && (
+                                            <Badge className={getStockStatus(item.remaining_slots, item.kuota_siswa)}>
+                                                {item.remaining_slots === 0 ? "Penuh" : "Tersedia"}
+                                            </Badge>
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <div className="flex items-center justify-center gap-2">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="h-8 w-8 p-0"
+                                                title="Update Quota"
+                                                onClick={() => {
+                                                    setSelectedIndustri(item)
+                                                    setQuota(item.kuota_siswa ?? 0)
+                                                    setIsModalOpen(true)
+                                                }}
+                                            >
+                                                <Settings className="h-4 w-4 text-gray-600" />
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="h-8 w-8 p-0"
+                                                title="Edit Industri"
+                                                onClick={() => {
+                                                    router.push(`/kapro/tempat-magang/edit/${item.industri_id}`)
+                                                }}
+                                            >
+                                                <Edit className="h-4 w-4 text-blue-600" />
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="h-8 w-8 p-0 border-red-200 hover:bg-red-50 hover:text-red-600 text-red-500"
+                                                title="Hapus Industri"
+                                                onClick={() => handleDeleteClick(item)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
                                         </div>
-                                        <p className="text-lg font-semibold text-gray-900">
-                                            {item.remaining_slots ?? 'N/A'}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* <div className="flex justify-between items-center mt-6 text-sm text-gray-600">
-                        <p>Menampilkan {dataIndustri.length} dari {dataIndustri.length} data</p>
-                    </div> */}
-                </>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             )}
+
             {/* Dialog Update Quota */}
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Update Data</DialogTitle>
+                        <DialogTitle>Update Quota - {selectedIndustri?.nama}</DialogTitle>
                     </DialogHeader>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleQuotaSubmit} className="space-y-4">
                         <Input
                             className="border p-2 w-full"
                             value={quota ?? ""}
@@ -249,6 +286,50 @@ export default function TempatMagangPage() {
                             <Button type="submit">Simpan</Button>
                         </div>
                     </form>
+                </DialogContent>
+            </Dialog>
+
+            {/* Dialog Delete Confirmation */}
+            <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="text-red-600">Hapus Industri?</DialogTitle>
+                        <DialogDescription>
+                            Tindakan ini tidak dapat dibatalkan. Ini akan menghapus data industri
+                            <span className="font-bold text-gray-900"> {industryToDelete?.nama} </span>
+                            secara permanen.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="py-4">
+                        <p className="text-sm text-gray-600 mb-2">
+                            Ketik <span className="font-bold select-all">{industryToDelete?.nama}</span> untuk konfirmasi.
+                        </p>
+                        <Input
+                            value={deleteConfirmationText}
+                            onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                            placeholder="Ketik nama industri disini..."
+                            className="w-full"
+                        />
+                    </div>
+
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsDeleteModalOpen(false)}
+                            disabled={isDeleting}
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleDeleteSubmit}
+                            disabled={deleteConfirmationText !== industryToDelete?.nama || isDeleting}
+                            className="bg-red-600 hover:bg-red-700"
+                        >
+                            {isDeleting ? "Menghapus..." : "Hapus Industri"}
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </div>

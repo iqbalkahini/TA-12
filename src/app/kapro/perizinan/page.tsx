@@ -1,14 +1,19 @@
+
 export default function PerizinanPage() {
     return (
-        <div className="flex flex-1 flex-col gap-4 p-4">
-            <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Perizinan</h1>
-            </div>
-            <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 p-8">
-                <p className="text-muted-foreground">
-                    Daftar perizinan akan ditampilkan di sini
-                </p>
-            </div>
+        <div className="min-h-screen bg-[#f8f9fb] text-[#333] font-sans">
+            <header className="bg-white px-[30px] py-[15px] flex justify-between items-center border-b border-gray-300">
+                <h1 className="text-xl font-bold">
+                    <span className="text-[#d32f2f]">Magang</span>Hub
+                </h1>
+                <div className="flex gap-5 items-center">
+                    <div className="relative">
+                        🔔
+                        <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] px-1 rounded-full">3</span>
+                    </div>
+                    <div>⚙️</div>
+                </div>
+            </header>
         </div>
     )
 }

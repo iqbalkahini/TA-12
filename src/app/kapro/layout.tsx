@@ -1,20 +1,22 @@
 "use client";
 
 import KaproLayout from "@/components/kapro-layout";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function KaproLayoutWrapper({ children }: { children: React.ReactNode }) {
-    const [pathName, setPathName] = useState("");
+    const pathname = usePathname();
 
-    useEffect(() => {
-        const url = new URL(window.location.href);
-        setPathName(url.pathname.split("/").at(-1) ?? "");
-    }, []);
+    if (!pathname) return null;
 
-    if (!pathName) return null;
-    
+    // Jika sedang di halaman edit, jangan gunakan KaproLayout (biarkan layout edit yang handle)
+    if (pathname.includes("/edit") || pathname.includes("/tambah")) {
+        return <>{children}</>;
+    }
+
+    const title = pathname.split("/").at(-1) ?? "";
+
     return (
-        <KaproLayout pathname={pathName}>
+        <KaproLayout pathname={title}>
             {children}
         </KaproLayout>
     )
