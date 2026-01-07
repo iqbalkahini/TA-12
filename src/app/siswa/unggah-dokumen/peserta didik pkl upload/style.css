@@ -1,0 +1,293 @@
+/* --- Global Reset --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #F9FAFB;
+    color: #374151;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+
+.logo-icon {
+    background: white;
+    color: #7A1B1B;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 18px;
+    text-decoration: none;
+    transition: 0.3s;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: white;
+}
+
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* --- Main Content --- */
+.content {
+    margin-left: 70px;
+    flex: 1;
+}
+
+.header {
+    background: white;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.brand-name {
+    color: #7A1B1B;
+    font-size: 22px;
+}
+
+.brand-name span {
+    font-style: italic;
+    font-weight: 800;
+}
+
+.brand-sub {
+    font-size: 12px;
+    color: #9CA3AF;
+}
+
+.header-tools {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #4B5563;
+    font-size: 18px;
+}
+
+.notif-box {
+    position: relative;
+}
+
+.badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #DC2626;
+    color: white;
+    font-size: 10px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+}
+
+/* --- Grid Layout --- */
+.dashboard-grid {
+    padding: 30px 40px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.main-card {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 30px;
+}
+
+.section-title {
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+/* --- Upload Box --- */
+.upload-area {
+    border: 2px dashed #E5E7EB;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.cloud-icon {
+    font-size: 40px;
+    color: #D1D5DB;
+    margin-bottom: 15px;
+}
+
+.upload-text {
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.upload-sub {
+    font-size: 13px;
+    color: #9CA3AF;
+}
+
+.file-format {
+    display: block;
+    font-size: 10px;
+    color: #D1D5DB;
+    text-transform: uppercase;
+    margin-top: 8px;
+}
+
+.btn-secondary {
+    background: #7A1B1B;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    margin-top: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* --- Form --- */
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #4B5563;
+}
+
+.input-group input, .input-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    outline-color: #7A1B1B;
+}
+
+.btn-primary {
+    width: 100%;
+    background: #D1D5DB;
+    color: #4B5563;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* --- Right Side Panels --- */
+.side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.status-card {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+}
+
+.panel-title {
+    font-size: 14px;
+    margin-bottom: 30px;
+    color: #374151;
+}
+
+.empty-state {
+    color: #E5E7EB;
+    padding: 20px 0;
+}
+
+.empty-state i {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    font-size: 11px;
+    color: #9CA3AF;
+}
+
+/* --- Guidelines --- */
+.guide-card {
+    background: #EFF6FF;
+    border: 1px solid #DBEAFE;
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.guide-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #1E40AF;
+    margin-bottom: 15px;
+}
+
+.guide-list {
+    list-style: none;
+}
+
+.guide-list li {
+    display: flex;
+    gap: 10px;
+    font-size: 12px;
+    color: #1E40AF;
+    opacity: 0.8;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}

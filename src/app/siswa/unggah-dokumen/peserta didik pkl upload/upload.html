@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MagangHub - Manajemen PKL</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+                <nav class="nav-menu">
+                    <a href="#" class="nav-link"><i class="fa-solid fa-play"></i></a>
+                    <a href="#" class="nav-link"><i class="fa-solid fa-house"></i></a>
+                    <a href="#" class="nav-link"><i class="fa-solid fa-file-lines"></i></a>
+                    <a href="#" class="nav-link active"><i class="fa-solid fa-upload"></i></a>
+                    <a href="#" class="nav-link"><i class="fa-solid fa-calendar-days"></i></a>
+                    <a href="#" class="nav-link"><i class="fa-solid fa-user-group"></i></a>
+                </nav>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="header">
+                <div class="header-info">
+                    <h1 class="brand-name">Magang<span>Hub</span></h1>
+                    <p class="brand-sub">Ringkasan singkat mengenai sistem manajemen PKL Anda.</p>
+                </div>
+                <div class="header-tools">
+                    <div class="notif-box">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <i class="fa-solid fa-gear settings-icon"></i>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <section class="main-card">
+                    <h2 class="section-title">Unggah Dokumen</h2>
+                    
+                    <div class="upload-area">
+                        <i class="fa-solid fa-cloud-arrow-up cloud-icon"></i>
+                        <h3 class="upload-text">Unggah surat penerimaan magang Anda</h3>
+                        <p class="upload-sub">Seret dan letakkan file Anda di sini, atau klik untuk menelusuri</p>
+                        <span class="file-format">Mendukung: PDF, JPG, PNG (Maks. 10MB)</span>
+                        <button class="btn-secondary">
+                            <i class="fa-solid fa-folder-open"></i> Telusuri File
+                        </button>
+                    </div>
+
+                    <form class="document-form">
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label>Tanggal Mulai Magang *</label>
+                                <input type="date" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Tanggal Selesai Magang *</label>
+                                <input type="date" required>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Nama Industri *</label>
+                            <input type="text" placeholder="Masukan Nama Industri" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Catatan Tambahan (Opsional) *</label>
+                            <textarea rows="4" placeholder="Informasi tambahan apa pun tentang magang Anda..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            <i class="fa-solid fa-upload"></i> Unggah Dokumen
+                        </button>
+                    </form>
+                </section>
+
+                <aside class="side-panel">
+                    <div class="status-card">
+                        <h3 class="panel-title">Status Unggahan</h3>
+                        <div class="empty-state">
+                            <i class="fa-solid fa-file-circle-minus"></i>
+                            <p>Tidak ada file yang dipilih</p>
+                        </div>
+                    </div>
+
+                    <div class="guide-card">
+                        <div class="guide-header">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <h4>Pedoman</h4>
+                        </div>
+                        <ul class="guide-list">
+                            <li><i class="fa-solid fa-check"></i> Unggah surat penerimaan resmi atau email</li>
+                            <li><i class="fa-solid fa-check"></i> Dokumen harus menyertakan kop surat perusahaan</li>
+                            <li><i class="fa-solid fa-check"></i> Penyebutan tanggal magang yang jelas</li>
+                            <li><i class="fa-solid fa-check"></i> Ukuran file tidak boleh melebihi 10MB</li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

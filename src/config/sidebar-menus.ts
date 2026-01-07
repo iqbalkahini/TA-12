@@ -13,6 +13,7 @@ import {
   Printer,
   MapPin,
   type LucideIcon,
+  Upload,
 } from "lucide-react";
 
 export interface SidebarMenuItem {
@@ -184,10 +185,10 @@ export const siswaMenus: SidebarMenuItem[] = [
     pathName: ["pengajuan-pkl"],
   },
   {
-    name: "Pengajuan Izin",
-    url: "/siswa/perizinan",
-    icon: CalendarCheck,
-    pathName: ["perizinan"],
+    name: "Unggah Dokumen",
+    url: "/siswa/unggah-dokumen",
+    icon: Upload,
+    pathName: ["unggah-dokumen"],
   },
   {
     name: "Pengajuan Pindah PKL",
