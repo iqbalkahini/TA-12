@@ -56,7 +56,6 @@ export default function Dashboard() {
                 <button className="p-2 rounded-full hover:bg-gray-100">🔔</button>
                 <span className="absolute -top-0 -right-0 bg-[#c1272d] text-white text-xs font-semibold rounded-full px-1.5 py-0.5">3</span>
               </div>
-              <button className="p-2 rounded-full hover:bg-gray-100">⚙️</button>
             </div>
           </header>
 
