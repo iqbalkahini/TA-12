@@ -2992,6 +2992,89 @@
           }
         }
       },
+      "Notification": {
+        "type": "object",
+        "description": "Main notification structure sent to WebSocket clients",
+        "required": [
+          "type",
+          "data",
+          "timestamp"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/NotificationData"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "$ref": "#/components/schemas/NotificationType"
+          }
+        }
+      },
+      "NotificationData": {
+        "type": "object",
+        "description": "Notification payload data",
+        "required": [
+          "application_id",
+          "siswa_id",
+          "siswa_username",
+          "siswa_nama",
+          "industri_id",
+          "industri_nama",
+          "jurusan_id",
+          "jurusan_nama",
+          "status"
+        ],
+        "properties": {
+          "application_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "catatan": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "industri_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "industri_nama": {
+            "type": "string"
+          },
+          "jurusan_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "jurusan_nama": {
+            "type": "string"
+          },
+          "siswa_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "siswa_nama": {
+            "type": "string"
+          },
+          "siswa_username": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "NotificationType": {
+        "type": "string",
+        "description": "Notification types that can be broadcast via WebSocket",
+        "enum": [
+          "pkl_approved",
+          "pkl_rejected"
+        ]
+      },
       "PembimbingGuruDto": {
         "type": "object",
         "required": [
@@ -3726,6 +3809,10 @@
     {
       "name": "PKL - Kaprog/Admin",
       "description": "PKL endpoints untuk permohonan siswa pkl dan untuk kaprog meninjau, menyetujui, mengelola kuota industri, serta mencari pembimbing"
+    },
+    {
+      "name": "websocket",
+      "description": "Real-time notifications via WebSocket. Connect at /ws?token={JWT}. Only students (role: ssw) can connect. See /ws-docs for complete guide."
     }
   ]
 }
