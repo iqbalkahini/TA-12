@@ -6,7 +6,7 @@ export default function UploadDokumenBukti() {
 
       {/* Main */}
       <main className="flex-1">
-        {/* Header */}
+        {/* Headerr */}
         <header className="h-16 border-b flex items-center justify-between px-6">
           <div>
             <h1 className="text-xl font-bold text-[#6B0F0F]">MagangHub</h1>
@@ -15,14 +15,14 @@ export default function UploadDokumenBukti() {
             </p>
           </div>
           <div className="flex items-center space-x-4">
-              <div className="relative">
-                <button className="p-2 rounded-full hover:bg-gray-100">🔔</button>
-                <span className="absolute -top-0 -right-0 bg-[#c1272d] text-white text-xs font-semibold rounded-full px-1.5 py-0.5">3</span>
-              </div>
-              <div className="relative">
-                <button className="p-2 rounded-full hover:bg-gray-100">⚙️</button>
-              </div>
+            <div className="relative">
+              <button className="p-2 rounded-full hover:bg-gray-100">🔔</button>
+              <span className="absolute -top-0 -right-0 bg-[#c1272d] text-white text-xs font-semibold rounded-full px-1.5 py-0.5">3</span>
             </div>
+            <div className="relative">
+              <button className="p-2 rounded-full hover:bg-gray-100">⚙️</button>
+            </div>
+          </div>
         </header>
 
         {/* Content */}
