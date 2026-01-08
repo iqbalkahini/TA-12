@@ -47,11 +47,11 @@ const pathNameMap: Record<string, string> = {
     pindah: "Pengajuan Pindah",
 }
 
-export default function RoleBasedLayout({ 
-    children, 
-    role, 
+export default function RoleBasedLayout({
+    children,
+    role,
     guruData,
-    breadcrumbTitle 
+    breadcrumbTitle
 }: RoleBasedLayoutProps) {
     const [pathName, setPathName] = useState("")
 

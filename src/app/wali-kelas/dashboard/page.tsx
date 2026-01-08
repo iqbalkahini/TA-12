@@ -1,7 +1,7 @@
 "use client"
 
 import { StatisticsCard } from "@/components/statistics-card"
-import { GraduationCap, Building2, Users } from "lucide-react"
+import { GraduationCap, Building2, Users, Search, Eye, ChevronLeft, ChevronRight } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -35,53 +35,14 @@ export default function DashboardWaliKelas() {
         }
     ]
 
-    const notifications = [
-        {
-            id: 1,
-            user: {
-                name: "Park Jhokuwie",
-                role: "XII RPL 1 • PT. Teknologi Maju",
-                image: "/placeholder-user.jpg"
-            },
-            action: "Mengadukan Masalah",
-            status: "Menunggu",
-            date: "2 jam yang lalu",
-            type: "issue"
-        },
-        {
-            id: 2,
-            user: {
-                name: "Kim Shareonni",
-                role: "XII TKJ 2 • CV. Solusi Digital",
-                image: "/placeholder-user.jpg"
-            },
-            action: "Mengadukan Masalah",
-            status: "Disetujui",
-            date: "1 hari yang lalu",
-            type: "issue"
-        },
-        {
-            id: 3,
-            user: {
-                name: "Lee Bhouwo",
-                role: "XII MM 1 • Bank Mandiri",
-                image: "/placeholder-user.jpg"
-            },
-            action: "Mengadukan Masalah",
-            status: "Ditolak",
-            date: "2 hari yang lalu",
-            type: "issue"
-        }
+    const industryData = [
+        { id: 1, jurusan: "TKJ", jumlah: "09" },
+        { id: 2, jurusan: "RPL", jumlah: "05" },
+        { id: 3, jurusan: "AKL", jumlah: "01" },
+        { id: 4, jurusan: "MM", jumlah: "02" },
+        { id: 5, jurusan: "RPL", jumlah: "07" },
+        { id: 6, jurusan: "AKL", jumlah: "06" },
     ]
-
-    const getStatusVariant = (status: string) => {
-        switch (status) {
-            case "Menunggu": return "warning"
-            case "Disetujui": return "success"
-            case "Ditolak": return "destructive"
-            default: return "secondary"
-        }
-    }
 
     return (
         <div className="space-y-6">
@@ -121,44 +82,78 @@ export default function DashboardWaliKelas() {
                 </Link>
             </div>
 
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="text-lg font-bold">Notifikasi</CardTitle>
-                    <Link href="/wali-kelas/permasalahan" className="text-sm text-muted-foreground hover:underline">
-                        Lihat Semua
-                    </Link>
+            <Card className="col-span-full">
+                <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <CardTitle className="text-xl font-normal">Daftar Data Industri</CardTitle>
+                    <div className="relative w-full sm:w-72">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#aaa]" />
+                        <input
+                            type="text"
+                            placeholder="Cari berdasarkan nama, email, jurusan..."
+                            className="w-full py-2 pl-10 pr-4 rounded-lg border border-[#ddd] focus:outline-none focus:border-[#8b1d1d] transition-colors text-sm"
+                        />
+                    </div>
                 </CardHeader>
-                <CardContent className="grid gap-4">
-                    {notifications.map((notif) => (
-                        <div key={notif.id} className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/5 transition-colors">
-                            <div className="flex items-center gap-4">
-                                <Avatar className="h-10 w-10">
-                                    <AvatarImage src={notif.user.image} alt={notif.user.name} />
-                                    <AvatarFallback>{notif.user.name[0]}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <div className="font-medium flex items-center gap-2">
-                                        {notif.user.name}
-                                    </div>
-                                    <div className="text-sm text-muted-foreground">
-                                        {notif.user.role} <span className="mx-1">|</span> <span className="text-red-500 font-medium">{notif.action}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Badge variant={getStatusVariant(notif.status) as "default" | "secondary" | "destructive" | "outline"} className="capitalize">
-                                    {notif.status}
-                                </Badge>
-                                <Button size="sm" variant="outline" className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-none" asChild>
-                                    <Link href={`/wali-kelas/permasalahan/${notif.id}`}>
-                                        Periksa
-                                    </Link>
-                                </Button>
-                            </div>
+                <CardContent>
+                    <div className="rounded-xl overflow-hidden shadow-sm border border-[#eee]">
+                        <table className="w-full">
+                            <thead className="bg-[#f1f1f1]">
+                                <tr>
+                                    <th className="p-3.5 text-left text-sm font-semibold">Nama Industri</th>
+                                    <th className="p-3.5 text-left text-sm font-semibold">Email</th>
+                                    <th className="p-3.5 text-left text-sm font-semibold">Jurusan</th>
+                                    <th className="p-3.5 text-left text-sm font-semibold">Jumlah Siswa</th>
+                                    <th className="p-3.5 text-left text-sm font-semibold">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {industryData.map((item, index) => (
+                                    <tr key={index} className="border-b border-[#eee] last:border-0 hover:bg-gray-50">
+                                        <td className="p-3.5 text-left text-sm">
+                                            <div className="flex items-center gap-2.5">
+                                                <img
+                                                    src="https://i.imgur.com/9QqMZ0p.jpg"
+                                                    alt="Industri"
+                                                    className="w-8 h-8 rounded-full object-cover"
+                                                />
+                                                JV. Partner Indonesia
+                                            </div>
+                                        </td>
+                                        <td className="p-3.5 text-left text-sm">jvpartner@gmail.com</td>
+                                        <td className="p-3.5 text-left text-sm">
+                                            <span className="bg-[#8b1d1d] text-white px-2.5 py-1 rounded-md text-xs">
+                                                {item.jurusan}
+                                            </span>
+                                        </td>
+                                        <td className="p-3.5 text-left text-sm">{item.jumlah}</td>
+                                        <td className="p-3.5 text-left text-sm">
+                                            <Link href={`/wali-kelas/industri/${item.id}`}>
+                                                <Eye className="h-5 w-5 cursor-pointer text-gray-500 hover:text-[#8b1d1d]" />
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="mt-4 flex justify-between items-center text-[13px] text-[#666]">
+                        <span>Menampilkan 1-3 dari 7 industri</span>
+                        <div className="flex gap-1.5">
+                            <button className="border border-[#ddd] bg-white px-2.5 py-1.5 rounded-md cursor-pointer hover:bg-gray-50 flex items-center justify-center">
+                                <ChevronLeft className="h-4 w-4" />
+                            </button>
+                            <button className="border border-[#8b1d1d] bg-[#8b1d1d] text-white px-2.5 py-1.5 rounded-md cursor-pointer">
+                                01
+                            </button>
+                            <button className="border border-[#ddd] bg-white px-2.5 py-1.5 rounded-md cursor-pointer hover:bg-gray-50 flex items-center justify-center">
+                                <ChevronRight className="h-4 w-4" />
+                            </button>
                         </div>
-                    ))}
+                    </div>
                 </CardContent>
             </Card>
         </div>
     )
 }
+

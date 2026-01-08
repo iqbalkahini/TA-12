@@ -125,27 +125,6 @@ const DashboardAdminPKL = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Quick Actions */}
-            <div>
-                <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {[
-                        { icon: "➕", label: "Tambah Tempat Magang" },
-                        { icon: "👤", label: "Tambah Pembimbing" },
-                        { icon: "📄", label: "Lihat Laporan" },
-                    ].map((action, index) => (
-                        <div
-                            key={index}
-                            className="border rounded-2xl p-6 bg-white shadow-sm flex flex-col items-center gap-3 hover:shadow-md transition"
-                        >
-                            <div className="text-4xl">{action.icon}</div>
-                            <p className="font-medium text-gray-700">{action.label}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
         </div>
     );
 };
