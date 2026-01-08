@@ -14,10 +14,14 @@ export default function UploadDokumenBukti() {
               Ringkasan singkat mengenai sistem manajemen PKL Anda.
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1">3</span>
-              <div className="w-6 h-6 bg-gray-400 rounded" />
+          <div className="flex items-center space-x-4">
+              <div className="relative">
+                <button className="p-2 rounded-full hover:bg-gray-100">🔔</button>
+                <span className="absolute -top-0 -right-0 bg-[#c1272d] text-white text-xs font-semibold rounded-full px-1.5 py-0.5">3</span>
+              </div>
+              <div className="relative">
+                <button className="p-2 rounded-full hover:bg-gray-100">⚙️</button>
+              </div>
             </div>
         </header>
 
