@@ -1,5 +1,7 @@
 import { getAccessToken, clearTokens } from "./axios";
 
+export { getAccessToken, clearTokens };
+
 // Interface untuk user data
 export interface User {
   id: string;

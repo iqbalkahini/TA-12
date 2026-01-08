@@ -46,6 +46,8 @@ const DashboardAdminPKL = () => {
         return <Spinner className="absolute top-1/2 left-1/2 w-7 h-7" />
     }
 
+    console.log(dataPengajuan);
+
     return (
         <div className="w-full p-6 max-w-6xl mx-auto space-y-10">
             {/* Stats */}
@@ -79,8 +81,8 @@ const DashboardAdminPKL = () => {
                                 </div>
 
                                 <div className="flex gap-2">
-                                    <button className="px-4 py-1 bg-green-600 text-white rounded-md text-sm">Setujui</button>
-                                    <button className="px-4 py-1 bg-red-600 text-white rounded-md text-sm">Tolak</button>
+                                    {/* <button className="px-4 py-1 bg-green-600 text-white rounded-md text-sm">Setujui</button>
+                                    <button className="px-4 py-1 bg-red-600 text-white rounded-md text-sm">Tolak</button> */}
                                 </div>
                             </div>
                         )) : (

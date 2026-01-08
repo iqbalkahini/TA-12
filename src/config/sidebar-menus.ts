@@ -14,6 +14,7 @@ import {
   MapPin,
   type LucideIcon,
   Upload,
+  Bell,
 } from "lucide-react";
 
 export interface SidebarMenuItem {
@@ -195,6 +196,12 @@ export const siswaMenus: SidebarMenuItem[] = [
     url: "/siswa/pindah-pkl",
     icon: Inbox,
     pathName: ["pindah-pkl"],
+  },
+  {
+    name: "Notifikasi Siswa",
+    url: "/siswa/notifikasi",
+    icon: Bell,
+    pathName: ["notifikasi"],
   },
 ];
 

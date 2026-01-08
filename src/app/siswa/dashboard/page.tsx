@@ -215,22 +215,6 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <button className="bg-white p-6 rounded-2xl shadow-sm border hover:bg-gray-50 transition text-center text-sm font-medium">
-                    Permohonan Baru
-                </button>
-                <button className="bg-white p-6 rounded-2xl shadow-sm border hover:bg-gray-50 transition text-center text-sm font-medium">
-                    Unggah Document
-                </button>
-                <button className="bg-white p-6 rounded-2xl shadow-sm border hover:bg-gray-50 transition text-center text-sm font-medium">
-                    Lihat Jadwal
-                </button>
-                <button className="bg-white p-6 rounded-2xl shadow-sm border hover:bg-gray-50 transition text-center text-sm font-medium">
-                    Kontak Pembimbing
-                </button>
-            </div>
-
             {/* Recent Activities */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border">
                 <h2 className="text-lg font-semibold mb-4">Daftar Permohonan</h2>
