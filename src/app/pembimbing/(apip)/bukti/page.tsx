@@ -19,8 +19,6 @@ export default function UploadDokumenBukti() {
               <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1">3</span>
               <div className="w-6 h-6 bg-gray-400 rounded" />
             </div>
-            <div className="w-6 h-6 bg-gray-400 rounded" />
-          </div>
         </header>
 
         {/* Content */}
