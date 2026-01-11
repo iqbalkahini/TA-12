@@ -51,6 +51,20 @@ function getTokenFromRequest(request: NextRequest): string | undefined {
   return decryptedToken || undefined;
 }
 
+// payload token secara dinamis
+function getPayloadFromToken(token: string): any | null {
+  if (!token) return null;
+
+  try {
+    const base64Payload = token.split(".")[1];
+    // Menggunakan atob agar kompatibel dengan middleware Next.js (Edge Runtime)
+    const payload = JSON.parse(atob(base64Payload));
+    return payload || null;
+  } catch {
+    return null;
+  }
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -96,13 +110,47 @@ export function middleware(request: NextRequest) {
 
   // Jika user sudah login dan mencoba akses auth route (login/register)
   if (isAuthRoute && isAuthenticated) {
-    console.log(
-      "✅ Already authenticated, redirecting from:",
-      pathname,
-      "-> /admin"
-    );
+    const payload = token ? getPayloadFromToken(token) : null;
 
-    // Redirect ke dashboard admin (bisa disesuaikan dengan role dari token)
+    if (payload && payload.rl) {
+      console.log(payload);
+      // Redirect berdasarkan role (rl)
+      switch (payload.rl.toLowerCase()) {
+        case "adm":
+          return NextResponse.redirect(
+            new URL("/admin/dashboard", request.url)
+          );
+        case "ssw":
+          return NextResponse.redirect(
+            new URL("/siswa/dashboard", request.url)
+          );
+        case "gru":
+          if (payload.is_kaprog) {
+            return NextResponse.redirect(
+              new URL("/kapro/dashboard", request.url)
+            );
+          }
+          if (payload.is_koordinator) {
+            return NextResponse.redirect(
+              new URL("/koordinator/dashboard", request.url)
+            );
+          }
+          if (payload.is_wali_kelas) {
+            return NextResponse.redirect(
+              new URL("/wali-kelas/dashboard", request.url)
+            );
+          }
+          if (payload.is_pembimbing) {
+            return NextResponse.redirect(
+              new URL("/pembimbing/dashboard", request.url)
+            );
+          }
+        default:
+          return NextResponse.redirect(new URL("/login", request.url));
+      }
+    }
+
+    // Default redirect jika payload tidak ditemukan
     return NextResponse.redirect(new URL("/admin", request.url));
   }
 
