@@ -34,7 +34,7 @@ export default function PermasalahanSiswa() {
   return (
     <div className="flex-1 bg-[#fafafa] min-h-screen">
       {/* HEADER */}
-      <div className="bg-white border-b px-8 py-4 flex items-center justify-between">
+      {/* <div className="bg-white border-b px-8 py-4 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#8B1E1E]">
             MagangHub
@@ -45,7 +45,6 @@ export default function PermasalahanSiswa() {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Bell */}
           <div className="relative">
             <svg
               className="w-6 h-6 text-gray-600"
@@ -65,7 +64,7 @@ export default function PermasalahanSiswa() {
             </span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* CONTENT */}
       <div className="px-8 py-10">
@@ -106,7 +105,7 @@ export default function PermasalahanSiswa() {
                           key={siswa.id}
                           value={siswa.nama}
                           onSelect={() => {
-                            if (siswa.id==siswaId){
+                            if (siswa.id == siswaId) {
                               setSiswaId(0)
                               return
                             }

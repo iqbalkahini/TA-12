@@ -45,7 +45,7 @@ export default function Dashboard() {
         {/* MAIN */}
         <main className="flex-1 p-6 md:p-8">
           {/* Top header */}
-          <header className="flex items-center justify-between pb-6 border-b border-gray-200">
+          {/* <header className="flex items-center justify-between pb-6 border-b border-gray-200">
             <div>
               <h1 className="text-2xl font-bold text-[#6e1f21]">MagangHub</h1>
               <p className="text-sm text-gray-500">Ringkasan singkat mengenai sistem manajemen PKL Anda.</p>
@@ -57,7 +57,7 @@ export default function Dashboard() {
                 <span className="absolute -top-0 -right-0 bg-[#c1272d] text-white text-xs font-semibold rounded-full px-1.5 py-0.5">3</span>
               </div>
             </div>
-          </header>
+          </header> */}
 
           {/* Cards */}
           <section className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">

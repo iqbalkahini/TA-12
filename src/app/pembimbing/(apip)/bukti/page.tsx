@@ -6,7 +6,7 @@ export default function UploadDokumenBukti() {
       {/* MAIN CONTENT */}
       <main className="flex-1">
         {/* HEADER */}
-        <header className="border-b px-6 py-4 flex items-center justify-between">
+        {/* <header className="border-b px-6 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-[#6B0F0F]">MagangHub</h1>
             <p className="text-sm text-gray-500">
@@ -27,7 +27,7 @@ export default function UploadDokumenBukti() {
               ⚙️
             </button>
           </div>
-        </header>
+        </header> */}
 
         {/* CONTENT */}
         <div className="p-8 space-y-10">

@@ -4,7 +4,7 @@ export default function PerizinanSiswa() {
   return (
     <div className="min-h-screen bg-[#fafafa]">
       {/* HEADER */}
-      <header className="bg-white border-b px-8 py-4 flex items-center justify-between">
+      {/* <header className="bg-white border-b px-8 py-4 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#8B1E1E]">MagangHub</h1>
           <p className="text-sm text-gray-500">
@@ -46,7 +46,7 @@ export default function PerizinanSiswa() {
             />
           </svg>
         </div>
-      </header>
+      </header> */}
 
       {/* CONTENT */}
       <div className="px-8 py-10 space-y-8">
