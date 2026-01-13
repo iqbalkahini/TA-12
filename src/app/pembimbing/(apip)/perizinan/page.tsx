@@ -1,33 +1,10 @@
-'use client'
 import React from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-const dataSiswa = [
-  { id: 1, nama: "Iqbal Lazuardi" },
-  { id: 2, nama: "Ahmad Fauzi" },
-  { id: 3, nama: "Budi Santoso" },
-];
-
-export default function PermasalahanSiswa() {
+export default function PerizinanSiswa() {
   return (
-    <div className="flex-1 bg-[#fafafa] min-h-screen">
+    <div className="min-h-screen bg-[#fafafa]">
       {/* HEADER */}
-      <div className="bg-white border-b px-8 py-4 flex items-center justify-between">
+      <header className="bg-white border-b px-8 py-4 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#8B1E1E]">MagangHub</h1>
           <p className="text-sm text-gray-500">
@@ -36,7 +13,6 @@ export default function PermasalahanSiswa() {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Bell */}
           <div className="relative">
             <svg
               className="w-6 h-6 text-gray-600"
@@ -56,7 +32,6 @@ export default function PermasalahanSiswa() {
             </span>
           </div>
 
-          {/* Gear */}
           <svg
             className="w-6 h-6 text-gray-600"
             fill="none"
@@ -71,61 +46,81 @@ export default function PermasalahanSiswa() {
             />
           </svg>
         </div>
-      </div>
+      </header>
 
-            {/* CONTENT */}
-            <div className="px-8 py-10">
-                <div className="max-w-4xl mx-auto bg-white border rounded-xl p-8">
-                    <h2 className="text-xl font-semibold mb-6">
-                        Permasalahan Siswa
-                    </h2>
-
-          {/* Nama Siswa */}
-          <div className="mb-6">
+      {/* CONTENT */}
+      <div className="px-8 py-10 space-y-8">
+        {/* FILTER */}
+        <div className="bg-white border rounded-xl p-6 flex items-end gap-6">
+          <div className="flex-1">
             <label className="block text-sm font-medium mb-2">
-              Nama Siswa <span className="text-red-500">*</span>
+              Industri <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              placeholder="Masukan nama siswa"
-              className="w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#8B1E1E]"
+              placeholder="Pilih Industri"
+              className="w-full border rounded-lg px-4 py-2"
             />
           </div>
 
-          {/* Permasalahan */}
-          <div className="mb-8">
+          <div className="flex-1">
             <label className="block text-sm font-medium mb-2">
-              Permasalahan Siswa <span className="text-red-500">*</span>
+              Kelas <span className="text-red-500">*</span>
             </label>
-            <textarea
-              rows= {6}
-              placeholder="Masukan permasalahan siswa"
-              className="w-full border rounded-lg px-4 py-3 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-[#8B1E1E]"
+            <input
+              type="text"
+              placeholder="Pilih Kelas"
+              className="w-full border rounded-lg px-4 py-2"
             />
           </div>
 
-          {/* Button */}
-          <button className="w-full bg-[#6B1B1B] hover:bg-[#5a1616] text-white py-3 rounded-lg flex items-center justify-center gap-2 transition">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M22 2L11 13"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M22 2l-7 20-4-9-9-4 20-7z"
-              />
-            </svg>
-            Kirim Pengaduan Masalah
+          <button className="bg-[#6B1B1B] text-white px-8 py-2 rounded-lg flex items-center gap-2">
+            🔍 Cari...
           </button>
+
+          <button className="bg-gray-100 px-4 py-2 rounded-lg flex items-center gap-2">
+            🔄 Reset Filter
+          </button>
+        </div>
+
+        {/* LIST */}
+        <div className="bg-white border rounded-xl p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-semibold">
+              Pengajuan Izin Peserta Didik
+            </h2>
+            <button className="text-sm text-blue-600">Lihat Semua</button>
+          </div>
+
+          <div className="space-y-6">
+            {[1, 2, 3].map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <img
+                    src="https://i.pravatar.cc/50"
+                    alt="avatar"
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <div>
+                    <p className="font-semibold">Nama Siswa</p>
+                    <p className="text-sm text-gray-500">
+                      XII RPL 1 • PT Teknologi Maju
+                    </p>
+                    <p className="text-sm">
+                      Alasan: <span className="text-red-600">Sakit</span>
+                    </p>
+                  </div>
+                </div>
+
+                <button className="bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm">
+                  Periksa
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
