@@ -67,7 +67,7 @@ export default function PembekalanPage() {
                 tanggal_selesai: endDate ? format(endDate, "yyyy-MM-dd") : "",
             })
             toast.success("Jadwal berhasil ditambahkan")
-            // router.push('/koordinator/jadwal')
+            router.push('/koordinator/jadwal')
         } catch (error) {
             console.log(error)
             toast.error("Gagal menambahkan jadwal")

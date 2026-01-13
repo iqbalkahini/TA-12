@@ -43,13 +43,13 @@ import { jadwalPkl } from "@/types/api"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
-export default function PengantaranPage() {
+export default function PembekalanPage() {
     const [startDate, setStartDate] = useState<Date | undefined>()
     const [endDate, setEndDate] = useState<Date | undefined>()
     const [tahunAjaranId, setTahunAjaranId] = useState<number>(0)
     const [data, setData] = useState<jadwalPkl>({
         deskripsi: "",
-        jenis_kegiatan: "Pengantaran",
+        jenis_kegiatan: "Penjemputan",
         tahun_ajaran_id: 0,
         tanggal_mulai: "",
         tanggal_selesai: "",
@@ -75,7 +75,6 @@ export default function PengantaranPage() {
             })
             toast.success("Jadwal berhasil ditambahkan")
             router.push('/koordinator/jadwal')
-            console.log(res)
         } catch (error) {
             console.log(error)
             toast.error("Gagal menambahkan jadwal")
@@ -89,7 +88,7 @@ export default function PengantaranPage() {
                 <Card className="lg:col-span-1 border-none shadow-sm h-fit">
                     <CardHeader className="space-y-1">
                         <div className="flex items-center gap-2 mb-2">
-                            <CardTitle className="text-xl">Tambah Jadwal Pengantaran</CardTitle>
+                            <CardTitle className="text-xl">Tambah Jadwal Penjemputan</CardTitle>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -218,91 +217,6 @@ export default function PengantaranPage() {
                     </CardContent>
                 </Card>
             </div>
-
-            {/* Bottom Section - Table */}
-            {/* <Card className="border-none shadow-sm">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="text-xl">Daftar Jadwal Pembekalan</CardTitle>
-                    <div className="flex items-center gap-2">
-                        <div className="relative">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                placeholder="Cari Jadwal..."
-                                className="w-[200px] pl-8 lg:w-[300px]"
-                            />
-                        </div>
-                        <Button variant="outline" size="sm" className="h-10 gap-1">
-                            <Filter className="h-3.5 w-3.5" />
-                            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                                Filter
-                            </span>
-                        </Button>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Judul Pembekalan</TableHead>
-                                <TableHead>Tanggal & Waktu</TableHead>
-                                <TableHead>Lokasi</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Aksi</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {schedules.map((schedule) => (
-                                <TableRow key={schedule.id}>
-                                    <TableCell>
-                                        <div className="flex flex-col">
-                                            <span className="font-semibold">{schedule.title}</span>
-                                            <span className="text-xs text-muted-foreground">{schedule.description}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex flex-col">
-                                            <span className="font-medium text-sm">{schedule.date}</span>
-                                            <span className="text-xs text-muted-foreground">{schedule.time}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="font-medium">{schedule.location}</TableCell>
-                                    <TableCell>
-                                        {getStatusBadge(schedule.status, schedule.statusVariant)}
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Button variant="outline" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-200">
-                                                <Edit className="h-4 w-4" />
-                                            </Button>
-                                            <Button variant="outline" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-
-                    <div className="flex items-center justify-between px-2 pt-4">
-                        <div className="text-xs text-muted-foreground">
-                            Menampilkan 1-4 dari 4 jadwal
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <Button variant="outline" className="h-8 w-8 p-0" disabled>
-                                <ChevronLeft className="h-4 w-4" />
-                            </Button>
-                            <Button variant="default" className="h-8 w-8 p-0 bg-[#5A1B1B] text-white hover:bg-[#4a1616]">
-                                1
-                            </Button>
-                            <Button variant="outline" className="h-8 w-8 p-0">
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card> */}
         </div>
     )
 }
