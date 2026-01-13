@@ -220,6 +220,16 @@ export interface TahunAjaran {
   updated_at: string;
 }
 
+export interface jadwalPkl {
+  id?: number;
+  deskripsi: string;
+  jenis_kegiatan: "Pembekalan" | "Pengantaran" | "Monitoring" | "Penjemputan";
+  tahun_ajaran_id: number;
+  tanggal_mulai: string;
+  tanggal_selesai: string;
+  status?: string;
+}
+
 export type GuruListResponse = ListResponse<Guru>;
 export type SiswaListResponse = ListResponse<Siswa>;
 export type JurusanListResponse = ListResponse<Jurusan>;

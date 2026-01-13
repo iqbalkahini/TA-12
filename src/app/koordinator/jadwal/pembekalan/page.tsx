@@ -1,18 +1,8 @@
 "use client"
 
-import * as React from "react"
 import {
     Calendar as CalendarIcon,
-    ChevronLeft,
-    ChevronRight,
-    Clock,
-    Edit,
-    Filter,
-    MoreVertical,
-    Plus,
     Save,
-    Search,
-    Trash2,
 } from "lucide-react"
 import { format } from "date-fns"
 
@@ -21,7 +11,6 @@ import { Calendar } from "@/components/ui/calendar"
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
@@ -32,87 +21,65 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+// import {
+//     Select,
+//     SelectContent,
+//     SelectItem,
+//     SelectTrigger,
+//     SelectValue,
+// } from "@/components/ui/select"
+// import {
+//     Table,
+//     TableBody,
+//     TableCell,
+//     TableHead,
+//     TableHeader,
+//     TableRow,
+// } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from "react"
+import { createJadwal, getActiveTahunAjaran } from "@/api/koordinator"
+import { jadwalPkl } from "@/types/api"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 export default function PembekalanPage() {
-    const [date, setDate] = React.useState<Date | undefined>(new Date())
+    const [startDate, setStartDate] = useState<Date | undefined>()
+    const [endDate, setEndDate] = useState<Date | undefined>()
+    const [tahunAjaranId, setTahunAjaranId] = useState<number>(0)
+    const [data, setData] = useState<jadwalPkl>({
+        deskripsi: "",
+        jenis_kegiatan: "Pembekalan",
+        tahun_ajaran_id: 0,
+        tanggal_mulai: "",
+        tanggal_selesai: "",
+    })
+    const router = useRouter()
 
-    // Mock data for the table
-    const schedules = [
-        {
-            id: 1,
-            title: "Orientasi PKL",
-            description: "Pengenalan program PKL",
-            date: "5 Nov 2024",
-            time: "09:00 - 11:00 WIB",
-            location: "Aula Pertemuan",
-            status: "Terjadwal",
-            statusVariant: "default", // blue
-        },
-        {
-            id: 2,
-            title: "Teknik Wawancara",
-            description: "Persiapan wawancara kerja",
-            date: "12 Nov 2024",
-            time: "13:00 - 15:00 WIB",
-            location: "Lab RPL 1",
-            status: "Selesai",
-            statusVariant: "success", // green
-        },
-        {
-            id: 3,
-            title: "Etika Profesional",
-            description: "Sikap dan perilaku di tempat kerja",
-            date: "18 Nov 2024",
-            time: "10:00 - 12:00 WIB",
-            location: "Lab DKV",
-            status: "Draft",
-            statusVariant: "outline", // gray/orange
-        },
-        {
-            id: 4,
-            title: "Evaluasi Akhir PKL",
-            description: "Penilaian dan feedback",
-            date: "25 Nov 2024",
-            time: "14:00 - 16:00 WIB",
-            location: "Ruang Bahasa",
-            status: "Selesai",
-            statusVariant: "success",
-        },
-    ]
 
-    const getStatusBadge = (status: string, variant: string) => {
-        let className = ""
-        switch (status) {
-            case "Terjadwal":
-                className = "bg-blue-100 text-blue-700 hover:bg-blue-100/80 border-transparent"
-                break
-            case "Selesai":
-                className = "bg-green-100 text-green-700 hover:bg-green-100/80 border-transparent"
-                break
-            case "Draft":
-                className = "bg-orange-100 text-orange-700 hover:bg-orange-100/80 border-transparent"
-                break
-            default:
-                className = "bg-gray-100 text-gray-700 hover:bg-gray-100/80 border-transparent"
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await getActiveTahunAjaran()
+            setTahunAjaranId(response.id)
         }
-        return <Badge className={className}>{status}</Badge>
+        fetchData()
+    }, [])
+
+    async function handleSubmit() {
+        try {
+            const res = await createJadwal({
+                ...data,
+                tahun_ajaran_id: tahunAjaranId,
+                tanggal_mulai: startDate ? format(startDate, "yyyy-MM-dd") : "",
+                tanggal_selesai: endDate ? format(endDate, "yyyy-MM-dd") : "",
+            })
+            toast.success("Jadwal berhasil ditambahkan")
+            // router.push('/koordinator/jadwal')
+            console.log(res)
+        } catch (error) {
+            console.log(error)
+            toast.error("Gagal menambahkan jadwal")
+        }
     }
 
     return (
@@ -122,69 +89,84 @@ export default function PembekalanPage() {
                 <Card className="lg:col-span-1 border-none shadow-sm h-fit">
                     <CardHeader className="space-y-1">
                         <div className="flex items-center gap-2 mb-2">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#5A1B1B] text-white">
-                                <Plus className="h-5 w-5" />
-                            </div>
-                            <CardTitle className="text-xl">Tambah Jadwal Baru</CardTitle>
+                            <CardTitle className="text-xl">Tambah Jadwal Pembekalan</CardTitle>
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="title">Judul Pembekalan</Label>
-                            <Input id="title" placeholder="Masukkan Judul Pembekalan" />
-                        </div>
-
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Tanggal</Label>
+                                <Label>Tanggal Mulai</Label>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <Button
                                             variant={"outline"}
                                             className={cn(
                                                 "w-full justify-start text-left font-normal",
-                                                !date && "text-muted-foreground"
+                                                !startDate && "text-muted-foreground"
                                             )}
                                         >
                                             <CalendarIcon className="mr-2 h-4 w-4" />
-                                            {date ? format(date, "P") : <span>DD/MM/YYYY</span>}
+                                            {startDate ? format(startDate, "P") : <span>DD/MM/YYYY</span>}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto p-0">
                                         <Calendar
                                             mode="single"
-                                            selected={date}
-                                            onSelect={setDate}
+                                            selected={startDate}
+                                            onSelect={setStartDate}
                                             initialFocus
+                                            disabled={(date) =>
+                                                date < new Date(new Date().setHours(0, 0, 0, 0))
+                                            }
                                         />
                                     </PopoverContent>
                                 </Popover>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="time">Waktu</Label>
-                                <div className="relative">
-                                    <Input id="time" placeholder="--:--" />
-                                    <Clock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                                </div>
+                                <Label className={cn(!startDate && "opacity-50")}>Tanggal Selesai</Label>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant={"outline"}
+                                            disabled={!startDate}
+                                            className={cn(
+                                                "w-full justify-start text-left font-normal",
+                                                !endDate && "text-muted-foreground"
+                                            )}
+                                        >
+                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                            {endDate ? format(endDate, "P") : <span>DD/MM/YYYY</span>}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0">
+                                        <Calendar
+                                            mode="single"
+                                            selected={endDate}
+                                            onSelect={setEndDate}
+                                            initialFocus
+                                            disabled={(date) => {
+                                                const today = new Date(new Date().setHours(0, 0, 0, 0));
+                                                if (startDate) {
+                                                    return date < startDate || date < today;
+                                                }
+                                                return date < today;
+                                            }}
+                                        />
+                                    </PopoverContent>
+                                </Popover>
                             </div>
                         </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="location">Lokasi</Label>
-                            <Input id="location" placeholder="Lokasi/Ruang Pembekalan" />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="speaker">Pemateri</Label>
-                            <Input id="speaker" placeholder="Pemateri Pembekalan" />
-                        </div>
-
                         <div className="space-y-2">
                             <Label htmlFor="notes">Keterangan</Label>
-                            <Input id="notes" placeholder="Opsional" />
+                            <Input id="notes" placeholder="Opsional" name="deskripsi" onChange={(e) => {
+                                setData({
+                                    ...data,
+                                    deskripsi: e.target.value,
+                                })
+                            }} />
                         </div>
 
-                        <Button className="w-full bg-[#5A1B1B] hover:bg-[#4a1616] text-white" size="lg">
+                        <Button className="w-full bg-[#5A1B1B] hover:bg-[#4a1616] text-white" size="lg" onClick={handleSubmit}>
                             <Save className="mr-2 h-4 w-4" />
                             Simpan Jadwal
                         </Button>
@@ -193,15 +175,24 @@ export default function PembekalanPage() {
 
                 {/* Right Column - Calendar */}
                 <Card className="lg:col-span-2 border-none shadow-sm h-full">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardHeader>
                         <CardTitle className="text-xl">Kalender Jadwal</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 sm:p-6">
                         <div className="flex justify-center w-full">
                             <Calendar
-                                mode="single"
-                                selected={date}
-                                onSelect={setDate}
+                                mode="range"
+                                selected={{
+                                    from: startDate,
+                                    to: endDate,
+                                }}
+                                onSelect={(range) => {
+                                    setStartDate(range?.from)
+                                    setEndDate(range?.to)
+                                }}
+                                disabled={(date) =>
+                                    date < new Date(new Date().setHours(0, 0, 0, 0))
+                                }
                                 className="rounded-md border shadow-sm w-full max-w-full"
                                 numberOfMonths={2}
                                 classNames={{
@@ -224,27 +215,12 @@ export default function PembekalanPage() {
                                 }}
                             />
                         </div>
-
-                        <div className="flex flex-wrap gap-4 mt-6 justify-center">
-                            <div className="flex items-center gap-2">
-                                <span className="h-3 w-3 rounded-full bg-[#5A1B1B]"></span>
-                                <span className="text-sm text-muted-foreground">Pembekalan Wajib</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="h-3 w-3 rounded-full bg-blue-200"></span>
-                                <span className="text-sm text-muted-foreground">Pembekalan Pilihan</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="h-3 w-3 rounded-full bg-green-200"></span>
-                                <span className="text-sm text-muted-foreground">Workshop</span>
-                            </div>
-                        </div>
                     </CardContent>
                 </Card>
             </div>
 
             {/* Bottom Section - Table */}
-            <Card className="border-none shadow-sm">
+            {/* <Card className="border-none shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-xl">Daftar Jadwal Pembekalan</CardTitle>
                     <div className="flex items-center gap-2">
@@ -309,7 +285,6 @@ export default function PembekalanPage() {
                         </TableBody>
                     </Table>
 
-                    {/* Pagination Mock */}
                     <div className="flex items-center justify-between px-2 pt-4">
                         <div className="text-xs text-muted-foreground">
                             Menampilkan 1-4 dari 4 jadwal
@@ -327,7 +302,7 @@ export default function PembekalanPage() {
                         </div>
                     </div>
                 </CardContent>
-            </Card>
+            </Card> */}
         </div>
     )
 }
