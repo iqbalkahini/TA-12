@@ -1,12 +1,44 @@
+'use client'
 import React from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const dataSiswa = [
+  { id: 1, nama: "Iqbal Lazuardi" },
+  { id: 2, nama: "Ahmad Fauzi" },
+  { id: 3, nama: "Budi Santoso" },
+];
 
 export default function PermasalahanSiswa() {
+  const [open, setOpen] = React.useState(false);
+  const [siswaId, setSiswaId] = React.useState<number>(0);
+
+  const selectedSiswa = dataSiswa.find(
+    (siswa) => siswa.id === siswaId
+  );
+
   return (
     <div className="flex-1 bg-[#fafafa] min-h-screen">
       {/* HEADER */}
       <div className="bg-white border-b px-8 py-4 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#8B1E1E]">MagangHub</h1>
+          <h1 className="text-2xl font-bold text-[#8B1E1E]">
+            MagangHub
+          </h1>
           <p className="text-sm text-gray-500">
             Ringkasan singkat mengenai sistem manajemen PKL Anda.
           </p>
@@ -32,21 +64,6 @@ export default function PermasalahanSiswa() {
               3
             </span>
           </div>
-
-          {/* Gear */}
-          <svg
-            className="w-6 h-6 text-gray-600"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.3 1.9l.7 2.1a8 8 0 012.6 0l.7-2.1 2.2.9-.9 2.1a8 8 0 011.8 1.8l2.1-.9.9 2.2-2.1.7a8 8 0 010 2.6l2.1.7-.9 2.2-2.1-.9a8 8 0 01-1.8 1.8l.9 2.1-2.2.9-.7-2.1a8 8 0 01-2.6 0l-.7 2.1-2.2-.9.9-2.1a8 8 0 01-1.8-1.8l-2.1.9-.9-2.2 2.1-.7a8 8 0 010-2.6l-2.1-.7.9-2.2 2.1.9a8 8 0 011.8-1.8l-.9-2.1 2.2-.9z"
-            />
-          </svg>
         </div>
       </div>
 
@@ -57,31 +74,76 @@ export default function PermasalahanSiswa() {
             Permasalahan Siswa
           </h2>
 
-          {/* Nama Siswa */}
+          {/* NAMA SISWA */}
           <div className="mb-6">
             <label className="block text-sm font-medium mb-2">
               Nama Siswa <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              placeholder="Masukan nama siswa"
-              className="w-full border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#8B1E1E]"
-            />
+
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-full justify-between"
+                >
+                  {selectedSiswa
+                    ? selectedSiswa.nama
+                    : "Masukan nama siswa"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-full p-0">
+                <Command>
+                  <CommandInput placeholder="Cari siswa..." />
+                  <CommandList>
+                    <CommandEmpty>Siswa tidak ditemukan.</CommandEmpty>
+                    <CommandGroup>
+                      {[{
+                        id : 1,
+                        nama :'alimin'
+                      }].map((siswa) => (
+                        <CommandItem
+                          key={siswa.id}
+                          value={siswa.nama}
+                          onSelect={() => {
+                            setSiswaId(siswa.id);
+                            setOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              siswaId === siswa.id
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          {siswa.nama}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
-          {/* Permasalahan */}
+          {/* PERMASALAHAN */}
           <div className="mb-8">
             <label className="block text-sm font-medium mb-2">
               Permasalahan Siswa <span className="text-red-500">*</span>
             </label>
             <textarea
-              rows= {6}
+              rows={6}
               placeholder="Masukan permasalahan siswa"
               className="w-full border rounded-lg px-4 py-3 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-[#8B1E1E]"
             />
           </div>
 
-          {/* Button */}
+          {/* BUTTON */}
           <button className="w-full bg-[#6B1B1B] hover:bg-[#5a1616] text-white py-3 rounded-lg flex items-center justify-center gap-2 transition">
             <svg
               className="w-5 h-5"
@@ -90,11 +152,7 @@ export default function PermasalahanSiswa() {
               strokeWidth="1.8"
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M22 2L11 13"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M22 2L11 13" />
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
