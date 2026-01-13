@@ -196,10 +196,12 @@ export default function JadwalPage() {
                                         Pembekalan: { icon: BookOpen, color: "text-blue-700", bg: "bg-blue-50", border: "border-blue-100" },
                                         Pengantaran: { icon: Truck, color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-100" },
                                         Monitoring: { icon: Users, color: "text-rose-700", bg: "bg-rose-50", border: "border-rose-100" },
+                                        Monitoring1: { icon: Users, color: "text-rose-700", bg: "bg-rose-50", border: "border-rose-100" },
+                                        Monitoring2: { icon: Users, color: "text-rose-700", bg: "bg-rose-50", border: "border-rose-100" },
                                         Penjemputan: { icon: Package, color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-100" },
                                     };
 
-                                    const config = configMap[item.jenis_kegiatan] || { icon: Clock, color: "text-gray-700", bg: "bg-gray-50", border: "border-gray-100" };
+                                    const config = (item.jenis_kegiatan && configMap[item.jenis_kegiatan]) || { icon: Clock, color: "text-gray-700", bg: "bg-gray-50", border: "border-gray-100" };
 
                                     const mDate = new Date(item.tanggal_mulai);
                                     const sDate = new Date(item.tanggal_selesai);
