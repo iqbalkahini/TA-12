@@ -46,8 +46,6 @@ const DashboardAdminPKL = () => {
         return <Spinner className="absolute top-1/2 left-1/2 w-7 h-7" />
     }
 
-    console.log(dataPengajuan);
-
     return (
         <div className="w-full p-6 max-w-6xl mx-auto space-y-10">
             {/* Stats */}
