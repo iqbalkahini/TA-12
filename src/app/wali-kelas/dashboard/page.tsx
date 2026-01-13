@@ -1,4 +1,4 @@
-import React from "react";
+import { GraduationCap, Users, Building2, ArrowUp, Search, MoreHorizontal } from "lucide-react";
 
 export default function Dashboard() {
     return (
@@ -13,10 +13,10 @@ export default function Dashboard() {
                         value="156"
                         info={
                             <span className="text-green-600 text-sm flex items-center gap-1">
-                                <i className="fa-solid fa-arrow-up"></i> +12% dari bulan lalu
+                                <ArrowUp className="w-4 h-4" /> +12% dari bulan lalu
                             </span>
                         }
-                        icon="fa-user-graduate"
+                        icon={GraduationCap}
                         iconStyle="bg-blue-100 text-blue-600"
                     />
 
@@ -24,7 +24,7 @@ export default function Dashboard() {
                         title="Pembimbing PKL"
                         value="38"
                         info={<span className="text-orange-500 text-sm">Penghubung sekolah & industri</span>}
-                        icon="fa-chalkboard-user"
+                        icon={Users}
                         iconStyle="bg-orange-100 text-orange-500"
                     />
 
@@ -32,7 +32,7 @@ export default function Dashboard() {
                         title="Industri Partner"
                         value="26"
                         info={<span className="text-blue-600 text-sm">Aktif bekerjasama</span>}
-                        icon="fa-building"
+                        icon={Building2}
                         iconStyle="bg-gray-200 text-gray-600"
                     />
                 </section>
@@ -42,7 +42,7 @@ export default function Dashboard() {
                     <h3 className="text-lg font-semibold">Data Siswa</h3>
 
                     <div className="relative my-4">
-                        <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                         <input
                             type="text"
                             placeholder="Cari nama siswa atau industri..."
@@ -70,7 +70,9 @@ export default function Dashboard() {
                                     <td className="p-3">{row.izin}</td>
                                     <td className="p-3">{row.alpha}</td>
                                     <td className="p-3">
-                                        <i className="fa-solid fa-ellipsis cursor-pointer"></i>
+                                        <div className="flex justify-center">
+                                            <MoreHorizontal className="cursor-pointer text-gray-400 hover:text-gray-600 w-5 h-5" />
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -92,7 +94,7 @@ export default function Dashboard() {
     );
 }
 
-function Card({ title, value, info, icon, iconStyle }: any) {
+function Card({ title, value, info, icon: Icon, iconStyle }: any) {
     return (
         <div className="bg-white rounded-xl p-5 flex justify-between items-center shadow-sm">
             <div>
@@ -100,8 +102,8 @@ function Card({ title, value, info, icon, iconStyle }: any) {
                 <h1 className="text-3xl font-bold my-2">{value}</h1>
                 {info}
             </div>
-            <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl ${iconStyle}`}>
-                <i className={`fa-solid ${icon}`}></i>
+            <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${iconStyle}`}>
+                <Icon className="w-7 h-7" />
             </div>
         </div>
     );
