@@ -311,6 +311,24 @@ export interface IBuktiKegiatan {
   updated_at: string;
 }
 
+export interface IndustriDataPembimbing {
+  industri_id: number;
+  industri_nama: string;
+  jumlah_siswa: number;
+}
+
+export interface SiswaDataPembimbing {
+  application_id: number;
+  industri_id: number;
+  industri_nama: string;
+  siswa_id: number;
+  siswa_nama: string;
+  siswa_username: string;
+  status: string;
+  tanggal_mulai: string;
+  tanggal_selesai: string;
+}
+
 export type GuruListResponse = ListResponse<Guru>;
 export type SiswaListResponse = ListResponse<Siswa>;
 export type JurusanListResponse = ListResponse<Jurusan>;

@@ -19,7 +19,15 @@ export async function kegiatanPklById(id: number) {
 }
 export async function getIndustri() {
   try {
-    const res = await axiosInstance.get(`/api/industri`);
+    const res = await axiosInstance.get(`/api/pkl/guru/industri`);
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}
+export async function getSiswa() {
+  try {
+    const res = await axiosInstance.get(`/api/pkl/guru/siswa`);
     return res.data;
   } catch (error) {
     throw error;
