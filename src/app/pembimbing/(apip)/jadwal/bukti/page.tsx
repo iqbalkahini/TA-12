@@ -37,6 +37,7 @@ import {
 import { TasksRealisasiPkl } from "@/types/api"
 import { getTasksRealisasiPkl } from "@/api/pembimbing"
 import { Spinner } from "@/components/ui/spinner"
+import { useRouter } from "next/navigation"
 
 const mockPayload = {
     "data": [
@@ -113,6 +114,7 @@ export default function JadwalBukti() {
     const [search, setSearch] = useState("")
     const [data, setData] = useState<TasksRealisasiPkl | null>(null)
     const [loading, setLoading] = useState(true)
+    const router = useRouter()
 
     const formatDate = (dateString: string) => {
         return format(new Date(dateString), "dd MMM yyyy", { locale: idLocale })
@@ -177,7 +179,7 @@ export default function JadwalBukti() {
             </div>
 
             <div className="grid gap-8">
-                {data?.data.map((item, idx) => (
+                {(data?.data?.length ?? 0) > 0 ? data?.data?.map((item, idx) => (
                     <div key={idx} className="group flex flex-col gap-4">
                         {/* Industry Header */}
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-2">
@@ -293,6 +295,9 @@ export default function JadwalBukti() {
                                                             ? 'bg-[#8B1E1E] hover:bg-[#6e1818] text-white shadow-md shadow-[#8B1E1E]/10'
                                                             : 'bg-gray-100 text-gray-400 border-transparent'
                                                             }`}
+                                                        onClick={() => {
+                                                            router.push(`/pembimbing/jadwal/${task.kegiatan.id}/industri/${item.industri.id}/bukti`)
+                                                        }}
                                                     >
                                                         <Upload className="mr-2 h-4 w-4" />
                                                         Unggah Bukti
@@ -306,7 +311,23 @@ export default function JadwalBukti() {
                             </CardContent>
                         </Card>
                     </div>
-                ))}
+                )) : <Card className="border-none shadow-xl shadow-gray-200/50 bg-white rounded-3xl overflow-hidden ring-1 ring-gray-100">
+                    <CardContent className="p-0 sm:p-2">
+                        <Table>
+                            <TableHeader>
+                                <TableRow className="border-none hover:bg-transparent">
+                                    <TableHead className="px-6 font-bold text-[11px] uppercase tracking-wider text-muted-foreground">Jenis Kegiatan</TableHead>
+                                    <TableHead className="px-6 font-bold text-[11px] uppercase tracking-wider text-muted-foreground">Rentang Waktu</TableHead>
+                                    <TableHead className="px-6 font-bold text-[11px] uppercase tracking-wider text-muted-foreground">Status</TableHead>
+                                    <TableHead className="px-6 font-bold text-[11px] uppercase tracking-wider text-muted-foreground text-right">Aksi</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>}
             </div>
         </div>
     )
