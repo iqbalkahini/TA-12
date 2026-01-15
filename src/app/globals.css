@@ -119,6 +119,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  button {
+    cursor: pointer;
+  }
 }
 
 /* Custom animations for landing page */
@@ -203,10 +206,6 @@
 .sidebar-container,
 .main-content {
   transition: width 0.3s ease-in-out, padding-left 0.3s ease-in-out;
-}
-
-button {
-  cursor: pointer;
 }
 
 @media (max-width: 1024px) {

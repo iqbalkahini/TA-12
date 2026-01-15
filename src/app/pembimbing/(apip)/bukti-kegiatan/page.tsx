@@ -151,11 +151,11 @@ export default function HasilBukti() {
                     <TableCell className="py-5 px-6">
                       <div className="flex items-center gap-2 text-sm text-gray-600 max-w-xs">
                         <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-                        <p className="truncate italic">"{item.catatan || "Tidak ada catatan"}"</p>
+                        <p className="truncate italic">{item.catatan || "-"}</p>
                       </div>
                     </TableCell>
                     <TableCell className="py-5 px-6">
-                      <div className="flex items-center gap-1.5 text-sm font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100/50 inline-flex">
+                      <div className=" items-center gap-1.5 text-sm font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100/50 inline-flex">
                         <ImageIcon className="h-3.5 w-3.5" />
                         <span>{item.bukti_foto_urls?.length || 0} Foto</span>
                       </div>

@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-sidebar-collapsed="true">
+    <html lang="en" data-sidebar-collapsed="true" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

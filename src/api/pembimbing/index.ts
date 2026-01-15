@@ -61,6 +61,17 @@ export async function createRealisasiKegiatanPkl(
   data: PostRealisasiKegiatanPkl
 ) {
   try {
+    const res = await axiosInstance.post(
+      `/api/realisasi-kegiatan/submit`,
+      data
+    );
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}
+export async function uploadImages(data: FormData) {
+  try {
     const res = await axiosInstance.post(`/api/realisasi-kegiatan`, data);
     return res.data;
   } catch (error) {
