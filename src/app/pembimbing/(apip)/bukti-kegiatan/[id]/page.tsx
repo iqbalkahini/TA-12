@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
-import { ArrowLeft, Calendar, CheckCircle2, Clock, ImageIcon, MapPin, User, Building } from "lucide-react"
+import { ArrowLeft, Calendar, CheckCircle2, Clock, ImageIcon, User, Building } from "lucide-react"
 import Image from "next/image"
 
 export default function BuktiKegiatanDetail() {
