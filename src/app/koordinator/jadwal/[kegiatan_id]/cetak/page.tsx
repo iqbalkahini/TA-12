@@ -204,9 +204,7 @@ const LetterPreview = ({ data }: { data: z.infer<typeof formSchema> }) => {
             {data.school_info.nama_sekolah}
           </h1>
           <p className="normal-case text-xs mt-1">
-            {data.school_info.alamat_jalan}, {data.school_info.kelurahan},{" "}
-            {data.school_info.kecamatan}, {data.school_info.kab_kota},{" "}
-            {data.school_info.provinsi} {data.school_info.kode_pos}
+            {data.school_info.alamat_jalan}
           </p>
           <p className="normal-case text-xs">
             Telepon {data.school_info.telepon}
@@ -678,7 +676,7 @@ export default function CetakBuktiPage() {
                                 >
                                   {field.value
                                     ? gurus.find((g) => g.nama === field.value)
-                                        ?.nama || field.value
+                                      ?.nama || field.value
                                     : "Pilih Guru Pembimbing"}
                                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
