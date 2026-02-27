@@ -35,7 +35,7 @@ export function TeamSwitcher({
         {
           open && (
             <div className="flex flex-col justify-center">
-              <h1 className="font-bold text-[#641E20]">MagangHub</h1>
+              <h1 className="font-bold text-[#ffffff]">MagangHub</h1>
             </div>
           )
         }
