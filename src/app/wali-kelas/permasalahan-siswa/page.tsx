@@ -98,7 +98,7 @@ export default function PermasalahanListWaliKelas() {
                     <div className="flex items-center justify-between">
                         <CardTitle>Filter Pengaduan</CardTitle>
                         <Button variant="outline" className="text-sm" onClick={handleReset}>
-                            Reset Filter <RotateCcw className="ml-2 h-3 w-3" />
+                            Atur Ulang formulir<RotateCcw className="ml-2 h-3 w-3" />
                         </Button>
                     </div>
                 </CardHeader>

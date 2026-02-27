@@ -49,7 +49,7 @@ export default function PengantaranPage() {
     const [tahunAjaranId, setTahunAjaranId] = useState<number>(0)
     const [data, setData] = useState<jadwalPkl>({
         deskripsi: "",
-        jenis_kegiatan: "Pengantaran",
+        jenis_kegiatan: "Pembekalan",
         tahun_ajaran_id: 0,
         tanggal_mulai: "",
         tanggal_selesai: "",

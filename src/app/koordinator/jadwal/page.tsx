@@ -103,12 +103,8 @@ export default function JadwalPage() {
 
             {/* Premium Horizontal Timeline UI */}
             {/* Timeline UI */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {[
-                    {
-                        title: "Pembekalan",
-                        image: "/avatars/01 pembekalan (1).png",
-                    },
                     {
                         title: "Pengantaran",
                         image: "/avatars/van-conversation.jpg",
@@ -159,7 +155,7 @@ export default function JadwalPage() {
                             ) : data.length > 0 ? (
                                 data.map((item, i) => {
                                     const configMap: Record<string, { icon: any, color: string, bg: string, border: string }> = {
-                                        Pembekalan: { icon: BookOpen, color: "text-blue-700", bg: "bg-blue-50", border: "border-blue-100" },
+                                        Pengantaran: { icon: Truck, color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-100" },
                                         Monitoring: { icon: Users, color: "text-rose-700", bg: "bg-rose-50", border: "border-rose-100" },
                                         Monitoring1: { icon: Users, color: "text-rose-700", bg: "bg-rose-50", border: "border-rose-100" },
                                         Monitoring2: { icon: Users, color: "text-rose-700", bg: "bg-rose-50", border: "border-rose-100" },
@@ -184,7 +180,7 @@ export default function JadwalPage() {
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-2">
                                                         <p className="font-bold text-foreground transition-colors">
-                                                            {item.jenis_kegiatan}
+                                                            {item.jenis_kegiatan == "Pembekalan" ? "Pengantaran" : item.jenis_kegiatan}
                                                         </p>
                                                         {item.status === "active" && (
                                                             <div className="flex items-center text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100 animate-pulse">
@@ -265,18 +261,18 @@ export default function JadwalPage() {
                             <CardTitle>Aksi Cepat</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <Button onClick={() => {
+                            {/* <Button onClick={() => {
                                 router.push(`${pathname}/pembekalan`)
                             }} variant='outline' className="w-full justify-start text-left h-auto py-3 whitespace-normal" size="lg">
                                 <Plus className="mr-2 h-5 w-5" />
                                 Tambah Jadwal Pembekalan
-                            </Button>
-                            {/* <Button onClick={() => {
+                            </Button> */}
+                            <Button onClick={() => {
                                 router.push(`${pathname}/pengantaran`)
                             }} variant="outline" className="w-full justify-start h-auto py-3 text-left whitespace-normal" size="lg">
                                 <Truck className="mr-2 h-5 w-5 shrink-0" />
                                 <span>Tambah Jadwal Pengantaran</span>
-                            </Button> */}
+                            </Button>
                             <Button onClick={() => {
                                 router.push(`${pathname}/monitoring`)
                             }} variant="outline" className="w-full justify-start h-auto py-3 text-left whitespace-normal" size="lg">
