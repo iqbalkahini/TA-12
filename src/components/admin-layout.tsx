@@ -108,12 +108,12 @@ export function AdminLayout({ children, user }: AdminLayoutProps) {
     return (
       <div className="min-h-screen bg-gray-50/40">
         {/* Desktop sidebar - fixed width to prevent layout shift */}
-        <div className="fixed inset-y-0 left-0 z-40 hidden bg-white shadow-sm lg:block w-64">
-          <div className="flex h-full flex-col border-r border-gray-200">
+        <div className="fixed inset-y-0 left-0 z-40 hidden bg-[#641E20] shadow-sm lg:block w-64">
+          <div className="flex h-full flex-col border-r border-white/10">
             {/* Placeholder content */}
-            <div className="flex h-16 items-center justify-between px-4 border-b">
+            <div className="flex h-16 items-center justify-between px-4 border-b border-white/10">
               <div className="flex items-center space-x-3">
-                <div className="animate-pulse bg-gray-200 h-7 w-24 rounded"></div>
+                <div className="animate-pulse bg-white/20 h-7 w-24 rounded"></div>
               </div>
             </div>
           </div>
@@ -146,15 +146,15 @@ export function AdminLayout({ children, user }: AdminLayoutProps) {
 
       {/* Mobile sidebar */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 transform bg-white shadow-xl transition-transform duration-300 ease-in-out lg:hidden",
+        "fixed inset-y-0 left-0 z-50 w-64 transform bg-[#641E20] shadow-xl transition-transform duration-300 ease-in-out lg:hidden",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex h-full flex-col">
           {/* Mobile header */}
-          <div className="flex h-16 items-center justify-between px-4 border-b">
+          <div className="flex h-16 items-center justify-between px-4 border-b border-white/10">
             <div className="flex flex-col justify-center gap-0.5">
-              <span className="text-lg font-bold text-gray-900 leading-none">{pageTitle}</span>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-gray-500 leading-none">Admin</span>
+              <span className="text-lg font-bold text-white leading-none">{pageTitle}</span>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-white/70 leading-none">Admin</span>
             </div>
           </div>
 
@@ -169,15 +169,14 @@ export function AdminLayout({ children, user }: AdminLayoutProps) {
                     key={item.name}
                     variant="ghost"
                     className={cn(
-                      "w-full justify-start rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-gray-100",
+                      "w-full justify-start rounded-lg px-3 py-2 text-sm font-medium transition-all text-white hover:text-white hover:bg-[#772527]",
                       active
-                        ? "bg-[#641E20] text-white hover:bg-[#641E20]/90"
-                        : "text-gray-700 hover:text-gray-900"
+                        ? "bg-[#9C292B]"
+                        : "bg-transparent"
                     )}
                   >
                     <Icon className={cn(
-                      "mr-3 h-5 w-5 flex-shrink-0",
-                      active ? "text-white" : "text-gray-400 group-hover:text-gray-600"
+                      "mr-3 h-5 w-5 flex-shrink-0 text-white"
                     )} />
                     {item.name}
                   </Button>
@@ -189,18 +188,18 @@ export function AdminLayout({ children, user }: AdminLayoutProps) {
       </div>
 
       {/* Desktop sidebar */}
-      <div className="sidebar-container fixed inset-y-0 left-0 z-40 hidden bg-white shadow-sm lg:block">
-        <div className="flex h-full flex-col border-r border-gray-200">
+      <div className="sidebar-container fixed inset-y-0 left-0 z-40 hidden bg-[#641E20] shadow-sm lg:block">
+        <div className="flex h-full flex-col border-r border-white/10">
           {/* Desktop header */}
-          <div className="flex h-16 items-center justify-between px-4 border-b">
+          <div className="flex h-16 items-center justify-between px-4 border-b border-white/10">
             <div className={cn(
               "flex flex-col justify-center gap-0.5 transition-opacity duration-200",
               collapsed ? "hidden" : "block"
             )}>
               {!collapsed && (
                 <>
-                  <span className="text-lg font-bold text-gray-900 leading-none">{pageTitle}</span> <br />
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-gray-500 leading-none">Admin</span>
+                  <span className="text-lg font-bold text-white leading-none">{pageTitle}</span> <br />
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-white/70 leading-none">Admin</span>
                 </>
               )}
             </div>
@@ -208,7 +207,7 @@ export function AdminLayout({ children, user }: AdminLayoutProps) {
               variant="ghost"
               size="sm"
               onClick={handleToggleCollapsed}
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 text-white hover:bg-[#772527] hover:text-white"
             >
               {collapsed ? (
                 <ChevronRight className="h-4 w-4" />
@@ -229,17 +228,16 @@ export function AdminLayout({ children, user }: AdminLayoutProps) {
                     key={item.name}
                     variant="ghost"
                     className={cn(
-                      "w-full justify-start rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-gray-100",
+                      "w-full justify-start rounded-lg px-3 py-2 text-sm font-medium transition-all text-white hover:text-white hover:bg-[#772527]",
                       active
-                        ? "bg-[#641E20] text-white hover:bg-[#641E20]/90"
-                        : "text-gray-700 hover:text-gray-900",
+                        ? "bg-[#9C292B]"
+                        : "bg-transparent",
                       collapsed && "justify-center"
                     )}
                     title={collapsed ? item.name : undefined}
                   >
                     <Icon className={cn(
-                      "h-5 w-5 flex-shrink-0",
-                      active ? "text-white" : "text-gray-400 group-hover:text-gray-600",
+                      "h-5 w-5 flex-shrink-0 text-white",
                       collapsed ? "mr-0" : "mr-3"
                     )} />
                     <span className={cn(

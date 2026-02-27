@@ -77,7 +77,7 @@ export default function PersetujuanPkl() {
             const date = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             // Kab. Malang, 12 Januari 2026
             const tempatTanggal = `${schoolData.kabupaten_kota.replace("Kab.", "").trim()}, ${date}`;
-
+            console.log(schoolData);
             const payload = {
                 nama_perusahaan: industryName,
                 school_info: {

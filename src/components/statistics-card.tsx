@@ -60,7 +60,7 @@ export function StatisticsCard({
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
-        <Icon className={`h-4 w-4 ${getIconStyles()}`} />
+        <Icon className={`h-7 w-7 ${getIconStyles()}`} />
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{safeNumber(value).toLocaleString()}</div>
@@ -71,7 +71,7 @@ export function StatisticsCard({
         )}
         {trend && (
           <div className="flex items-center mt-2">
-            <Badge 
+            <Badge
               variant={trend.isPositive ? 'success' : 'destructive'}
               className="text-xs"
             >
