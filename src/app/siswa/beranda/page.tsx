@@ -240,7 +240,7 @@ export default function Dashboard() {
                                     {kelas?.nama}
                                 </div>
 
-                                <div className="text-gray-500">Jurusan</div>
+                                <div className="text-gray-500">Kosentrasi Keahlian</div>
                                 <div className="font-medium">{jurusan?.nama}</div>
                             </div>
                         </div>
@@ -277,7 +277,7 @@ export default function Dashboard() {
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-500">Sisa Waktu</span>
                                     <span className="font-medium text-blue-600">
-                                    Memuat...
+                                        Memuat...
                                     </span>
                                 </div>
                             </div>
