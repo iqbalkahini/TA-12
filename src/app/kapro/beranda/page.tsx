@@ -162,9 +162,9 @@ const DashboardAdminPKL = () => {
                             className="text-sm border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50 px-3 py-1.5"
                         >
                             <option value="all">Semua Status</option>
-                            <option value="pending_pembimbing">Pending Pembimbing</option>
-                            <option value="pending_kaprog">Pending Kaprog</option>
-                            <option value="pending_koordinator">Pending Koordinator</option>
+                            <option value="pending_pembimbing">Pembimbing Tertunda</option>
+                            <option value="pending_kaprog">Kaprog Tertunda</option>
+                            <option value="pending_koordinator">Koordinator Tertunda</option>
                             <option value="approved">Disetujui</option>
                             <option value="rejected">Ditolak</option>
                         </select>
