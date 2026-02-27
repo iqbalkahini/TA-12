@@ -839,7 +839,7 @@ export default function CetakBuktiPage() {
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormControl>
-                          <Input {...field} placeholder="Label (e.g. Hari)" />
+                          <Input disabled {...field} placeholder="Label (e.g. Hari)" />
                         </FormControl>
                       </FormItem>
                     )}
