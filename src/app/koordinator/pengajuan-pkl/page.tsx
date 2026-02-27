@@ -319,7 +319,7 @@ export default function PengajuanPKLPage() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">Semua Status</SelectItem>
-                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="pending">Tertunda</SelectItem>
                             <SelectItem value="approved">Disetujui</SelectItem>
                             <SelectItem value="rejected">Ditolak</SelectItem>
                         </SelectContent>

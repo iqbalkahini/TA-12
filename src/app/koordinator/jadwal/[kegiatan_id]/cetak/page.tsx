@@ -195,7 +195,7 @@ const LetterPreview = ({ data }: { data: z.infer<typeof formSchema> }) => {
             </div>
           )}
         </div>
-        <div className="text-center w-full uppercase">
+        <div className="text-center w-full">
           <h2 className="text-lg font-bold">
             PEMERINTAH PROVINSI {data.school_info.provinsi}
           </h2>
@@ -295,7 +295,7 @@ const LetterPreview = ({ data }: { data: z.infer<typeof formSchema> }) => {
           </p>
           <p className="font-bold mb-20">{data.penandatangan.jabatan}</p>
 
-          <p className="font-bold underline uppercase">
+          <p className="font-bold underline">
             {data.penandatangan.nama}
           </p>
           <p>{data.penandatangan.pangkat}</p>
