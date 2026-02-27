@@ -63,8 +63,6 @@ export function AppSidebar({ role, guruData, ...props }: AppSidebarProps) {
     setMenus(roleMenus)
   }, [role, guruData, user])
 
-  console.log(user)
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
