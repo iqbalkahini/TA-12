@@ -68,7 +68,7 @@ export function AppSidebar({ role, guruData, ...props }: AppSidebarProps) {
       <SidebarHeader>
         <TeamSwitcher teams={teams} open={open} />
         {
-          role === "gru" ? (
+          user.role === "gru" ? (
             <RoleSwitcher guruData={guruData} open={open} />
           ) : (
             <p className="text-white font-semibold mx-auto">Siswa</p>
