@@ -63,11 +63,19 @@ export function AppSidebar({ role, guruData, ...props }: AppSidebarProps) {
     setMenus(roleMenus)
   }, [role, guruData, user])
 
+  console.log(user)
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={teams} open={open} />
-        <RoleSwitcher guruData={guruData} open={open} />
+        {
+          role === "gru" ? (
+            <RoleSwitcher guruData={guruData} open={open} />
+          ) : (
+            <p className="text-white font-semibold mx-auto">Siswa</p>
+          )
+        }
       </SidebarHeader>
       <SidebarContent>
         <NavProjects projects={menus} pathName={pathName} />
