@@ -295,9 +295,7 @@ const LetterPreview = ({ data }: { data: z.infer<typeof formSchema> }) => {
           </p>
           <p className="font-bold mb-20">{data.penandatangan.jabatan}</p>
 
-          <p className="font-bold underline">
-            {data.penandatangan.nama}
-          </p>
+          <p className="font-bold underline">{data.penandatangan.nama}</p>
           <p>{data.penandatangan.pangkat}</p>
           <p>NIP. {data.penandatangan.nip}</p>
         </div>
@@ -407,6 +405,7 @@ export default function CetakBuktiPage() {
   const getDataSekolah = async () => {
     try {
       const response = await getSekolah();
+      console.log("School Info Response:", response);
       setDataSekolah(response);
     } catch (error) {
       console.error("Error fetching school info:", error);
@@ -429,7 +428,7 @@ export default function CetakBuktiPage() {
 
       // Populate School Info
       form.setValue("school_info.nama_sekolah", info.nama_sekolah);
-      form.setValue("school_info.alamat_jalan", info.jalan);
+      form.setValue("school_info.alamat_jalan", "Jalan Perusahaan No.20");
       form.setValue("school_info.kelurahan", info.kelurahan);
       form.setValue("school_info.kecamatan", info.kecamatan);
       form.setValue("school_info.kab_kota", info.kabupaten_kota);
@@ -676,7 +675,7 @@ export default function CetakBuktiPage() {
                                 >
                                   {field.value
                                     ? gurus.find((g) => g.nama === field.value)
-                                      ?.nama || field.value
+                                        ?.nama || field.value
                                     : "Pilih Guru Pembimbing"}
                                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
@@ -839,7 +838,11 @@ export default function CetakBuktiPage() {
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormControl>
-                          <Input disabled {...field} placeholder="Label (e.g. Hari)" />
+                          <Input
+                            disabled
+                            {...field}
+                            placeholder="Label (e.g. Hari)"
+                          />
                         </FormControl>
                       </FormItem>
                     )}
