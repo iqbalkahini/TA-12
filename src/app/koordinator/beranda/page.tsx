@@ -32,7 +32,7 @@ export default function DashboardPKL() {
                     iconBg="bg-orange-100"
                 />
                 <StatCard
-                    title="Industri Partner"
+                    title="Rekan Industri"
                     value="26"
                     note="Aktif bekerjasama"
                     noteColor="text-purple-600"
