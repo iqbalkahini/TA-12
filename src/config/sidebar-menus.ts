@@ -12,6 +12,7 @@ import {
   type LucideIcon,
   Upload,
   Bell,
+  Award,
 } from "lucide-react";
 
 export interface SidebarMenuItem {
@@ -97,6 +98,12 @@ export const koordinatorMenus: SidebarMenuItem[] = [
     url: "/koordinator/pengajuan-pkl",
     icon: FileUp,
     pathName: ["pengajuan-pkl"],
+  },
+  {
+    name: "Sertifikat",
+    url: "/koordinator/sertifikat",
+    icon: Award,
+    pathName: ["sertifikat"],
   },
   {
     name: "Industri",
