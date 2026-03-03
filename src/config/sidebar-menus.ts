@@ -47,6 +47,12 @@ export const pembimbingMenus: SidebarMenuItem[] = [
     pathName: ["bukti-kegiatan"],
   },
   {
+    name: "Penilaian",
+    url: "/pembimbing/penilaian",
+    icon: FileUp,
+    pathName: ["penilaian"],
+  },
+  {
     name: "Permasalahan",
     url: "/pembimbing/permasalahan",
     icon: TriangleAlert,
