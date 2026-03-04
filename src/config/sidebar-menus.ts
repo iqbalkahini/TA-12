@@ -11,9 +11,9 @@ import {
   MapPin,
   type LucideIcon,
   Upload,
-  Bell,
   Award,
   FileText,
+  ClipboardCheck,
 } from "lucide-react";
 
 export interface SidebarMenuItem {
@@ -105,6 +105,12 @@ export const koordinatorMenus: SidebarMenuItem[] = [
     url: "/koordinator/form-penilaian",
     icon: FileText,
     pathName: ["form-penilaian"],
+  },
+  {
+    name: "Hasil Penilaian",
+    url: "/koordinator/hasil-penilaian",
+    icon: ClipboardCheck,
+    pathName: ["hasil-penilaian"],
   },
   {
     name: "Industri",
