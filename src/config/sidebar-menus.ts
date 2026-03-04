@@ -100,10 +100,10 @@ export const koordinatorMenus: SidebarMenuItem[] = [
     pathName: ["pengajuan-pkl"],
   },
   {
-    name: "Sertifikat",
-    url: "/koordinator/sertifikat",
+    name: "Formulir Penilaian",
+    url: "/koordinator/form-penilaian",
     icon: Award,
-    pathName: ["sertifikat"],
+    pathName: ["form-penilaian"],
   },
   {
     name: "Industri",
