@@ -13,6 +13,7 @@ import {
   Upload,
   Bell,
   Award,
+  FileText,
 } from "lucide-react";
 
 export interface SidebarMenuItem {
@@ -50,7 +51,7 @@ export const pembimbingMenus: SidebarMenuItem[] = [
   {
     name: "Penilaian",
     url: "/pembimbing/penilaian",
-    icon: FileUp,
+    icon: Award,
     pathName: ["penilaian"],
   },
   {
@@ -102,7 +103,7 @@ export const koordinatorMenus: SidebarMenuItem[] = [
   {
     name: "Formulir Penilaian",
     url: "/koordinator/form-penilaian",
-    icon: Award,
+    icon: FileText,
     pathName: ["form-penilaian"],
   },
   {
