@@ -2,7 +2,7 @@
 
 import { GraduationCap, Users, Building2, ArrowUp, Search, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getWaliKelasDashboard, SiswaPklSummaryDto, WaliKelasDashboardDto } from "@/api/wali-kelas";
+import { getNilaiSiswaByWaliKelas, getWaliKelasDashboard, SiswaPklSummaryDto, WaliKelasDashboardDto } from "@/api/wali-kelas";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -59,6 +59,32 @@ export default function Dashboard() {
         }
     }
 
+    const exportNilai = async () => {
+        try {
+            setLoading(true)
+            const res = await getNilaiSiswaByWaliKelas()
+            if (res) {
+                const url = window.URL.createObjectURL(res);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = "penilaian-final-wali-kelas.xlsx";
+                document.body.appendChild(link);
+                link.click();
+
+                // Bersihkan memory
+                link.remove();
+                window.URL.revokeObjectURL(url);
+                toast.success("Nilai berhasil diexport")
+            }
+        } catch (error) {
+            console.error(error)
+            toast.error("Gagal memuat data nilai")
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <div className="min-h-screen bg-gray-100 font-sans">
 
@@ -95,9 +121,11 @@ export default function Dashboard() {
                 {/* TABLE header with dynamic class name */}
                 <section className="bg-white mt-8 p-6 rounded-xl">
                     <div className="flex justify-between items-center mb-4">
-                        <div>
+                        <div className="grid grid-cols-2 grid-rows-1 gap-x-2 items-center">
                             <h3 className="text-lg font-semibold">Data Siswa - {kelasInfo?.nama || "Memuat..."}</h3>
-                            <p className="text-sm text-gray-500">Wali Kelas: {kelasInfo?.wali_kelas || "-"}</p>
+                            <Button disabled={loading} onClick={() => {
+                                exportNilai()
+                            }}>Expor Nilai</Button>
                         </div>
                         <div className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
                             Total: {kelasInfo?.total_siswa || 0} Siswa

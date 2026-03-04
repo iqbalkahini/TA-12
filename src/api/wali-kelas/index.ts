@@ -106,7 +106,9 @@ export async function patchPermasalahanByWaliKelas(id: number, data: { status: s
 // export nilai siswa
 export async function getNilaiSiswaByWaliKelas() {
   try {
-    const res = await axiosInstance.get('/api/penilaian/wali-kelas/export')
+    const res = await axiosInstance.get('/api/penilaian/wali/export', {
+      responseType: 'blob',
+    })
     return res.data
   } catch (error) {
     throw error
