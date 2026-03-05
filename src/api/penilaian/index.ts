@@ -126,10 +126,19 @@ export const koordinatorPenilaianApi = {
     getReviewList: async (
         page: number = 1,
         limit: number = 10,
-        search: string = ""
+        search: string = "",
+        jurusan_id?: number | null,
+        kelas_id?: number | null,
+        industri_id?: number | null,
     ): Promise<PenilaianPagination<ReviewApplicationItem>> => {
+        const params: any = { page, limit };
+        if (search) params.search = search;
+        if (jurusan_id) params.jurusan_id = jurusan_id;
+        if (kelas_id) params.kelas_id = kelas_id;
+        if (industri_id) params.industri_id = industri_id;
+
         const response = await axiosInstance.get(`/api/penilaian/review`, {
-            params: { page, limit, search }
+            params
         });
         return response.data;
     },

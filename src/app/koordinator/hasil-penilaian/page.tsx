@@ -25,6 +25,19 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { getJurusan } from "@/api/admin/jurusan";
+import { getKelas } from "@/api/admin/kelas";
+import { getIndustri } from "@/api/admin/industri";
+import { Jurusan, Kelas, Industri } from "@/types/api";
+import {
     Search,
     FileSearch,
     GraduationCap,
@@ -46,7 +59,16 @@ import { downloadPDF } from "@/api/files";
 export default function HasilPenilaianPage() {
     const [reviews, setReviews] = useState<ReviewApplicationItem[]>([]);
     const [loadingList, setLoadingList] = useState(true);
+    const [searchInput, setSearchInput] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
+
+    const [jurusans, setJurusans] = useState<Jurusan[]>([]);
+    const [kelasData, setKelasData] = useState<Kelas[]>([]);
+    const [industris, setIndustris] = useState<Industri[]>([]);
+
+    const [selectedJurusan, setSelectedJurusan] = useState<string>("all");
+    const [selectedKelas, setSelectedKelas] = useState<string>("all");
+    const [selectedIndustri, setSelectedIndustri] = useState<string>("all");
 
     const [activeReview, setActiveReview] = useState<ReviewApplicationItem | null>(null);
     const [detailData, setDetailData] = useState<PenilaianApplicationDetail | null>(null);
@@ -57,14 +79,46 @@ export default function HasilPenilaianPage() {
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        fetchReviews();
         fetchFormActive();
+        const loadJurusans = async () => {
+            const res = await getJurusan();
+            const list = res?.data?.data || res?.data || res || [];
+            if (Array.isArray(list)) setJurusans(list);
+        };
+        loadJurusans();
     }, []);
 
-    const fetchReviews = async (search: string = "") => {
+    useEffect(() => {
+        const loadDependentData = async () => {
+            const jId = selectedJurusan !== "all" ? Number(selectedJurusan) : undefined;
+
+            const kRes = await getKelas(undefined, undefined, jId);
+            const kList = kRes?.data?.data || kRes?.data || kRes || [];
+            if (Array.isArray(kList)) setKelasData(kList);
+
+            const iRes = await getIndustri(undefined, undefined, jId);
+            const iList = iRes?.data?.data || iRes?.data || iRes || [];
+            if (Array.isArray(iList)) setIndustris(iList);
+
+            // Optional: reset kelas and industri selection if they do not exist
+            setSelectedKelas("all");
+            setSelectedIndustri("all");
+        };
+        loadDependentData();
+    }, [selectedJurusan]);
+
+    useEffect(() => {
+        fetchReviews();
+    }, [searchQuery, selectedJurusan, selectedKelas, selectedIndustri]);
+
+    const fetchReviews = async () => {
         try {
             setLoadingList(true);
-            const res = await koordinatorPenilaianApi.getReviewList(1, 100, search);
+            const jId = selectedJurusan !== "all" ? Number(selectedJurusan) : null;
+            const kId = selectedKelas !== "all" ? Number(selectedKelas) : null;
+            const iId = selectedIndustri !== "all" ? Number(selectedIndustri) : null;
+
+            const res = await koordinatorPenilaianApi.getReviewList(1, 100, searchQuery, jId, kId, iId);
             setReviews(res.data || []);
         } catch (error) {
             console.error("Gagal mengambil daftar hasil penilaian:", error);
@@ -74,13 +128,7 @@ export default function HasilPenilaianPage() {
         }
     };
 
-    // Optional: Trigger search on enter or button click, but for small dataset we can just filter client-side.
-    // We'll just do client-side filtering for simplicity since we fetched max 100.
-    const filteredReviews = reviews.filter(
-        (review) =>
-            review.siswa_username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            review.siswa_nisn.includes(searchQuery)
-    );
+    const filteredReviews = reviews;
 
     const fetchFormActive = async () => {
         try {
@@ -225,16 +273,75 @@ export default function HasilPenilaianPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-6">
-                    <div className="flex items-center space-x-2 mb-6">
-                        <div className="relative w-full md:w-80">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                placeholder="Cari nama atau NISN siswa..."
-                                className="pl-8 bg-background"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
+                    <div className="flex flex-col md:flex-row gap-4 mb-6 md:items-center">
+                        <div className="flex items-center gap-2 w-full md:w-auto">
+                            <div className="relative flex-1 md:w-80">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    type="search"
+                                    placeholder="Cari nama atau NISN siswa..."
+                                    className="pl-8 bg-background"
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            setSearchQuery(searchInput);
+                                        }
+                                    }}
+                                />
+                            </div>
+                            <Button
+                                variant="secondary"
+                                onClick={() => setSearchQuery(searchInput)}
+                            >
+                                Cari
+                            </Button>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+                            <Select value={selectedJurusan} onValueChange={setSelectedJurusan}>
+                                <SelectTrigger className="w-full sm:w-[150px]">
+                                    <SelectValue placeholder="Pilih Jurusan" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Jurusan</SelectLabel>
+                                        <SelectItem value="all">Semua Jurusan</SelectItem>
+                                        {jurusans.map((j) => (
+                                            <SelectItem key={j.id} value={j.id.toString()}>{j.kode}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+
+                            <Select value={selectedKelas} onValueChange={setSelectedKelas}>
+                                <SelectTrigger className="w-full sm:w-[150px]">
+                                    <SelectValue placeholder="Pilih Kelas" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Kelas</SelectLabel>
+                                        <SelectItem value="all">Semua Kelas</SelectItem>
+                                        {kelasData.map((k) => (
+                                            <SelectItem key={k.id} value={k.id.toString()}>{k.nama}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+
+                            <Select value={selectedIndustri} onValueChange={setSelectedIndustri}>
+                                <SelectTrigger className="w-full sm:w-[200px]">
+                                    <SelectValue placeholder="Pilih Industri" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Industri / Tempat PKL</SelectLabel>
+                                        <SelectItem value="all">Semua Industri</SelectItem>
+                                        {industris.map((i) => (
+                                            <SelectItem key={i.id} value={i.id.toString()}>{i.nama}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 
