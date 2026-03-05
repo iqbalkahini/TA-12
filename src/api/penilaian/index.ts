@@ -24,11 +24,12 @@ export const pembimbingPenilaianApi = {
         page: number = 1,
         limit: number = 10,
         history: boolean = false,
-        status: 'belum_dinilai' | 'sudah_dinilai' | 'semua' = 'semua'
+        status: 'belum_dinilai' | 'sudah_dinilai' | 'semua' = 'semua',
+        search: string = ""
     ): Promise<PenilaianPagination<StudentApplicationItem>> => {
         const response = await axiosInstance.get(
             `/api/penilaian/pembimbing/students`,
-            { params: { page, limit, history, status: status === 'semua' ? null : status } }
+            { params: { page, limit, history, status: status === 'semua' ? null : status, search } }
         );
         return response.data;
     },

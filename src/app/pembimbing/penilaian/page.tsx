@@ -62,6 +62,7 @@ export default function PembimbingPenilaianPage() {
     const [students, setStudents] = useState<StudentApplicationItem[]>([]);
     const [sekolah, setSekolah] = useState<ApiResponseSekolah | null>(null);
     const [loadingList, setLoadingList] = useState(true);
+    const [searchInput, setSearchInput] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
 
     // Modal State
@@ -83,7 +84,7 @@ export default function PembimbingPenilaianPage() {
 
     useEffect(() => {
         fetchStudents();
-    }, [filterStatus]);
+    }, [filterStatus, searchQuery]);
 
     useEffect(() => {
         fetchSekolah();
@@ -93,7 +94,7 @@ export default function PembimbingPenilaianPage() {
         try {
             setLoadingList(true);
             // Adjust limit as necessary or implement pagination
-            const res = await pembimbingPenilaianApi.getStudents(1, 100, false, filterStatus);
+            const res = await pembimbingPenilaianApi.getStudents(1, 100, false, filterStatus, searchQuery);
             setStudents(res.data || []);
         } catch (error) {
             console.error("Gagal mengambil data siswa:", error);
@@ -188,11 +189,7 @@ export default function PembimbingPenilaianPage() {
         }
     };
 
-    const filteredStudents = students.filter(
-        (s) =>
-            s.siswa_username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            s.siswa_nisn.includes(searchQuery)
-    );
+    const filteredStudents = students;
 
     const getPayload = (): DraftPenilaianPayload => {
         if (!detailData) return { items: [] };
@@ -331,16 +328,29 @@ export default function PembimbingPenilaianPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="flex items-center space-x-2 mb-6">
-                        <div className="relative w-full md:w-80">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                placeholder="Cari nama atau NISN siswa..."
-                                className="pl-8"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
+                    <div className="flex flex-col md:flex-row md:items-center gap-2 mb-6">
+                        <div className="flex items-center gap-2 w-full md:w-auto">
+                            <div className="relative flex-1 md:w-80">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    type="search"
+                                    placeholder="Cari nama atau NISN siswa..."
+                                    className="pl-8"
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            setSearchQuery(searchInput);
+                                        }
+                                    }}
+                                />
+                            </div>
+                            <Button
+                                variant="secondary"
+                                onClick={() => setSearchQuery(searchInput)}
+                            >
+                                Cari
+                            </Button>
                         </div>
                         <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as 'belum_dinilai' | 'sudah_dinilai' | 'semua')}>
                             <SelectTrigger className="w-[180px]">
