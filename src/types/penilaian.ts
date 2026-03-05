@@ -120,3 +120,51 @@ export interface SertifikatPKL {
     tanggal_terbit: string;
     nilai: NilaiPKL;
 }
+
+// sertif penilaian 
+interface SchoolInfo {
+    nama_sekolah: string;
+    alamat_jalan: string;
+    kelurahan: string;
+    kecamatan: string;
+    kab_kota: string;
+    provinsi: string;
+    kode_pos: string;
+    telepon: string;
+    email: string;
+    website: string;
+    logo_url: string;
+}
+
+interface SiswaDetail {
+    nama: string;
+    nisn: string;
+    kelas: string;
+    konsentrasi_keahlian: string;
+    tempat_pkl: string;
+    tanggal_mulai: string;
+    tanggal_selesai: string;
+    nama_instruktur: string;
+    nama_pembimbing: string;
+}
+
+interface NilaiDetail {
+    skor_1: number;
+    desc_1: string;
+    skor_2: number;
+    desc_2: string;
+    skor_3: number;
+    desc_3: string;
+    skor_4: number;
+    desc_4: string;
+}
+
+export interface LaporanPKL {
+    school_info: SchoolInfo;
+    siswa: SiswaDetail;
+    nilai: NilaiDetail;
+    sakit: number;
+    izin: number;
+    alpa: number;
+    tempat_tanggal: string;
+}

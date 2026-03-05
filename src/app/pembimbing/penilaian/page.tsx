@@ -38,19 +38,23 @@ import {
     Download,
 } from "lucide-react";
 import { toast } from "sonner";
-import { cetakSertifikat, pembimbingPenilaianApi } from "@/api/penilaian";
+import { cetakPenilaian, cetakSertifikat, pembimbingPenilaianApi } from "@/api/penilaian";
 import {
     StudentApplicationItem,
     PenilaianApplicationDetail,
     DraftPenilaianPayload,
     SertifikatPKL,
+    LaporanPKL,
 } from "@/types/penilaian";
 import { AxiosError } from "axios";
 import { Label } from "@/components/ui/label";
 import { downloadPDF } from "@/api/files";
+import { ApiResponseSekolah } from "@/types/api";
+import { getSekolah } from "@/api/public";
 
 export default function PembimbingPenilaianPage() {
     const [students, setStudents] = useState<StudentApplicationItem[]>([]);
+    const [sekolah, setSekolah] = useState<ApiResponseSekolah | null>(null);
     const [loadingList, setLoadingList] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -58,6 +62,7 @@ export default function PembimbingPenilaianPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loadingDetail, setLoadingDetail] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const [loading, setLoading] = useState(false)
 
     // Active Assessment State
     const [activeStudent, setActiveStudent] = useState<StudentApplicationItem | null>(null);
@@ -70,6 +75,7 @@ export default function PembimbingPenilaianPage() {
 
     useEffect(() => {
         fetchStudents();
+        fetchSekolah();
     }, []);
 
     const fetchStudents = async () => {
@@ -83,6 +89,16 @@ export default function PembimbingPenilaianPage() {
             toast.error("Gagal memuat daftar siswa bimbingan.");
         } finally {
             setLoadingList(false);
+        }
+    };
+
+    const fetchSekolah = async () => {
+        try {
+            const res = await getSekolah();
+            setSekolah(res || null);
+        } catch (error) {
+            console.error("Gagal mengambil data sekolah:", error);
+            toast.error("Gagal memuat data sekolah.");
         }
     };
 
@@ -265,7 +281,24 @@ export default function PembimbingPenilaianPage() {
         }
     };
 
-
+    const cetakSuratPenilaian = async (data: LaporanPKL) => {
+        try {
+            setLoading(true)
+            const res = await cetakPenilaian(data)
+            console.log(res)
+            const download = await downloadPDF(res.filename)
+            toast.success("Surat penilaian berhasil dicetak!")
+        } catch (error) {
+            console.error(error);
+            if (error instanceof AxiosError && error.response?.data?.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("Terjadi kesalahan saat mencetak surat penilaian.");
+            }
+        } finally {
+            setLoading(false)
+        }
+    }
 
 
     return (
@@ -372,8 +405,70 @@ export default function PembimbingPenilaianPage() {
                         <DialogTitle className="text-xl">
                             Lembar Penilaian: {activeStudent?.siswa_username}
                         </DialogTitle>
-                        <DialogDescription className="mt-2">
-                            Status Data: {detailData ? getStatusBadge(detailData.status) : "-"}
+                        <DialogDescription className="mt-2 flex justify-between">
+                            {detailData ? getStatusBadge(detailData.status) : "-"}
+                            <Button onClick={() => {
+                                if (!activeStudent || !detailData) {
+                                    toast.error("Data siswa atau penilaian tidak lengkap");
+                                    return;
+                                }
+
+                                const fi = detailData.form_items || [];
+
+                                // Helper to safely get score
+                                const getScore = (index: number) => {
+                                    if (!fi[index]) return 0;
+                                    const val = scores[fi[index].id];
+                                    return typeof val === "number" ? val : 0;
+                                };
+
+                                // Helper to safely get desc
+                                const getDesc = (index: number) => {
+                                    if (!fi[index]) return "-";
+                                    return descriptions[fi[index].id] || "-";
+                                };
+
+                                cetakSuratPenilaian({
+                                    school_info: {
+                                        nama_sekolah: sekolah?.data.nama_sekolah || "-",
+                                        alamat_jalan: sekolah?.data.jalan || "-",
+                                        kelurahan: sekolah?.data.kelurahan || "-",
+                                        kecamatan: sekolah?.data.kecamatan || "-",
+                                        kab_kota: sekolah?.data.kabupaten_kota || "-",
+                                        provinsi: sekolah?.data.provinsi || "-",
+                                        kode_pos: sekolah?.data.kode_pos || "-",
+                                        telepon: sekolah?.data.nomor_telepon || "-",
+                                        email: sekolah?.data.email || "-",
+                                        website: sekolah?.data.website || "-",
+                                        logo_url: sekolah?.data.logo_url || "-"
+                                    },
+                                    siswa: {
+                                        nama: activeStudent.siswa_username || "-",
+                                        nisn: activeStudent.siswa_nisn || "-",
+                                        kelas: activeStudent.kelas_nama || "-",
+                                        konsentrasi_keahlian: "-", // Needs API support
+                                        tempat_pkl: activeStudent.industri_nama || "-",
+                                        tanggal_mulai: "-", // Needs API support
+                                        tanggal_selesai: "-", // Needs API support
+                                        nama_instruktur: "-", // Needs API support
+                                        nama_pembimbing: "-" // Needs API support
+                                    },
+                                    nilai: {
+                                        skor_1: getScore(0),
+                                        desc_1: getDesc(0),
+                                        skor_2: getScore(1),
+                                        desc_2: getDesc(1),
+                                        skor_3: getScore(2),
+                                        desc_3: getDesc(2),
+                                        skor_4: getScore(3),
+                                        desc_4: getDesc(3),
+                                    },
+                                    sakit: 0,
+                                    izin: 0,
+                                    alpa: 0,
+                                    tempat_tanggal: `${sekolah?.data.kabupaten_kota || "Tempat"}, ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`
+                                });
+                            }} disabled={loading} >Cetak Penilaian</Button>
                         </DialogDescription>
                     </div>
 
@@ -509,6 +604,6 @@ export default function PembimbingPenilaianPage() {
                     </div>
                 </DialogContent>
             </Dialog>
-        </div>
+        </div >
     );
 }

@@ -7,7 +7,8 @@ import {
     PenilaianForm,
     CreatePenilaianFormPayload,
     ReviewApplicationItem,
-    SertifikatPKL
+    SertifikatPKL,
+    LaporanPKL
 } from "@/types/penilaian";
 import axios from "axios";
 
@@ -147,5 +148,10 @@ export const koordinatorPenilaianApi = {
 // cetak sertifikat 
 export const cetakSertifikat = async (code_jurusan: string, data: SertifikatPKL) => {
     const response = await axios.post(`https://sertif.gedanggoreng.com/api/v1/letters/sertifikat/${code_jurusan}`, data)
+    return response.data;
+};
+
+export const cetakPenilaian = async (data: LaporanPKL) => {
+    const response = await axios.post(`https://sertif.gedanggoreng.com/api/v1/letters/penilaian`, data);
     return response.data;
 };
