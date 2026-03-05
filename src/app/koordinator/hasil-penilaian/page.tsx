@@ -33,6 +33,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { getJurusan } from "@/api/admin/jurusan";
 import { getKelas } from "@/api/admin/kelas";
 import { getIndustri } from "@/api/admin/industri";
@@ -55,6 +56,7 @@ import {
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { downloadPDF } from "@/api/files";
+import { Progress } from "@/components/ui/progress";
 
 export default function HasilPenilaianPage() {
     const [reviews, setReviews] = useState<ReviewApplicationItem[]>([]);
@@ -77,6 +79,12 @@ export default function HasilPenilaianPage() {
     const [formActive, setFormActive] = useState<PenilaianForm | null>(null);
 
     const [submitting, setSubmitting] = useState(false);
+
+    const [isBatchDownloading, setIsBatchDownloading] = useState(false);
+    const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
+
+    const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+    const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
 
     useEffect(() => {
         fetchFormActive();
@@ -204,7 +212,6 @@ export default function HasilPenilaianPage() {
             }
 
 
-            // Konversi rata-rata ke predikat hasil_pkl
             let hasil_pkl = "Cukup";
             const num = Number(review.rata_rata);
             if (!isNaN(num)) {
@@ -214,7 +221,7 @@ export default function HasilPenilaianPage() {
                 else hasil_pkl = "Kurang";
             }
 
-            const student: SertifikatPKL = {
+            const studentData: SertifikatPKL = {
                 nomor_sertifikat: "-",
                 siswa: {
                     nama: review.siswa_username,
@@ -238,19 +245,110 @@ export default function HasilPenilaianPage() {
                     desc_4: detail.form_items?.[3]?.tujuan_pembelajaran || formActive?.items?.[3]?.tujuan_pembelajaran || "-"
                 }
             };
-            const response = await cetakSertifikat('tkj', student);
+            const response = await cetakSertifikat(kode_jurusan, studentData);
             console.log(response)
             downloadPDF(response.filename);
-            toast.success("Sertifikat berhasil diunduh!");
+            toast.success(`Sertifikat ${review.siswa_username} berhasil diunduh!`);
         } catch (error) {
             console.log(error);
             if (error instanceof AxiosError && error.response?.data?.message) {
                 toast.error(error.response.data.message);
             } else {
-                toast.error("Terjadi kesalahan saat mengunduh sertifikat.");
+                toast.error(`Terjadi kesalahan saat mengunduh sertifikat ${review.siswa_username}.`);
             }
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const isFilterActive = selectedJurusan !== "all" || selectedKelas !== "all" || selectedIndustri !== "all";
+
+    const handleBatchDownload = async () => {
+        if (selectedStudents.length === 0) {
+            toast.error("Tidak ada siswa yang dipilih untuk diunduh.");
+            return;
+        }
+
+        setIsBatchDownloading(true);
+        setBatchProgress({ current: 0, total: selectedStudents.length });
+
+        let successCount = 0;
+        let failCount = 0;
+
+        const studentsToDownload = filteredReviews.filter(r => selectedStudents.includes(r.application_id));
+
+        for (let i = 0; i < studentsToDownload.length; i++) {
+            const review = studentsToDownload[i];
+
+            try {
+                // Fetch rincian nilai untuk mendapatkan skor tiap aspek
+                const detail = await koordinatorPenilaianApi.getReviewDetail(review.application_id);
+
+                let kode_jurusan = review.jurusan_nama
+                    .split(' ')
+                    .map(word => word.charAt(0))
+                    .join('')
+                    .toLowerCase();
+
+                switch (kode_jurusan) {
+                    case "tkdj": kode_jurusan = "tkj"; break;
+                    case "rpl": kode_jurusan = "rpl"; break;
+                    case "dkv": kode_jurusan = "dkv"; break;
+                    case "tei": kode_jurusan = "tei"; break;
+                    case "tflm": kode_jurusan = "tflm"; break;
+                }
+
+                let hasil_pkl = "Cukup";
+                const num = Number(review.rata_rata);
+                if (!isNaN(num)) {
+                    if (num >= 90) hasil_pkl = "Amat Baik";
+                    else if (num >= 80) hasil_pkl = "Baik";
+                    else if (num >= 70) hasil_pkl = "Cukup";
+                    else hasil_pkl = "Kurang";
+                }
+
+                const studentData: SertifikatPKL = {
+                    nomor_sertifikat: "-",
+                    siswa: {
+                        nama: review.siswa_username,
+                        nisn: review.siswa_nisn,
+                    },
+                    nama_industri: review.industri_nama,
+                    tanggal_mulai: "-",
+                    tanggal_selesai: "-",
+                    tanggal_terbit: review.finalized_at
+                        ? new Date(review.finalized_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
+                        : "-",
+                    hasil_pkl: hasil_pkl as any,
+                    nilai: {
+                        aspek_1: detail.items?.find(i => i.form_item_id === detail.form_items?.[0]?.id)?.skor || 0,
+                        desc_1: detail.form_items?.[0]?.tujuan_pembelajaran || formActive?.items?.[0]?.tujuan_pembelajaran || "-",
+                        aspek_2: detail.items?.find(i => i.form_item_id === detail.form_items?.[1]?.id)?.skor || 0,
+                        desc_2: detail.form_items?.[1]?.tujuan_pembelajaran || formActive?.items?.[1]?.tujuan_pembelajaran || "-",
+                        aspek_3: detail.items?.find(i => i.form_item_id === detail.form_items?.[2]?.id)?.skor || 0,
+                        desc_3: detail.form_items?.[2]?.tujuan_pembelajaran || formActive?.items?.[2]?.tujuan_pembelajaran || "-",
+                        aspek_4: detail.items?.find(i => i.form_item_id === detail.form_items?.[3]?.id)?.skor || 0,
+                        desc_4: detail.form_items?.[3]?.tujuan_pembelajaran || formActive?.items?.[3]?.tujuan_pembelajaran || "-"
+                    }
+                };
+
+                const response = await cetakSertifikat(kode_jurusan, studentData);
+                downloadPDF(response.filename);
+                successCount++;
+            } catch (error) {
+                console.error(`Gagal mengunduh sertifikat ${review.siswa_username}:`, error);
+                failCount++;
+            }
+
+            setBatchProgress({ current: i + 1, total: studentsToDownload.length });
+        }
+
+        setIsBatchDownloading(false);
+        if (failCount === 0) {
+            toast.success(`Berhasil mengunduh ${successCount} sertifikat.`);
+            setIsDownloadModalOpen(false);
+        } else {
+            toast.warning(`Berhasil mengunduh ${successCount} sertifikat, gagal ${failCount}.`);
         }
     };
 
@@ -273,75 +371,98 @@ export default function HasilPenilaianPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-6">
-                    <div className="flex flex-col md:flex-row gap-4 mb-6 md:items-center">
-                        <div className="flex items-center gap-2 w-full md:w-auto">
-                            <div className="relative flex-1 md:w-80">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    type="search"
-                                    placeholder="Cari nama atau NISN siswa..."
-                                    className="pl-8 bg-background"
-                                    value={searchInput}
-                                    onChange={(e) => setSearchInput(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            setSearchQuery(searchInput);
+                    <div className="flex flex-col md:flex-row justify-between mb-6 md:items-center gap-4">
+                        <div className="flex flex-col gap-4 flex-1">
+                            <div className="flex items-center gap-2 w-full md:w-auto">
+                                <div className="relative flex-1 md:w-80">
+                                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        type="search"
+                                        placeholder="Cari nama atau NISN siswa..."
+                                        className="pl-8 bg-background"
+                                        value={searchInput}
+                                        onChange={(e) => setSearchInput(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                setSearchQuery(searchInput);
+                                            }
+                                        }}
+                                        disabled={isBatchDownloading}
+                                    />
+                                </div>
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => setSearchQuery(searchInput)}
+                                    disabled={isBatchDownloading}
+                                >
+                                    Cari
+                                </Button>
+                                <Button
+                                    variant="default"
+                                    disabled={!isFilterActive || isBatchDownloading || filteredReviews.length === 0}
+                                    onClick={() => {
+                                        if (!isFilterActive) {
+                                            toast.error("Pilih minimal satu filter (Jurusan, Kelas, atau Industri) untuk mengunduh semua sertifikat.");
+                                            return;
                                         }
+                                        if (filteredReviews.length === 0) {
+                                            toast.error("Tidak ada data siswa untuk diunduh.");
+                                            return;
+                                        }
+                                        setSelectedStudents(filteredReviews.map(r => r.application_id));
+                                        setIsDownloadModalOpen(true);
                                     }}
-                                />
+                                    className="w-full md:w-auto shrink-0"
+                                >
+                                    Unduh Semua Sertifikat
+                                </Button>
                             </div>
-                            <Button
-                                variant="secondary"
-                                onClick={() => setSearchQuery(searchInput)}
-                            >
-                                Cari
-                            </Button>
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-                            <Select value={selectedJurusan} onValueChange={setSelectedJurusan}>
-                                <SelectTrigger className="w-full sm:w-[150px]">
-                                    <SelectValue placeholder="Pilih Jurusan" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Jurusan</SelectLabel>
-                                        <SelectItem value="all">Semua Jurusan</SelectItem>
-                                        {jurusans.map((j) => (
-                                            <SelectItem key={j.id} value={j.id.toString()}>{j.kode}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
+                            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+                                <Select value={selectedJurusan} onValueChange={setSelectedJurusan} disabled={isBatchDownloading}>
+                                    <SelectTrigger className="w-full sm:w-[150px]">
+                                        <SelectValue placeholder="Pilih Jurusan" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Jurusan</SelectLabel>
+                                            <SelectItem value="all">Semua Jurusan</SelectItem>
+                                            {jurusans.map((j) => (
+                                                <SelectItem key={j.id} value={j.id.toString()}>{j.kode}</SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
 
-                            <Select value={selectedKelas} onValueChange={setSelectedKelas}>
-                                <SelectTrigger className="w-full sm:w-[150px]">
-                                    <SelectValue placeholder="Pilih Kelas" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Kelas</SelectLabel>
-                                        <SelectItem value="all">Semua Kelas</SelectItem>
-                                        {kelasData.map((k) => (
-                                            <SelectItem key={k.id} value={k.id.toString()}>{k.nama}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
+                                <Select value={selectedKelas} onValueChange={setSelectedKelas} disabled={isBatchDownloading}>
+                                    <SelectTrigger className="w-full sm:w-[150px]">
+                                        <SelectValue placeholder="Pilih Kelas" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Kelas</SelectLabel>
+                                            <SelectItem value="all">Semua Kelas</SelectItem>
+                                            {kelasData.map((k) => (
+                                                <SelectItem key={k.id} value={k.id.toString()}>{k.nama}</SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
 
-                            <Select value={selectedIndustri} onValueChange={setSelectedIndustri}>
-                                <SelectTrigger className="w-full sm:w-[200px]">
-                                    <SelectValue placeholder="Pilih Industri" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Industri / Tempat PKL</SelectLabel>
-                                        <SelectItem value="all">Semua Industri</SelectItem>
-                                        {industris.map((i) => (
-                                            <SelectItem key={i.id} value={i.id.toString()}>{i.nama}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
+                                <Select value={selectedIndustri} onValueChange={setSelectedIndustri} disabled={isBatchDownloading}>
+                                    <SelectTrigger className="w-full sm:w-[200px]">
+                                        <SelectValue placeholder="Pilih Industri" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Industri / Tempat PKL</SelectLabel>
+                                            <SelectItem value="all">Semua Industri</SelectItem>
+                                            {industris.map((i) => (
+                                                <SelectItem key={i.id} value={i.id.toString()}>{i.nama}</SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
                     </div>
 
@@ -418,6 +539,85 @@ export default function HasilPenilaianPage() {
                     </div>
                 </CardContent>
             </Card>
+
+            {/* DOWNLOAD SELECTION MODAL */}
+            <Dialog open={isDownloadModalOpen} onOpenChange={(open) => {
+                if (!isBatchDownloading) setIsDownloadModalOpen(open);
+            }}>
+                <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden flex flex-col p-0">
+                    <div className="p-6 pb-4 border-b">
+                        <DialogTitle className="text-xl">
+                            Pilih Siswa untuk Diunduh
+                        </DialogTitle>
+                        <p className="text-sm text-muted-foreground mt-2">
+                            Centang siswa yang ingin Anda unduh sertifikatnya. Secara default, semua siswa yang difilter akan terpilih.
+                        </p>
+                    </div>
+
+                    <div className="px-6 overflow-y-auto max-h-full space-y-4">
+                        <div className="space-x-3 pb-4 border-b">
+                            {true && (
+                                <div className="mb-6 space-y-2">
+                                    <div className="flex justify-between text-sm font-medium">
+                                        <span>Mengunduh sertifikat...</span>
+                                        <span>{batchProgress.current} / {batchProgress.total}</span>
+                                    </div>
+                                    <Progress value={batchProgress.total === 0 ? 0 : (batchProgress.current / batchProgress.total) * 100} className="h-2" />
+                                </div>
+                            )}
+                            <div className="flex items-center space-x-3">
+                                <Checkbox
+                                    id="select-all"
+                                    checked={selectedStudents.length === filteredReviews.length && filteredReviews.length > 0}
+                                    onCheckedChange={(checked) => {
+                                        if (checked) {
+                                            setSelectedStudents(filteredReviews.map(r => r.application_id));
+                                        } else {
+                                            setSelectedStudents([]);
+                                        }
+                                    }}
+                                    disabled={isBatchDownloading}
+                                />
+                                <label htmlFor="select-all" className="text-sm font-medium leading-none cursor-pointer">
+                                    Pilih Semua ({filteredReviews.length} Siswa)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            {filteredReviews.map(review => (
+                                <div key={review.application_id} className="flex items-center space-x-3 p-2 rounded hover:bg-muted/50 transition-colors">
+                                    <Checkbox
+                                        id={`student-${review.application_id}`}
+                                        checked={selectedStudents.includes(review.application_id)}
+                                        onCheckedChange={(checked) => {
+                                            if (checked) {
+                                                setSelectedStudents(prev => [...prev, review.application_id]);
+                                            } else {
+                                                setSelectedStudents(prev => prev.filter(id => id !== review.application_id));
+                                            }
+                                        }}
+                                        disabled={isBatchDownloading}
+                                    />
+                                    <label htmlFor={`student-${review.application_id}`} className="flex-1 flex justify-between text-sm cursor-pointer">
+                                        <span className="font-semibold">{review.siswa_username}</span>
+                                        <span className="text-muted-foreground">{review.kelas_nama}</span>
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="p-4 border-t bg-muted/20 mt-auto flex justify-end gap-3">
+                        <Button variant="outline" onClick={() => setIsDownloadModalOpen(false)} disabled={isBatchDownloading}>
+                            Batal
+                        </Button>
+                        <Button onClick={handleBatchDownload} disabled={isBatchDownloading || selectedStudents.length === 0}>
+                            {isBatchDownloading ? `Mengunduh (${batchProgress.current}/${batchProgress.total})...` : `Unduh ${selectedStudents.length} Sertifikat`}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
 
             {/* DETAIL MODAL */}
             <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
