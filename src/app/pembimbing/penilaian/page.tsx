@@ -439,8 +439,8 @@ export default function PembimbingPenilaianPage() {
                         <DialogTitle className="text-xl">
                             Lembar Penilaian: {activeStudent?.siswa_username}
                         </DialogTitle>
-                        <DialogDescription className="mt-2 flex justify-between">
-                            {detailData ? getStatusBadge(detailData.status) : "-"}
+                        <DialogDescription className="mt-2 flex justify-end">
+                            {/* {detailData ? getStatusBadge(detailData.status) : "-"} */}
                             <Button onClick={() => {
                                 if (!activeStudent || !detailData) {
                                     toast.error("Data siswa atau penilaian tidak lengkap");
