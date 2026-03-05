@@ -121,7 +121,7 @@ export default function Dashboard() {
                 {/* TABLE header with dynamic class name */}
                 <section className="bg-white mt-8 p-6 rounded-xl">
                     <div className="flex justify-between items-center mb-4">
-                        <div className="grid grid-cols-2 grid-rows-1 gap-x-2 items-center">
+                        <div className="grid grid-cols-2 grid-rows-1 gap-x-5 items-center">
                             <h3 className="text-lg font-semibold">Data Siswa - {kelasInfo?.nama || "Memuat..."}</h3>
                             <Button disabled={loading} onClick={() => {
                                 exportNilai()
