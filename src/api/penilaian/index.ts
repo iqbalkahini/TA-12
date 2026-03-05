@@ -23,11 +23,12 @@ export const pembimbingPenilaianApi = {
     getStudents: async (
         page: number = 1,
         limit: number = 10,
-        history: boolean = false
+        history: boolean = false,
+        status: 'belum_dinilai' | 'sudah_dinilai' | 'semua' = 'semua'
     ): Promise<PenilaianPagination<StudentApplicationItem>> => {
         const response = await axiosInstance.get(
             `/api/penilaian/pembimbing/students`,
-            { params: { page, limit, history } }
+            { params: { page, limit, history, status: status === 'semua' ? null : status } }
         );
         return response.data;
     },

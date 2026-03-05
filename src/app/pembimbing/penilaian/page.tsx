@@ -23,10 +23,17 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
-    DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea";
 import {
     Search,
@@ -35,10 +42,9 @@ import {
     Clock,
     Save,
     CheckCircle2,
-    Download,
 } from "lucide-react";
 import { toast } from "sonner";
-import { cetakPenilaian, cetakSertifikat, pembimbingPenilaianApi } from "@/api/penilaian";
+import { cetakPenilaian, pembimbingPenilaianApi } from "@/api/penilaian";
 import {
     StudentApplicationItem,
     PenilaianApplicationDetail,
@@ -73,16 +79,21 @@ export default function PembimbingPenilaianPage() {
     const [descriptions, setDescriptions] = useState<Record<number, string>>({});
     const [catatanAkhir, setCatatanAkhir] = useState("");
 
+    const [filterStatus, setFilterStatus] = useState<'belum_dinilai' | 'sudah_dinilai' | 'semua'>('semua');
+
     useEffect(() => {
         fetchStudents();
+    }, [filterStatus]);
+
+    useEffect(() => {
         fetchSekolah();
-    }, []);
+    }, [])
 
     const fetchStudents = async () => {
         try {
             setLoadingList(true);
             // Adjust limit as necessary or implement pagination
-            const res = await pembimbingPenilaianApi.getStudents(1, 100, false);
+            const res = await pembimbingPenilaianApi.getStudents(1, 100, false, filterStatus);
             setStudents(res.data || []);
         } catch (error) {
             console.error("Gagal mengambil data siswa:", error);
@@ -331,6 +342,19 @@ export default function PembimbingPenilaianPage() {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
+                        <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as 'belum_dinilai' | 'sudah_dinilai' | 'semua')}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Filter Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Status</SelectLabel>
+                                    <SelectItem value="semua">Semua</SelectItem>
+                                    <SelectItem value="belum_dinilai">Belum Dinilai</SelectItem>
+                                    <SelectItem value="sudah_dinilai">Sudah Dinilai</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     <div className="rounded-md border overflow-x-auto">
