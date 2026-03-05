@@ -91,3 +91,32 @@ export interface ReviewApplicationItem {
     rata_rata: string;
     finalized_at: string;
 }
+
+
+// cetak sertifikat
+interface Siswa {
+    nama: string;
+    nisn: string;
+}
+
+interface NilaiPKL {
+    aspek_1: number;
+    desc_1: string;
+    aspek_2: number;
+    desc_2: string;
+    aspek_3: number;
+    desc_3: string;
+    aspek_4: number;
+    desc_4: string;
+}
+
+export interface SertifikatPKL {
+    nomor_sertifikat: string;
+    siswa: Siswa;
+    nama_industri: string;
+    tanggal_mulai: string;
+    tanggal_selesai: string;
+    hasil_pkl: "Amat Baik" | "Baik" | "Cukup" | "Kurang"; // Menggunakan union type untuk validasi
+    tanggal_terbit: string;
+    nilai: NilaiPKL;
+}

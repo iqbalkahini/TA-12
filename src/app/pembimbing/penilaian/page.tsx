@@ -35,16 +35,19 @@ import {
     Clock,
     Save,
     CheckCircle2,
+    Download,
 } from "lucide-react";
 import { toast } from "sonner";
-import { pembimbingPenilaianApi } from "@/api/penilaian";
+import { cetakSertifikat, pembimbingPenilaianApi } from "@/api/penilaian";
 import {
     StudentApplicationItem,
     PenilaianApplicationDetail,
     DraftPenilaianPayload,
+    SertifikatPKL,
 } from "@/types/penilaian";
 import { AxiosError } from "axios";
 import { Label } from "@/components/ui/label";
+import { downloadPDF } from "@/api/files";
 
 export default function PembimbingPenilaianPage() {
     const [students, setStudents] = useState<StudentApplicationItem[]>([]);
@@ -263,6 +266,8 @@ export default function PembimbingPenilaianPage() {
     };
 
 
+
+
     return (
         <div className="p-6 space-y-6">
             <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
@@ -327,7 +332,7 @@ export default function PembimbingPenilaianPage() {
                                             <TableCell className="text-center">
                                                 {getStatusBadge(student.penilaian_status)}
                                             </TableCell>
-                                            <TableCell className="text-right">
+                                            <TableCell className="text-right flex">
                                                 <Button
                                                     variant="outline"
                                                     size="sm"

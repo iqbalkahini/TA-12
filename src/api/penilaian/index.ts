@@ -6,8 +6,10 @@ import {
     DraftPenilaianPayload,
     PenilaianForm,
     CreatePenilaianFormPayload,
-    ReviewApplicationItem
+    ReviewApplicationItem,
+    SertifikatPKL
 } from "@/types/penilaian";
+import axios from "axios";
 
 // ==========================================
 // PEMBIMBING ENDPOINTS
@@ -140,4 +142,10 @@ export const koordinatorPenilaianApi = {
         );
         return response.data;
     }
+};
+
+// cetak sertifikat 
+export const cetakSertifikat = async (code_jurusan: string, data: SertifikatPKL) => {
+    const response = await axios.post(`https://sertif.gedanggoreng.com/api/v1/letters/sertifikat/${code_jurusan}`, data)
+    return response.data;
 };

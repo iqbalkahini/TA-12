@@ -32,12 +32,16 @@ import {
     CalendarDays,
     CheckCircle2,
 } from "lucide-react";
-import { koordinatorPenilaianApi } from "@/api/penilaian";
+import { cetakSertifikat, koordinatorPenilaianApi } from "@/api/penilaian";
 import {
     ReviewApplicationItem,
     PenilaianApplicationDetail,
+    SertifikatPKL,
+    PenilaianForm,
 } from "@/types/penilaian";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
+import { downloadPDF } from "@/api/files";
 
 export default function HasilPenilaianPage() {
     const [reviews, setReviews] = useState<ReviewApplicationItem[]>([]);
@@ -48,9 +52,13 @@ export default function HasilPenilaianPage() {
     const [detailData, setDetailData] = useState<PenilaianApplicationDetail | null>(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [loadingDetail, setLoadingDetail] = useState(false);
+    const [formActive, setFormActive] = useState<PenilaianForm | null>(null);
+
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         fetchReviews();
+        fetchFormActive();
     }, []);
 
     const fetchReviews = async (search: string = "") => {
@@ -73,6 +81,16 @@ export default function HasilPenilaianPage() {
             review.siswa_username.toLowerCase().includes(searchQuery.toLowerCase()) ||
             review.siswa_nisn.includes(searchQuery)
     );
+
+    const fetchFormActive = async () => {
+        try {
+            const res = await koordinatorPenilaianApi.getForms();
+            setFormActive(res.data.find((form: PenilaianForm) => form.is_active) || null);
+        } catch (error) {
+            console.error("Gagal mengambil daftar form aktif:", error);
+            toast.error("Gagal memuat daftar form aktif.");
+        }
+    }
 
     const handleOpenDetail = async (review: ReviewApplicationItem) => {
         setActiveReview(review);
@@ -102,6 +120,90 @@ export default function HasilPenilaianPage() {
         if (num >= 80) return "Baik";
         if (num >= 70) return "Cukup";
         return "Kurang";
+    };
+
+    const handleDownloadSertifikat = async (review: ReviewApplicationItem) => {
+        try {
+            setSubmitting(true);
+
+            // Fetch rincian nilai untuk mendapatkan skor tiap aspek
+            const detail = await koordinatorPenilaianApi.getReviewDetail(review.application_id);
+
+            let kode_jurusan = review.jurusan_nama
+                .split(' ')
+                .map(word => word.charAt(0))
+                .join('')
+                .toLowerCase();
+
+            switch (kode_jurusan) {
+                case "tkdj":
+                    kode_jurusan = "tkj"
+                    break;
+                case "rpl":
+                    kode_jurusan = "rpl"
+                    break;
+                case "dkv":
+                    kode_jurusan = "dkv"
+                    break;
+                case "tei":
+                    kode_jurusan = "tei"
+                    break;
+                case "tflm":
+                    kode_jurusan = "tflm"
+                    break;
+                default:
+                    break;
+            }
+
+
+            // Konversi rata-rata ke predikat hasil_pkl
+            let hasil_pkl = "Cukup";
+            const num = Number(review.rata_rata);
+            if (!isNaN(num)) {
+                if (num >= 90) hasil_pkl = "Amat Baik";
+                else if (num >= 80) hasil_pkl = "Baik";
+                else if (num >= 70) hasil_pkl = "Cukup";
+                else hasil_pkl = "Kurang";
+            }
+
+            const student: SertifikatPKL = {
+                nomor_sertifikat: "-",
+                siswa: {
+                    nama: review.siswa_username,
+                    nisn: review.siswa_nisn,
+                },
+                nama_industri: review.industri_nama,
+                tanggal_mulai: "-",
+                tanggal_selesai: "-",
+                tanggal_terbit: review.finalized_at
+                    ? new Date(review.finalized_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
+                    : "-",
+                hasil_pkl: hasil_pkl as any,
+                nilai: {
+                    aspek_1: detail.items?.find(i => i.form_item_id === detail.form_items?.[0]?.id)?.skor || 0,
+                    desc_1: detail.form_items?.[0]?.tujuan_pembelajaran || formActive?.items?.[0]?.tujuan_pembelajaran || "-",
+                    aspek_2: detail.items?.find(i => i.form_item_id === detail.form_items?.[1]?.id)?.skor || 0,
+                    desc_2: detail.form_items?.[1]?.tujuan_pembelajaran || formActive?.items?.[1]?.tujuan_pembelajaran || "-",
+                    aspek_3: detail.items?.find(i => i.form_item_id === detail.form_items?.[2]?.id)?.skor || 0,
+                    desc_3: detail.form_items?.[2]?.tujuan_pembelajaran || formActive?.items?.[2]?.tujuan_pembelajaran || "-",
+                    aspek_4: detail.items?.find(i => i.form_item_id === detail.form_items?.[3]?.id)?.skor || 0,
+                    desc_4: detail.form_items?.[3]?.tujuan_pembelajaran || formActive?.items?.[3]?.tujuan_pembelajaran || "-"
+                }
+            };
+            const response = await cetakSertifikat('tkj', student);
+            console.log(response)
+            downloadPDF(response.filename);
+            toast.success("Sertifikat berhasil diunduh!");
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError && error.response?.data?.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("Terjadi kesalahan saat mengunduh sertifikat.");
+            }
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -193,6 +295,7 @@ export default function HasilPenilaianPage() {
                                                 >
                                                     <FileSearch className="h-4 w-4" /> Buka Detail
                                                 </Button>
+                                                <Button className="mt-1" disabled={submitting} onClick={() => handleDownloadSertifikat(review)}>Cetak Sertifikat</Button>
                                             </TableCell>
                                         </TableRow>
                                     ))
