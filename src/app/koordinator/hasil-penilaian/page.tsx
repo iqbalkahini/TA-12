@@ -36,7 +36,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { getJurusan } from "@/api/admin/jurusan";
 import { getKelas } from "@/api/admin/kelas";
-import { getIndustri } from "@/api/admin/industri";
+import { getIndustri, getIndustriById } from "@/api/admin/industri";
 import { Jurusan, Kelas, Industri } from "@/types/api";
 import {
     Search,
@@ -184,6 +184,8 @@ export default function HasilPenilaianPage() {
 
             // Fetch rincian nilai untuk mendapatkan skor tiap aspek
             const detail = await koordinatorPenilaianApi.getReviewDetail(review.application_id);
+            const industriRes = await getIndustriById(review.industri_id);
+            const namaPimpinan = industriRes?.data?.pic || industriRes?.pic || "-";
 
             let kode_jurusan = review.jurusan_nama
                 .split(' ')
@@ -243,7 +245,8 @@ export default function HasilPenilaianPage() {
                     desc_3: detail.form_items?.[2]?.tujuan_pembelajaran || formActive?.items?.[2]?.tujuan_pembelajaran || "-",
                     aspek_4: detail.items?.find(i => i.form_item_id === detail.form_items?.[3]?.id)?.skor || 0,
                     desc_4: detail.form_items?.[3]?.tujuan_pembelajaran || formActive?.items?.[3]?.tujuan_pembelajaran || "-"
-                }
+                },
+                nama_pimpinan: namaPimpinan
             };
             const response = await cetakSertifikat(kode_jurusan, studentData);
             console.log(response)
@@ -283,6 +286,8 @@ export default function HasilPenilaianPage() {
             try {
                 // Fetch rincian nilai untuk mendapatkan skor tiap aspek
                 const detail = await koordinatorPenilaianApi.getReviewDetail(review.application_id);
+                const industriRes = await getIndustriById(review.industri_id);
+                const namaPimpinan = industriRes?.data?.pic || industriRes?.pic || "-";
 
                 let kode_jurusan = review.jurusan_nama
                     .split(' ')
@@ -329,7 +334,8 @@ export default function HasilPenilaianPage() {
                         desc_3: detail.form_items?.[2]?.tujuan_pembelajaran || formActive?.items?.[2]?.tujuan_pembelajaran || "-",
                         aspek_4: detail.items?.find(i => i.form_item_id === detail.form_items?.[3]?.id)?.skor || 0,
                         desc_4: detail.form_items?.[3]?.tujuan_pembelajaran || formActive?.items?.[3]?.tujuan_pembelajaran || "-"
-                    }
+                    },
+                    nama_pimpinan: namaPimpinan
                 };
 
                 const response = await cetakSertifikat(kode_jurusan, studentData);
