@@ -37,6 +37,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { getJurusan } from "@/api/admin/jurusan";
 import { getKelas } from "@/api/admin/kelas";
 import { getIndustri, getIndustriById } from "@/api/admin/industri";
+import { getGuruById } from "@/api/admin/guru";
 import { Jurusan, Kelas, Industri } from "@/types/api";
 import {
     Search,
@@ -57,6 +58,7 @@ import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { downloadPDF } from "@/api/files";
 import { Progress } from "@/components/ui/progress";
+import { getDetailSIA } from "@/api/koordinator";
 
 export default function HasilPenilaianPage() {
     const [reviews, setReviews] = useState<ReviewApplicationItem[]>([]);
@@ -358,6 +360,113 @@ export default function HasilPenilaianPage() {
         }
     };
 
+    const getSIA = async (siswa_id: number) => {
+        try {
+            const response = await getDetailSIA(siswa_id)
+            return response
+        } catch (error) {
+            console.log(error)
+            alert("Terjadi kesalahan saat memngambil data SIA")
+        }
+    }
+
+    const handleExportCSV = async () => {
+        if (!isFilterActive) {
+            toast.error("Pilih minimal satu filter (Jurusan, Kelas, atau Industri) untuk mengekspor CSV.");
+            return;
+        }
+        
+        if (filteredReviews.length === 0) {
+            toast.error("Tidak ada data siswa untuk diekspor.");
+            return;
+        }
+
+        setIsBatchDownloading(true);
+        toast.info("Menyiapkan data untuk diekspor...");
+
+        try {
+            const dataToExport = await Promise.all(
+                filteredReviews.map(async (review, index) => {
+                    const sia = await getSIA(review.siswa_id);
+                    let pembimbingNama = "-";
+                    if (review.pembimbing_guru_id) {
+                        try {
+                            const guruRes = await getGuruById(review.pembimbing_guru_id);
+                            pembimbingNama = guruRes?.data?.nama || guruRes?.nama || "-";
+                        } catch (err) {
+                            console.error("Failed to fetch guru:", err);
+                        }
+                    }
+
+                    return {
+                        no: index + 1,
+                        nama_siswa: review.siswa_username,
+                        nisn: Number(review.siswa_nisn) || 0,
+                        kelas: review.kelas_nama,
+                        jurusan: review.jurusan_nama,
+                        industri: review.industri_nama,
+                        pembimbing: pembimbingNama,
+                        sakit: sia?.sakit || 0,
+                        izin: sia?.izin || 0,
+                        alpha: 0,
+                        total_skor: review.total_skor || 0,
+                        rata_rata: review.rata_rata || "0",
+                        tanggal_finalisasi: review.finalized_at 
+                            ? new Date(review.finalized_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) 
+                            : '-'
+                    };
+                })
+            );
+
+            exportToCSV(dataToExport, `Data_Nilai_PKL_${new Date().getTime()}.csv`);
+            toast.success("Berhasil mengekspor data CSV.");
+        } catch (error) {
+            console.error("Gagal mengekspor CSV:", error);
+            toast.error("Terjadi kesalahan saat menyiapkan data ekspor.");
+        } finally {
+            setIsBatchDownloading(false);
+        }
+    };
+
+    function exportToCSV(data: {
+        no: number,
+        nama_siswa: string,
+        nisn: number,
+        kelas: string,
+        jurusan: string,
+        industri: string,
+        pembimbing: string,
+        sakit: number,
+        izin: number,
+        alpha: number,
+        total_skor: number,
+        rata_rata: string,
+        tanggal_finalisasi: string
+    }[], filename = 'data-export.csv') {
+        // 1. Ambil header dari kunci objek pertama
+        const headers = Object.keys(data[0]).join(',');
+
+        // 2. Map data menjadi baris-baris string
+        const rows = data.map(obj =>
+            Object.values(obj).join(',')
+        );
+
+        // 3. Gabungkan header dan baris dengan baris baru (\n)
+        const csvContent = [headers, ...rows].join('\n');
+
+        // 4. Buat file download di browser
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+
+        link.setAttribute("href", url);
+        link.setAttribute("download", filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     return (
         <div className="px-5 space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -402,6 +511,14 @@ export default function HasilPenilaianPage() {
                                     disabled={isBatchDownloading}
                                 >
                                     Cari
+                                </Button>
+                                <Button
+                                    variant="default"
+                                    disabled={!isFilterActive || isBatchDownloading || filteredReviews.length === 0}
+                                    onClick={handleExportCSV}
+                                    className="w-full md:w-auto shrink-0"
+                                >
+                                    Expor CSV
                                 </Button>
                                 <Button
                                     variant="default"
