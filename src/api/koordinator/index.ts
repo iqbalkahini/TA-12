@@ -116,7 +116,7 @@ export async function listApprovePklKoordinator(page: number, kelas_id?: number,
 }
 
 // izin
-export async function getDetailSIA(siswa_id: number): Promise<ListApprovePklKoordinatorResponse> {
+export async function getDetailSIA(siswa_id: number): Promise<{ izin: number, sakit: number, siswa_id: number }> {
   try {
     const response = await axiosInstance.get(`/api/izin/students/${siswa_id}/summary`);
     return response.data;
