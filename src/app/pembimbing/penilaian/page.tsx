@@ -57,9 +57,17 @@ import { Label } from "@/components/ui/label";
 import { downloadPDF } from "@/api/files";
 import { ApiResponseSekolah } from "@/types/api";
 import { getSekolah } from "@/api/public";
+import { getSiswa } from "@/api/pembimbing";
+import { getSiswaById } from "@/api/admin/siswa";
+import { getKelasById } from "@/api/admin/kelas";
+import { getJurusanById } from "@/api/admin/jurusan";
+import { SiswaDataPembimbing } from "@/types/api";
+import { getCurrentUser } from "@/utils/auth";
+import { getIndustriById } from "@/api/admin/industri";
 
 export default function PembimbingPenilaianPage() {
     const [students, setStudents] = useState<StudentApplicationItem[]>([]);
+    const [siswaDetails, setSiswaDetails] = useState<SiswaDataPembimbing[]>([]);
     const [sekolah, setSekolah] = useState<ApiResponseSekolah | null>(null);
     const [loadingList, setLoadingList] = useState(true);
     const [searchInput, setSearchInput] = useState("");
@@ -84,11 +92,22 @@ export default function PembimbingPenilaianPage() {
 
     useEffect(() => {
         fetchStudents();
+        fetchSiswaDetails();
     }, [filterStatus, searchQuery]);
 
     useEffect(() => {
         fetchSekolah();
     }, [])
+
+    const fetchSiswaDetails = async () => {
+        try {
+            const res = await getSiswa();
+            const data = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
+            setSiswaDetails(data);
+        } catch (error) {
+            console.error("Gagal mengambil detail siswa:", error);
+        }
+    };
 
     const fetchStudents = async () => {
         try {
@@ -293,7 +312,7 @@ export default function PembimbingPenilaianPage() {
         try {
             setLoading(true)
             const res = await cetakPenilaian(data)
-            console.log(res)
+            console.log(data)
             const download = await downloadPDF(res.filename)
             toast.success("Surat penilaian berhasil dicetak!")
         } catch (error) {
@@ -441,7 +460,7 @@ export default function PembimbingPenilaianPage() {
                         </DialogTitle>
                         <DialogDescription className="mt-2 flex justify-end">
                             {/* {detailData ? getStatusBadge(detailData.status) : "-"} */}
-                            <Button onClick={() => {
+                            <Button onClick={async () => {
                                 if (!activeStudent || !detailData) {
                                     toast.error("Data siswa atau penilaian tidak lengkap");
                                     return;
@@ -462,30 +481,65 @@ export default function PembimbingPenilaianPage() {
                                     return descriptions[fi[index].id] || "-";
                                 };
 
+                                const activeSiswaDetail = siswaDetails.find(s => s.siswa_id === activeStudent.siswa_id);
+                                const tglMulaiVal = activeSiswaDetail?.tanggal_mulai || "-";
+                                const tglSelesaiVal = activeSiswaDetail?.tanggal_selesai || "-";
+
+                                // Fetch Konsentrasi Keahlian (Jurusan) via Siswa -> Kelas -> Jurusan
+                                let konsentrasiKeahlianVal = "-";
+                                try {
+                                    const siswaRes = await getSiswaById(activeStudent.siswa_id);
+                                    if (siswaRes && siswaRes.data && siswaRes.data.kelas_id) {
+                                        const kelasRes = await getKelasById(siswaRes.data.kelas_id);
+                                        if (kelasRes && kelasRes.data && kelasRes.data.jurusan_id) {
+                                            const jurusanRes = await getJurusanById(kelasRes.data.jurusan_id);
+                                            if (jurusanRes && jurusanRes.data && jurusanRes.data.nama) {
+                                                konsentrasiKeahlianVal = jurusanRes.data.nama;
+                                            }
+                                        }
+                                    }
+                                } catch (err) {
+                                    console.error("Failed to fetch konsentrasi keahlian", err);
+                                }
+
+                                // Fetch industri for PIC
+                                let namaInstrukturVal = "-";
+                                try {
+                                    const industriRes = await getIndustriById(activeStudent.industri_id);
+                                    if (industriRes && industriRes.data && industriRes.data.pic) {
+                                        namaInstrukturVal = industriRes.data.pic;
+                                    }
+                                } catch (err) {
+                                    console.error("Failed to fetch industri PIC", err);
+                                }
+
+                                const currentUserInfo = JSON.parse(localStorage.getItem("guruData") || "{}");
+                                const namaPembimbingVal = currentUserInfo?.nama || "-";
+
                                 cetakSuratPenilaian({
                                     school_info: {
-                                        nama_sekolah: sekolah?.data.nama_sekolah || "-",
-                                        alamat_jalan: sekolah?.data.jalan || "-",
-                                        kelurahan: sekolah?.data.kelurahan || "-",
-                                        kecamatan: sekolah?.data.kecamatan || "-",
-                                        kab_kota: sekolah?.data.kabupaten_kota || "-",
-                                        provinsi: sekolah?.data.provinsi || "-",
-                                        kode_pos: sekolah?.data.kode_pos || "-",
-                                        telepon: sekolah?.data.nomor_telepon || "-",
-                                        email: sekolah?.data.email || "-",
-                                        website: sekolah?.data.website || "-",
-                                        logo_url: sekolah?.data.logo_url || "-"
+                                        nama_sekolah: sekolah?.data.nama_sekolah || "SMKN 2 SINGOSARI",
+                                        alamat_jalan: sekolah?.data.jalan || "Jl. Raya Perusahaan No.20",
+                                        kelurahan: sekolah?.data.kelurahan || "Tanjungtirto",
+                                        kecamatan: sekolah?.data.kecamatan || "Singosari",
+                                        kab_kota: sekolah?.data.kabupaten_kota || "",
+                                        provinsi: "",
+                                        kode_pos: sekolah?.data.kode_pos || "",
+                                        telepon: sekolah?.data.nomor_telepon || "(0341) 4345127",
+                                        email: sekolah?.data.email || "smkn2.singosari@yahoo.co.id",
+                                        website: sekolah?.data.website || "https://smkn2-singosari.sch.id/",
+                                        logo_url: sekolah?.data.logo_url || "https://upload.wikimedia.org/wikipedia/commons/7/74/Coat_of_arms_of_East_Java.svg"
                                     },
                                     siswa: {
                                         nama: activeStudent.siswa_username || "-",
                                         nisn: activeStudent.siswa_nisn || "-",
                                         kelas: activeStudent.kelas_nama || "-",
-                                        konsentrasi_keahlian: "-", // Needs API support
+                                        konsentrasi_keahlian: konsentrasiKeahlianVal,
                                         tempat_pkl: activeStudent.industri_nama || "-",
-                                        tanggal_mulai: "-", // Needs API support
-                                        tanggal_selesai: "-", // Needs API support
-                                        nama_instruktur: "-", // Needs API support
-                                        nama_pembimbing: "-" // Needs API support
+                                        tanggal_mulai: tglMulaiVal,
+                                        tanggal_selesai: tglSelesaiVal,
+                                        nama_instruktur: namaInstrukturVal,
+                                        nama_pembimbing: namaPembimbingVal
                                     },
                                     nilai: {
                                         skor_1: getScore(0),
