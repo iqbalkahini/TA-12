@@ -312,7 +312,6 @@ export default function PembimbingPenilaianPage() {
         try {
             setLoading(true)
             const res = await cetakPenilaian(data)
-            console.log(data)
             const download = await downloadPDF(res.filename)
             toast.success("Surat penilaian berhasil dicetak!")
         } catch (error) {
