@@ -582,13 +582,17 @@ export default function PengajuanPKLPage() {
                             application: {
                                 id: selectedApp.application_id,
                                 tanggal_permohonan: selectedApp.tanggal_permohonan,
-                                status: selectedApp.status
+                                status: selectedApp.status,
+                                tanggal_mulai: selectedApp.tanggal_mulai,
+                                tanggal_selesai: selectedApp.tanggal_selesai
                             },
                             siswa_username: selectedApp.siswa_username,
                             siswa_nisn: selectedApp.siswa_nisn,
                             industri_nama: selectedApp.industri_nama,
-                            kelas_nama: "-",
-                            jurusan_nama: "-"
+                            kelas_nama: selectedApp.kelas_nama || "-",
+                            jurusan_nama: selectedApp.jurusan_nama || "-",
+                            tanggal_mulai: selectedApp.tanggal_mulai,
+                            tanggal_selesai: selectedApp.tanggal_selesai
                         } as any
                     }
                     allApplications={applications as any}
