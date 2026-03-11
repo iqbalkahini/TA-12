@@ -168,7 +168,7 @@ export function SuratPermohonanModal({ isOpen, onClose, application, allApplicat
                             <div className="text-center w-[300px]">
                                 <p className="mb-20">Kepala {schoolData.nama_sekolah},</p>
                                 <p className="font-bold underline uppercase">{schoolData.kepala_sekolah}</p>
-                                <p className="">NIP. {schoolData.nip_kepala_sekolah}</p>
+                                <p className="">NIP. {schoolData.nip_kepala_sekolah || "19700210 199802 2 009"}</p>
                                 <p className="font-bold">{schoolData.pembina_utama_muda || "Pembina Utama Muda (IV/c)"}</p> {/* Hardcoded rank from image if not in data, or just leave it */}
                             </div>
                         </div>
