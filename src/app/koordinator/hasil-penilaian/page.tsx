@@ -58,7 +58,7 @@ import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { downloadPDF } from "@/api/files";
 import { Progress } from "@/components/ui/progress";
-import { getDetailSIA } from "@/api/koordinator";
+import { getDetailSIA, listApprovePklKoordinator } from "@/api/koordinator";
 
 export default function HasilPenilaianPage() {
     const [reviews, setReviews] = useState<ReviewApplicationItem[]>([]);
@@ -225,6 +225,19 @@ export default function HasilPenilaianPage() {
                 else hasil_pkl = "Kurang";
             }
 
+            let tglMulaiFormatted = "-";
+            let tglSelesaiFormatted = "-";
+            try {
+                const approveList = await listApprovePklKoordinator(1, undefined, undefined, undefined, review.siswa_nisn);
+                const pklData = approveList?.data?.find(a => a.application_id === review.application_id);
+                if (pklData) {
+                    if (pklData.tanggal_mulai) tglMulaiFormatted = new Date(pklData.tanggal_mulai).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+                    if (pklData.tanggal_selesai) tglSelesaiFormatted = new Date(pklData.tanggal_selesai).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+                }
+            } catch (err) {
+                console.error("Failed to fetch PKL dates", err);
+            }
+
             const studentData: SertifikatPKL = {
                 nomor_sertifikat: "-",
                 siswa: {
@@ -232,8 +245,8 @@ export default function HasilPenilaianPage() {
                     nisn: review.siswa_nisn,
                 },
                 nama_industri: review.industri_nama,
-                tanggal_mulai: "-",
-                tanggal_selesai: "-",
+                tanggal_mulai: tglMulaiFormatted,
+                tanggal_selesai: tglSelesaiFormatted,
                 tanggal_terbit: review.finalized_at
                     ? new Date(review.finalized_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
                     : "-",
@@ -314,6 +327,19 @@ export default function HasilPenilaianPage() {
                     else hasil_pkl = "Kurang";
                 }
 
+                let tglMulaiFormatted = "-";
+                let tglSelesaiFormatted = "-";
+                try {
+                    const approveList = await listApprovePklKoordinator(1, undefined, undefined, undefined, review.siswa_nisn);
+                    const pklData = approveList?.data?.find(a => a.application_id === review.application_id);
+                    if (pklData) {
+                        if (pklData.tanggal_mulai) tglMulaiFormatted = new Date(pklData.tanggal_mulai).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+                        if (pklData.tanggal_selesai) tglSelesaiFormatted = new Date(pklData.tanggal_selesai).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+                    }
+                } catch (err) {
+                    console.error("Failed to fetch PKL dates", err);
+                }
+
                 const studentData: SertifikatPKL = {
                     nomor_sertifikat: "-",
                     siswa: {
@@ -321,8 +347,8 @@ export default function HasilPenilaianPage() {
                         nisn: review.siswa_nisn,
                     },
                     nama_industri: review.industri_nama,
-                    tanggal_mulai: "-",
-                    tanggal_selesai: "-",
+                    tanggal_mulai: tglMulaiFormatted,
+                    tanggal_selesai: tglSelesaiFormatted,
                     tanggal_terbit: review.finalized_at
                         ? new Date(review.finalized_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
                         : "-",
