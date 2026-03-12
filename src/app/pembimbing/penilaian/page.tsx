@@ -333,7 +333,7 @@ export default function PembimbingPenilaianPage() {
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Penilaian Siswa</h1>
                     <p className="text-muted-foreground mt-1">
-                        Kelola dan input nilai praktik kerja lapangan (PKL) siswa bimbingan Anda.
+                        Kelola dan Masukan nilai praktik kerja lapangan (PKL) siswa bimbingan Anda.
                     </p>
                 </div>
             </div>
@@ -430,7 +430,7 @@ export default function PembimbingPenilaianPage() {
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <FileEdit className="h-4 w-4" /> Input Nilai
+                                                            <FileEdit className="h-4 w-4" /> Masukan Nilai
                                                         </>
                                                     )}
                                                 </Button>
