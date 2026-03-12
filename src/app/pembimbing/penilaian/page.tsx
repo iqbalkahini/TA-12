@@ -64,6 +64,7 @@ import { getJurusanById } from "@/api/admin/jurusan";
 import { SiswaDataPembimbing } from "@/types/api";
 import { getCurrentUser } from "@/utils/auth";
 import { getIndustriById } from "@/api/admin/industri";
+import deskripsiSkor from "@/utils/skor";
 
 export default function PembimbingPenilaianPage() {
     const [students, setStudents] = useState<StudentApplicationItem[]>([]);
@@ -213,11 +214,18 @@ export default function PembimbingPenilaianPage() {
     const getPayload = (): DraftPenilaianPayload => {
         if (!detailData) return { items: [] };
 
-        const items = detailData.form_items.map((fi) => ({
-            form_item_id: fi.id,
-            skor: typeof scores[fi.id] === "number" ? (scores[fi.id] as number) : 0,
-            deskripsi: descriptions[fi.id] || "",
-        }));
+
+        const items = detailData.form_items.map((fi, i) => {
+            const skorValue = typeof scores[fi.id] === "number" ? (scores[fi.id] as number) : 0;
+            // Generate the deskripsi dynamically based on the current score and index
+            const deskripsi = deskripsiSkor(i + 1, skorValue);
+
+            return {
+                form_item_id: fi.id,
+                skor: skorValue,
+                deskripsi: deskripsi,
+            }
+        });
 
         // Filter out items that have no score inputted if it's draft, or just send all
         // Let backend validate. We'll only send valid items to avoid 0 if user just left it empty
@@ -278,13 +286,25 @@ export default function PembimbingPenilaianPage() {
             return;
         }
 
-        if (!confirm("Peringatan: Nilai yang sudah difinalisasi TIDAK DAPAT DIUBAH lagi. Anda yakin?")) {
+        if (!confirm("Plai yang sudah difinalisasi TIDAK DAPAT DIUBAH lagi. Anda yakin?")) {
             return;
         }
 
         try {
             setSubmitting(true);
+            Object.keys(scores).forEach((key, i) => {
+                const id = parseInt(key);
+                const deskripsi = deskripsiSkor(i + 1, scores[id] as number);
+                setDescriptions((prev) => ({
+                    ...prev,
+                    [id]: deskripsi,
+                }));
+                if (!scores[id]) {
+                    scores[id] = 0;
+                }
+            });
             // 1. Simpan draft secara penuh terlebih dahulu agar datanya utuh di backend
+            console.log(getPayload())
             await pembimbingPenilaianApi.saveDraft(
                 activeStudent.application_id,
                 getPayload()
@@ -596,17 +616,6 @@ export default function PembimbingPenilaianPage() {
                                                     </div>
                                                     <div>
                                                         <p className="text-sm font-medium leading-relaxed">{fi.tujuan_pembelajaran}</p>
-                                                        {detailData.status !== "final" && (
-                                                            <Input
-                                                                placeholder="Catatan/Deskripsi indikator (opsional)..."
-                                                                className="mt-3 text-sm h-8"
-                                                                value={descriptions[fi.id] || ""}
-                                                                onChange={(e) =>
-                                                                    setDescriptions((p) => ({ ...p, [fi.id]: e.target.value }))
-                                                                }
-                                                                disabled={detailData.status === "final"}
-                                                            />
-                                                        )}
                                                         {detailData.status === "final" && descriptions[fi.id] && (
                                                             <p className="mt-2 text-sm italic text-muted-foreground border-l-2 pl-2">
                                                                 &ldquo;{descriptions[fi.id]}&rdquo;
@@ -671,7 +680,7 @@ export default function PembimbingPenilaianPage() {
                                     disabled={submitting}
                                 >
                                     <Save className="h-4 w-4 mr-2" />
-                                    Simpan Draft
+                                    Simpan Draf
                                 </Button>
                                 <Button
                                     className="bg-green-600 hover:bg-green-700 text-white"

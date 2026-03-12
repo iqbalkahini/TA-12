@@ -469,12 +469,22 @@ export default function HasilPenilaianPage() {
         rata_rata: string,
         tanggal_finalisasi: string
     }[], filename = 'data-export.csv') {
-        // 1. Ambil header dari kunci objek pertama
-        const headers = Object.keys(data[0]).join(',');
+        // 1. Ambil header dari kunci objek pertama, lalu ganti underscore dengan spasi + Title Case
+        const headers = Object.keys(data[0]).map(key => 
+            key.replace(/_/g, ' ')
+               .replace(/\b\w/g, char => char.toUpperCase())
+        ).join(',');
 
         // 2. Map data menjadi baris-baris string
         const rows = data.map(obj =>
-            Object.values(obj).join(',')
+            Object.values(obj).map(val => {
+                const strVal = String(val);
+                // Jika mengandung koma, kutip ganda, atau baris baru, bungkus dengan kutip dua
+                if (strVal.includes(',') || strVal.includes('"') || strVal.includes('\n')) {
+                    return `"${strVal.replace(/"/g, '""')}"`;
+                }
+                return strVal;
+            }).join(',')
         );
 
         // 3. Gabungkan header dan baris dengan baris baru (\n)

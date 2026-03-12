@@ -1,4 +1,4 @@
-export default function deskripsiSkor(id: number, skor: number) {
+export default function deskripsiSkor(id: number, skor: number): string {
     if (id == 1) {
         if (skor >= 86) return "Peserta didik mampu menerapkan soft skill yang dimiliki dengan menunjukkan integritas (jujur, disiplin, komitmen, dan tanggung jawab), memiliki etos kerja, menunjukkan kemandirian, menunjukkan kerja sama, dan menunjukkan kepedulian sosial dan lingkungan dengan predikat sangat baik.";
         if (skor >= 75) return "Peserta didik mampu menerapkan soft skill yang dimiliki dengan menunjukkan integritas (jujur, disiplin, komitmen, dan tanggung jawab), memiliki etos kerja, menunjukkan kemandirian, menunjukkan kerja sama, dan menunjukkan kepedulian sosial dan lingkungan dengan predikat baik.";
@@ -16,4 +16,5 @@ export default function deskripsiSkor(id: number, skor: number) {
         if (skor >= 75) return "Peserta didik mampu memahami alur bisnis dunia kerja tempat PKL dan wawasan wirausaha dengan predikat baik.";
         return "Peserta didik mampu memahami alur bisnis dunia kerja tempat PKL dan wawasan wirausaha dengan predikat kurang.";
     }
+    return "";
 }
