@@ -88,6 +88,12 @@ export default function PembimbingPenilaianPage() {
     const [scores, setScores] = useState<Record<number, number | "">>({});
     const [descriptions, setDescriptions] = useState<Record<number, string>>({});
     const [catatanAkhir, setCatatanAkhir] = useState("");
+    const [namaPimpinan, setNamaPimpinan] = useState("");
+    const [nipPimpinan, setNipPimpinan] = useState("");
+    const [jabatanPimpinan, setJabatanPimpinan] = useState("");
+    const [namaPembimbingReq, setNamaPembimbingReq] = useState("");
+    const [nipPembimbing, setNipPembimbing] = useState("");
+    const [jabatanPembimbing, setJabatanPembimbing] = useState("");
 
     const [filterStatus, setFilterStatus] = useState<'belum_dinilai' | 'sudah_dinilai' | 'semua'>('semua');
 
@@ -144,6 +150,28 @@ export default function PembimbingPenilaianPage() {
         setScores({});
         setDescriptions({});
         setCatatanAkhir("");
+        setNamaPimpinan("");
+        setNipPimpinan("");
+        setJabatanPimpinan("");
+        setNamaPembimbingReq("");
+        setNipPembimbing("");
+        setJabatanPembimbing("");
+
+        // Load from local storage if exists
+        const storedSertifikatStr = localStorage.getItem(`sertifikat_data_${student.siswa_id}`);
+        if (storedSertifikatStr) {
+            try {
+                const storedSertifikat = JSON.parse(storedSertifikatStr);
+                setNamaPimpinan(storedSertifikat.nama_pimpinan || "");
+                setNipPimpinan(storedSertifikat.nip_pimpinan || "");
+                setJabatanPimpinan(storedSertifikat.jabatan_pimpinan || "");
+                setNamaPembimbingReq(storedSertifikat.nama_pembimbing || "");
+                setNipPembimbing(storedSertifikat.nip_pembimbing || "");
+                setJabatanPembimbing(storedSertifikat.jabatan_pembimbing || "");
+            } catch (err) {
+                console.error("Format local storage sertifikat data invalid")
+            }
+        }
 
         try {
             const detail = await pembimbingPenilaianApi.getApplicationDetail(
@@ -248,6 +276,17 @@ export default function PembimbingPenilaianPage() {
 
         try {
             setSubmitting(true);
+            
+            // Simpan ke local storage
+            localStorage.setItem(`sertifikat_data_${activeStudent.siswa_id}`, JSON.stringify({
+                nama_pimpinan: namaPimpinan,
+                nip_pimpinan: nipPimpinan,
+                jabatan_pimpinan: jabatanPimpinan,
+                nama_pembimbing: namaPembimbingReq,
+                nip_pembimbing: nipPembimbing,
+                jabatan_pembimbing: jabatanPembimbing
+            }));
+
             await pembimbingPenilaianApi.saveDraft(
                 activeStudent.application_id,
                 payload
@@ -303,6 +342,16 @@ export default function PembimbingPenilaianPage() {
                     scores[id] = 0;
                 }
             });
+            // Simpan ke local storage
+            localStorage.setItem(`sertifikat_data_${activeStudent.siswa_id}`, JSON.stringify({
+                nama_pimpinan: namaPimpinan,
+                nip_pimpinan: nipPimpinan,
+                jabatan_pimpinan: jabatanPimpinan,
+                nama_pembimbing: namaPembimbingReq,
+                nip_pembimbing: nipPembimbing,
+                jabatan_pembimbing: jabatanPembimbing
+            }));
+
             // 1. Simpan draft secara penuh terlebih dahulu agar datanya utuh di backend
             console.log(getPayload())
             await pembimbingPenilaianApi.saveDraft(
@@ -645,6 +694,36 @@ export default function PembimbingPenilaianPage() {
                                                 </div>
                                             </div>
                                         ))}
+
+                                        <div className="mt-6 pt-4 border-t space-y-4">
+                                            <h3 className="font-bold text-base">Data Tambahan Sertifikat</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label>Nama Pimpinan</Label>
+                                                    <Input value={namaPimpinan} onChange={(e) => setNamaPimpinan(e.target.value)} disabled={detailData.status === "final"} placeholder="Masukkan Nama Pimpinan" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label>NIP Pimpinan</Label>
+                                                    <Input value={nipPimpinan} onChange={(e) => setNipPimpinan(e.target.value)} disabled={detailData.status === "final"} placeholder="Masukkan NIP Pimpinan" />
+                                                </div>
+                                                <div className="space-y-2 md:col-span-2">
+                                                    <Label>Jabatan Pimpinan</Label>
+                                                    <Input value={jabatanPimpinan} onChange={(e) => setJabatanPimpinan(e.target.value)} disabled={detailData.status === "final"} placeholder="Masukkan Jabatan Pimpinan" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label>Nama Pembimbing</Label>
+                                                    <Input value={namaPembimbingReq} onChange={(e) => setNamaPembimbingReq(e.target.value)} disabled={detailData.status === "final"} placeholder="Masukkan Nama Pembimbing" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label>NIP Pembimbing</Label>
+                                                    <Input value={nipPembimbing} onChange={(e) => setNipPembimbing(e.target.value)} disabled={detailData.status === "final"} placeholder="Masukkan NIP Pembimbing" />
+                                                </div>
+                                                <div className="space-y-2 md:col-span-2">
+                                                    <Label>Jabatan Pembimbing</Label>
+                                                    <Input value={jabatanPembimbing} onChange={(e) => setJabatanPembimbing(e.target.value)} disabled={detailData.status === "final"} placeholder="Masukkan Jabatan Pembimbing" />
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <div className="mt-6 pt-4 border-t space-y-2">
                                             <Label className="font-bold text-base">Catatan Akhir Pembimbing</Label>

@@ -238,6 +238,41 @@ export default function HasilPenilaianPage() {
                 console.error("Failed to fetch PKL dates", err);
             }
 
+            const nilaiPKL = {
+                aspek_1: detail.items?.find(i => i.form_item_id === detail.form_items?.[0]?.id)?.skor || 0,
+                desc_1: detail.form_items?.[0]?.tujuan_pembelajaran || formActive?.items?.[0]?.tujuan_pembelajaran || "-",
+                aspek_2: detail.items?.find(i => i.form_item_id === detail.form_items?.[1]?.id)?.skor || 0,
+                desc_2: detail.form_items?.[1]?.tujuan_pembelajaran || formActive?.items?.[1]?.tujuan_pembelajaran || "-",
+                aspek_3: detail.items?.find(i => i.form_item_id === detail.form_items?.[2]?.id)?.skor || 0,
+                desc_3: detail.form_items?.[2]?.tujuan_pembelajaran || formActive?.items?.[2]?.tujuan_pembelajaran || "-",
+                aspek_4: detail.items?.find(i => i.form_item_id === detail.form_items?.[3]?.id)?.skor || 0,
+                desc_4: detail.form_items?.[3]?.tujuan_pembelajaran || formActive?.items?.[3]?.tujuan_pembelajaran || "-"
+            };
+
+            // Get data from localStorage
+            const storedSertifikatStr = localStorage.getItem(`sertifikat_data_${review.siswa_id}`);
+            let sertifikatData = {
+                nama_pimpinan: "Nama Pimpinan",
+                nip_pimpinan: "198012122005011002",
+                jabatan_pimpinan: "Jabatan Pimpinan",
+                nama_pembimbing: namaPembimbing,
+                nip_pembimbing: "198012122005011002",
+                jabatan_pembimbing: "Jabatan Pembimbing"
+            };
+
+            if (storedSertifikatStr) {
+                try {
+                    const parsed = JSON.parse(storedSertifikatStr);
+                    sertifikatData = {
+                        ...sertifikatData,
+                        ...parsed,
+                        nama_pembimbing: parsed.nama_pembimbing || namaPembimbing // fallback to API if not in localStorage or empty
+                    };
+                } catch (e) {
+                    console.error("Failed to parse sertifikat data from localStorage", e);
+                }
+            }
+
             const studentData: SertifikatPKL = {
                 nomor_sertifikat: "-",
                 siswa: {
@@ -251,22 +286,8 @@ export default function HasilPenilaianPage() {
                     ? new Date(review.finalized_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
                     : "-",
                 hasil_pkl: hasil_pkl as any,
-                nilai: {
-                    aspek_1: detail.items?.find(i => i.form_item_id === detail.form_items?.[0]?.id)?.skor || 0,
-                    desc_1: detail.form_items?.[0]?.tujuan_pembelajaran || formActive?.items?.[0]?.tujuan_pembelajaran || "-",
-                    aspek_2: detail.items?.find(i => i.form_item_id === detail.form_items?.[1]?.id)?.skor || 0,
-                    desc_2: detail.form_items?.[1]?.tujuan_pembelajaran || formActive?.items?.[1]?.tujuan_pembelajaran || "-",
-                    aspek_3: detail.items?.find(i => i.form_item_id === detail.form_items?.[2]?.id)?.skor || 0,
-                    desc_3: detail.form_items?.[2]?.tujuan_pembelajaran || formActive?.items?.[2]?.tujuan_pembelajaran || "-",
-                    aspek_4: detail.items?.find(i => i.form_item_id === detail.form_items?.[3]?.id)?.skor || 0,
-                    desc_4: detail.form_items?.[3]?.tujuan_pembelajaran || formActive?.items?.[3]?.tujuan_pembelajaran || "-"
-                },
-                nama_pimpinan: "Nama Pimpinan",
-                nip_pimpinan: "198012122005011002",
-                jabatan_pimpinan: "Jabatan Pimpinan",
-                nama_pembimbing: namaPembimbing,
-                nip_pembimbing: "198012122005011002",
-                jabatan_pembimbing: "Jabatan Pembimbing"
+                nilai: nilaiPKL,
+                ...sertifikatData
             };
             const response = await cetakSertifikat(kode_jurusan, studentData);
             downloadPDF(response.filename);
@@ -344,6 +365,30 @@ export default function HasilPenilaianPage() {
                     console.error("Failed to fetch PKL dates", err);
                 }
 
+                // Get data from localStorage
+                const storedSertifikatStr = localStorage.getItem(`sertifikat_data_${review.siswa_id}`);
+                let sertifikatData = {
+                    nama_pimpinan: "Nama Pimpinan",
+                    nip_pimpinan: "198012122005011002",
+                    jabatan_pimpinan: "Jabatan Pimpinan",
+                    nama_pembimbing: namaPimpinan,
+                    nip_pembimbing: "198012122005011002",
+                    jabatan_pembimbing: "Jabatan Pembimbing"
+                };
+
+                if (storedSertifikatStr) {
+                    try {
+                        const parsed = JSON.parse(storedSertifikatStr);
+                        sertifikatData = {
+                            ...sertifikatData,
+                            ...parsed,
+                            nama_pembimbing: parsed.nama_pembimbing || namaPimpinan // fallback to API if not in localStorage or empty
+                        };
+                    } catch (e) {
+                        console.error("Failed to parse sertifikat data from localStorage", e);
+                    }
+                }
+
                 const studentData: SertifikatPKL = {
                     nomor_sertifikat: "-",
                     siswa: {
@@ -367,12 +412,7 @@ export default function HasilPenilaianPage() {
                         aspek_4: detail.items?.find(i => i.form_item_id === detail.form_items?.[3]?.id)?.skor || 0,
                         desc_4: detail.form_items?.[3]?.tujuan_pembelajaran || formActive?.items?.[3]?.tujuan_pembelajaran || "-"
                     },
-                    nama_pimpinan: namaPimpinan,
-                    nip_pimpinan: "-",
-                    jabatan_pimpinan: "-",
-                    nama_pembimbing: "-",
-                    nip_pembimbing: "-",
-                    jabatan_pembimbing: "-"
+                    ...sertifikatData
                 };
 
                 const response = await cetakSertifikat(kode_jurusan, studentData);
