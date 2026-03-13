@@ -119,7 +119,12 @@ export interface SertifikatPKL {
     hasil_pkl: "Amat Baik" | "Baik" | "Cukup" | "Kurang"; // Menggunakan union type untuk validasi
     tanggal_terbit: string;
     nilai: NilaiPKL;
-    nama_pimpinan: string
+    nama_pimpinan: string;
+    nip_pimpinan: string;
+    jabatan_pimpinan: string;
+    nama_pembimbing: string;
+    nip_pembimbing: string;
+    jabatan_pembimbing: string;
 }
 
 // sertif penilaian 

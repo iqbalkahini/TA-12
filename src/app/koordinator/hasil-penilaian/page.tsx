@@ -187,7 +187,7 @@ export default function HasilPenilaianPage() {
             // Fetch rincian nilai untuk mendapatkan skor tiap aspek
             const detail = await koordinatorPenilaianApi.getReviewDetail(review.application_id);
             const industriRes = await getIndustriById(review.industri_id);
-            const namaPimpinan = industriRes?.data?.pic || industriRes?.pic || "-";
+            const namaPembimbing = industriRes?.data?.pic || industriRes?.pic || "-";
 
             let kode_jurusan = review.jurusan_nama
                 .split(' ')
@@ -261,10 +261,14 @@ export default function HasilPenilaianPage() {
                     aspek_4: detail.items?.find(i => i.form_item_id === detail.form_items?.[3]?.id)?.skor || 0,
                     desc_4: detail.form_items?.[3]?.tujuan_pembelajaran || formActive?.items?.[3]?.tujuan_pembelajaran || "-"
                 },
-                nama_pimpinan: namaPimpinan
+                nama_pimpinan: "Nama Pimpinan",
+                nip_pimpinan: "198012122005011002",
+                jabatan_pimpinan: "Jabatan Pimpinan",
+                nama_pembimbing: namaPembimbing,
+                nip_pembimbing: "198012122005011002",
+                jabatan_pembimbing: "Jabatan Pembimbing"
             };
             const response = await cetakSertifikat(kode_jurusan, studentData);
-            console.log(response)
             downloadPDF(response.filename);
             toast.success(`Sertifikat ${review.siswa_username} berhasil diunduh!`);
         } catch (error) {
@@ -363,7 +367,12 @@ export default function HasilPenilaianPage() {
                         aspek_4: detail.items?.find(i => i.form_item_id === detail.form_items?.[3]?.id)?.skor || 0,
                         desc_4: detail.form_items?.[3]?.tujuan_pembelajaran || formActive?.items?.[3]?.tujuan_pembelajaran || "-"
                     },
-                    nama_pimpinan: namaPimpinan
+                    nama_pimpinan: namaPimpinan,
+                    nip_pimpinan: "-",
+                    jabatan_pimpinan: "-",
+                    nama_pembimbing: "-",
+                    nip_pembimbing: "-",
+                    jabatan_pembimbing: "-"
                 };
 
                 const response = await cetakSertifikat(kode_jurusan, studentData);
@@ -401,7 +410,7 @@ export default function HasilPenilaianPage() {
             toast.error("Pilih minimal satu filter (Jurusan, Kelas, atau Industri) untuk mengekspor CSV.");
             return;
         }
-        
+
         if (filteredReviews.length === 0) {
             toast.error("Tidak ada data siswa untuk diekspor.");
             return;
@@ -437,8 +446,8 @@ export default function HasilPenilaianPage() {
                         alpha: 0,
                         total_skor: review.total_skor || 0,
                         rata_rata: review.rata_rata || "0",
-                        tanggal_finalisasi: review.finalized_at 
-                            ? new Date(review.finalized_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) 
+                        tanggal_finalisasi: review.finalized_at
+                            ? new Date(review.finalized_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
                             : '-'
                     };
                 })
@@ -470,9 +479,9 @@ export default function HasilPenilaianPage() {
         tanggal_finalisasi: string
     }[], filename = 'data-export.csv') {
         // 1. Ambil header dari kunci objek pertama, lalu ganti underscore dengan spasi + Title Case
-        const headers = Object.keys(data[0]).map(key => 
+        const headers = Object.keys(data[0]).map(key =>
             key.replace(/_/g, ' ')
-               .replace(/\b\w/g, char => char.toUpperCase())
+                .replace(/\b\w/g, char => char.toUpperCase())
         ).join(',');
 
         // 2. Map data menjadi baris-baris string
