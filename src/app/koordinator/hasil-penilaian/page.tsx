@@ -216,7 +216,7 @@ export default function HasilPenilaianPage() {
             }
 
 
-            let hasil_pkl = "Cukup";
+            let hasil_pkl: SertifikatPKL["hasil_pkl"] = "Cukup";
             const num = Number(review.rata_rata);
             if (!isNaN(num)) {
                 if (num >= 90) hasil_pkl = "Amat Baik";
@@ -253,9 +253,11 @@ export default function HasilPenilaianPage() {
             const storedSertifikatStr = localStorage.getItem(`sertifikat_data_${review.siswa_id}`);
             let sertifikatData = {
                 nama_pimpinan: "Nama Pimpinan",
+                jenis_nomor_pimpinan: "NIP",
                 nip_pimpinan: "198012122005011002",
                 jabatan_pimpinan: "Jabatan Pimpinan",
                 nama_pembimbing: namaPembimbing,
+                jenis_nomor_pembimbing: "NIP",
                 nip_pembimbing: "198012122005011002",
                 jabatan_pembimbing: "Jabatan Pembimbing"
             };
@@ -285,7 +287,7 @@ export default function HasilPenilaianPage() {
                 tanggal_terbit: review.finalized_at
                     ? new Date(review.finalized_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
                     : "-",
-                hasil_pkl: hasil_pkl as any,
+                hasil_pkl,
                 nilai: nilaiPKL,
                 ...sertifikatData
             };
@@ -343,7 +345,7 @@ export default function HasilPenilaianPage() {
                     case "tflm": kode_jurusan = "tflm"; break;
                 }
 
-                let hasil_pkl = "Cukup";
+                let hasil_pkl: SertifikatPKL["hasil_pkl"] = "Cukup";
                 const num = Number(review.rata_rata);
                 if (!isNaN(num)) {
                     if (num >= 90) hasil_pkl = "Amat Baik";
@@ -369,9 +371,11 @@ export default function HasilPenilaianPage() {
                 const storedSertifikatStr = localStorage.getItem(`sertifikat_data_${review.siswa_id}`);
                 let sertifikatData = {
                     nama_pimpinan: "Nama Pimpinan",
+                    jenis_nomor_pimpinan: "NIP",
                     nip_pimpinan: "198012122005011002",
                     jabatan_pimpinan: "Jabatan Pimpinan",
                     nama_pembimbing: namaPimpinan,
+                    jenis_nomor_pembimbing: "NIP",
                     nip_pembimbing: "198012122005011002",
                     jabatan_pembimbing: "Jabatan Pembimbing"
                 };
@@ -401,7 +405,7 @@ export default function HasilPenilaianPage() {
                     tanggal_terbit: review.finalized_at
                         ? new Date(review.finalized_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
                         : "-",
-                    hasil_pkl: hasil_pkl as any,
+                    hasil_pkl,
                     nilai: {
                         aspek_1: detail.items?.find(i => i.form_item_id === detail.form_items?.[0]?.id)?.skor || 0,
                         desc_1: detail.form_items?.[0]?.tujuan_pembelajaran || formActive?.items?.[0]?.tujuan_pembelajaran || "-",

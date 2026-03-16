@@ -17,6 +17,8 @@ export interface StudentApplicationItem {
     kelas_nama: string;
     industri_id: number;
     industri_nama: string;
+    tanggal_mulai?: string | null;
+    tanggal_selesai?: string | null;
     pkl_status: string;         // e.g. 'approved'
     penilaian_status: string;   // e.g. 'sudah_dinilai', 'belum_dinilai'
 }
@@ -38,6 +40,8 @@ export interface PenilaianApplicationDetail {
     form_id: number;
     form_nama: string;
     status: string;              // 'final', 'draft', etc.
+    tanggal_mulai?: string | null;
+    tanggal_selesai?: string | null;
     total_skor: number;
     rata_rata: string;           // string format for decimal
     catatan_akhir: string | null;
@@ -120,9 +124,11 @@ export interface SertifikatPKL {
     tanggal_terbit: string;
     nilai: NilaiPKL;
     nama_pimpinan: string;
+    jenis_nomor_pimpinan?: string;
     nip_pimpinan: string;
     jabatan_pimpinan: string;
     nama_pembimbing: string;
+    jenis_nomor_pembimbing?: string;
     nip_pembimbing: string;
     jabatan_pembimbing: string;
 }
@@ -151,7 +157,11 @@ interface SiswaDetail {
     tanggal_mulai: string;
     tanggal_selesai: string;
     nama_instruktur: string;
+    jabatan_instruktur: string;
+    nip_instruktur: string;
     nama_pembimbing: string;
+    jabatan_pembimbing: string;
+    nip_pembimbing: string;
 }
 
 interface NilaiDetail {
@@ -169,6 +179,7 @@ export interface LaporanPKL {
     school_info: SchoolInfo;
     siswa: SiswaDetail;
     nilai: NilaiDetail;
+    jenis_nomor?: string;
     sakit: number;
     izin: number;
     alpa: number;
