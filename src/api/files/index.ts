@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const postData = async (values: any) => {
     try {
-        const response = await axios.post("https://sertif.gedanggoreng.com/api/v1/letters/surat-tugas", values)
+        const response = await axios.post("http://b0sogsc0oo84w8ckkgskws80.13.212.194.164.sslip.io/api/v1/letters/surat-tugas", values)
         return response.data
     } catch (error) {
         throw error
@@ -11,7 +11,7 @@ export const postData = async (values: any) => {
 
 export const postDataPersetujuan = async (values: any) => {
     try {
-        const response = await axios.post("https://sertif.gedanggoreng.com/api/v1/letters/lembar-persetujuan", values)
+        const response = await axios.post("http://b0sogsc0oo84w8ckkgskws80.13.212.194.164.sslip.io/api/v1/letters/lembar-persetujuan", values)
         return response.data
     } catch (error) {
         throw error
@@ -20,7 +20,7 @@ export const postDataPersetujuan = async (values: any) => {
 
 export const downloadPDF = async (nameFile: string) => {
     try {
-        const response = await axios.get(`https://sertif.gedanggoreng.com/api/v1/letters/download/${nameFile}`, {
+        const response = await axios.get(`http://b0sogsc0oo84w8ckkgskws80.13.212.194.164.sslip.io/api/v1/letters/download/${nameFile}`, {
             responseType: "blob",
         })
         const url = window.URL.createObjectURL(new Blob([response.data]));

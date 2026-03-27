@@ -173,7 +173,7 @@ export default function PengajuanIndividu() {
 
     const downloadSurat = async (fileName: string) => {
         try {
-            const response = await axios.get(`https://sertif.gedanggoreng.com/api/v1/letters/download/${fileName}`, {
+            const response = await axios.get(`http://b0sogsc0oo84w8ckkgskws80.13.212.194.164.sslip.io/api/v1/letters/download/${fileName}`, {
                 responseType: 'blob',
             });
             const url = window.URL.createObjectURL(new Blob([response.data]));
