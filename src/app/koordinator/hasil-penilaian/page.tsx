@@ -275,9 +275,19 @@ export default function HasilPenilaianPage() {
                 }
             }
 
+            // Generate random 4 digits for nomor_sertifikat
+            const randomDigits = Math.floor(1000 + Math.random() * 9000).toString();
+            let nomorSertifikat = "-";
+            const templateNomorSertif = formActive?.nomor_sertif || localStorage.getItem("nomor_sertif");
+            if (templateNomorSertif) {
+                nomorSertifikat = templateNomorSertif.replace("-", randomDigits);
+            }
+
+
             const studentData: SertifikatPKL = {
-                nomor_sertifikat: "-",
+                nomor_sertifikat: nomorSertifikat,
                 siswa: {
+
                     nama: review.siswa_username,
                     nisn: review.siswa_nisn,
                 },
@@ -393,9 +403,21 @@ export default function HasilPenilaianPage() {
                     }
                 }
 
+                // Generate random 4 digits for nomor_sertifikat
+                const randomDigits = Math.floor(1000 + Math.random() * 9000).toString();
+                let nomorSertifikat = "-";
+                const templateNomorSertif = formActive?.nomor_sertif || localStorage.getItem("nomor_sertif");
+                if (templateNomorSertif) {
+                    nomorSertifikat = templateNomorSertif.replace("-", randomDigits);
+                }
+
+
+                console.log('nomor_sertifikat: ', nomorSertifikat);
+
                 const studentData: SertifikatPKL = {
-                    nomor_sertifikat: "-",
+                    nomor_sertifikat: nomorSertifikat,
                     siswa: {
+
                         nama: review.siswa_username,
                         nisn: review.siswa_nisn,
                     },

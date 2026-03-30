@@ -54,8 +54,10 @@ export default function FormulirPenilaianPage() {
     // Form Data States
     const [selectedForm, setSelectedForm] = useState<PenilaianForm | null>(null);
     const [formNama, setFormNama] = useState("");
+    const [formNomorSertif, setFormNomorSertif] = useState("");
     const [formItems, setFormItems] = useState<{ urutan: number; tujuan_pembelajaran: string }[]>([]);
     const [submitting, setSubmitting] = useState(false);
+
 
     useEffect(() => {
         fetchForms();
@@ -78,13 +80,16 @@ export default function FormulirPenilaianPage() {
     const handleOpenCreate = () => {
         setSelectedForm(null);
         setFormNama("");
+        setFormNomorSertif("");
         setFormItems([{ urutan: 1, tujuan_pembelajaran: "" }]);
         setIsFormModalOpen(true);
     };
 
+
     const handleOpenEdit = (form: PenilaianForm) => {
         setSelectedForm(form);
         setFormNama(form.nama);
+        setFormNomorSertif(form.nomor_sertif || "");
         setFormItems(
             form.items.map((item) => ({
                 urutan: item.urutan,
@@ -93,6 +98,7 @@ export default function FormulirPenilaianPage() {
         );
         setIsFormModalOpen(true);
     };
+
 
     const handleOpenDetail = (form: PenilaianForm) => {
         setSelectedForm(form);
@@ -143,8 +149,10 @@ export default function FormulirPenilaianPage() {
             setSubmitting(true);
             const payload: CreatePenilaianFormPayload = {
                 nama: formNama,
+                nomor_sertif: formNomorSertif,
                 items: validItems,
             };
+
 
             if (selectedForm) {
                 await koordinatorPenilaianApi.updateForm(selectedForm.id, payload);
@@ -153,8 +161,15 @@ export default function FormulirPenilaianPage() {
                 await koordinatorPenilaianApi.createForm(payload);
                 toast.success("Formulir penilaian berhasil dibuat");
             }
+
+            // Sync with localStorage so it's available for certificate generation
+            if (formNomorSertif) {
+                localStorage.setItem("nomor_sertif", formNomorSertif);
+            }
+
             setIsFormModalOpen(false);
             fetchForms();
+
         } catch (error) {
             console.error(error);
             if (error instanceof AxiosError && error.response?.data?.message) {
@@ -315,6 +330,20 @@ export default function FormulirPenilaianPage() {
                                 onChange={(e) => setFormNama(e.target.value)}
                             />
                         </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="nomor_sertif">Template Nomor Sertifikat</Label>
+                            <Input
+                                id="nomor_sertif"
+                                placeholder="cth: 420/-/101.6.9.19/2026"
+                                value={formNomorSertif}
+                                onChange={(e) => setFormNomorSertif(e.target.value)}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Gunakan tanda hubung (-) sebagai placeholder untuk data angka random 4 digit.
+                            </p>
+                        </div>
+
 
                         <div className="space-y-4 pt-4 border-t">
                             <div className="flex items-center justify-between">

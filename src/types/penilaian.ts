@@ -62,12 +62,14 @@ export interface DraftPenilaianPayload {
 export interface PenilaianForm {
     id: number;
     nama: string;
+    nomor_sertif?: string;
     is_active: boolean;
     created_by: number;
     created_at: string;
     updated_at: string;
     items: FormItemDetail[];
 }
+
 
 export interface CreateFormItemPayload {
     urutan: number;
@@ -76,8 +78,10 @@ export interface CreateFormItemPayload {
 
 export interface CreatePenilaianFormPayload {
     nama: string;
+    nomor_sertif?: string;
     items: CreateFormItemPayload[];
 }
+
 
 export interface ReviewApplicationItem {
     application_id: number;
