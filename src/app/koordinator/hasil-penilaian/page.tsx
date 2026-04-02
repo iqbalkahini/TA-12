@@ -46,7 +46,9 @@ import {
     Building2,
     CalendarDays,
     CheckCircle2,
+    Settings,
 } from "lucide-react";
+import { Label } from "@/components/ui/label";
 import { cetakSertifikat, koordinatorPenilaianApi } from "@/api/penilaian";
 import {
     ReviewApplicationItem,
@@ -88,6 +90,10 @@ export default function HasilPenilaianPage() {
     const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
     const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
 
+    const [isCertNoModalOpen, setIsCertNoModalOpen] = useState(false);
+    const [certNo, setCertNo] = useState("");
+    const [tempCertNo, setTempCertNo] = useState("");
+
     useEffect(() => {
         fetchFormActive();
         const loadJurusans = async () => {
@@ -96,6 +102,13 @@ export default function HasilPenilaianPage() {
             if (Array.isArray(list)) setJurusans(list);
         };
         loadJurusans();
+
+        // Load certificate number from localStorage
+        const storedCertNo = localStorage.getItem("tahun_ini_nomor_sertifikat");
+        if (storedCertNo) {
+            setCertNo(storedCertNo);
+            setTempCertNo(storedCertNo);
+        }
     }, []);
 
     useEffect(() => {
@@ -139,6 +152,13 @@ export default function HasilPenilaianPage() {
     };
 
     const filteredReviews = reviews;
+
+    const handleSaveCertNo = () => {
+        localStorage.setItem("tahun_ini_nomor_sertifikat", tempCertNo);
+        setCertNo(tempCertNo);
+        setIsCertNoModalOpen(false);
+        toast.success("Nomor sertifikat berhasil disimpan.");
+    };
 
     const fetchFormActive = async () => {
         try {
@@ -276,7 +296,7 @@ export default function HasilPenilaianPage() {
             }
 
             const studentData: SertifikatPKL = {
-                nomor_sertifikat: "-",
+                nomor_sertifikat: certNo || "-",
                 siswa: {
                     nama: review.siswa_username,
                     nisn: review.siswa_nisn,
@@ -394,7 +414,7 @@ export default function HasilPenilaianPage() {
                 }
 
                 const studentData: SertifikatPKL = {
-                    nomor_sertifikat: "-",
+                    nomor_sertifikat: certNo || "-",
                     siswa: {
                         nama: review.siswa_username,
                         nisn: review.siswa_nisn,
@@ -627,6 +647,17 @@ export default function HasilPenilaianPage() {
                                     className="w-full md:w-auto shrink-0"
                                 >
                                     Unduh Semua Sertifikat
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        setTempCertNo(certNo);
+                                        setIsCertNoModalOpen(true);
+                                    }}
+                                    className="w-full md:w-auto shrink-0 gap-2"
+                                >
+                                    <Settings className="h-4 w-4" />
+                                    Atur Nomor Sertifikat
                                 </Button>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
@@ -950,6 +981,41 @@ export default function HasilPenilaianPage() {
                         <Button variant="outline" onClick={() => setIsDetailModalOpen(false)}>
                             Tutup Panel
                         </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* CERTIFICATE NUMBER MODAL */}
+            <Dialog open={isCertNoModalOpen} onOpenChange={setIsCertNoModalOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <div className="p-6">
+                        <DialogTitle className="text-xl">
+                            Atur Nomor Sertifikat
+                        </DialogTitle>
+                        <p className="text-sm text-muted-foreground mt-2">
+                            Masukkan nomor sertifikat untuk tahun ini. Nomor ini akan digunakan sebagai identitas pada sertifikat yang diunduh.
+                        </p>
+                        
+                        <div className="grid gap-4 py-4 mt-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="cert-no">Nomor Sertifikat</Label>
+                                <Input
+                                    id="cert-no"
+                                    value={tempCertNo}
+                                    onChange={(e) => setTempCertNo(e.target.value)}
+                                    placeholder="Contoh: 001/PKL/2024"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-3 mt-6">
+                            <Button variant="outline" onClick={() => setIsCertNoModalOpen(false)}>
+                                Batal
+                            </Button>
+                            <Button onClick={handleSaveCertNo}>
+                                Simpan Perubahan
+                            </Button>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
