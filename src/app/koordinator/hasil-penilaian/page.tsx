@@ -295,8 +295,13 @@ export default function HasilPenilaianPage() {
                 }
             }
 
+            let finalCertNo = certNo || "-";
+            if (tglSelesaiFormatted.includes("2025") || (review.finalized_at && new Date(review.finalized_at).getFullYear() === 2025)) {
+                finalCertNo = finalCertNo.replace("2026", "2025");
+            }
+
             const studentData: SertifikatPKL = {
-                nomor_sertifikat: certNo || "-",
+                nomor_sertifikat: finalCertNo,
                 siswa: {
                     nama: review.siswa_username,
                     nisn: review.siswa_nisn,
@@ -413,8 +418,13 @@ export default function HasilPenilaianPage() {
                     }
                 }
 
+                let finalCertNo = certNo || "-";
+                if (tglSelesaiFormatted.includes("2025") || (review.finalized_at && new Date(review.finalized_at).getFullYear() === 2025)) {
+                    finalCertNo = finalCertNo.replace("2026", "2025");
+                }
+
                 const studentData: SertifikatPKL = {
-                    nomor_sertifikat: certNo || "-",
+                    nomor_sertifikat: finalCertNo,
                     siswa: {
                         nama: review.siswa_username,
                         nisn: review.siswa_nisn,
