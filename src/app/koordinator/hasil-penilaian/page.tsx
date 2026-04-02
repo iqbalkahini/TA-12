@@ -295,9 +295,18 @@ export default function HasilPenilaianPage() {
                 }
             }
 
+            let studentYear = "";
+            if (tglSelesaiFormatted !== "-") {
+                const match = tglSelesaiFormatted.match(/\b(20\d{2})\b/);
+                if (match) studentYear = match[1];
+            }
+            if (!studentYear && review.finalized_at) {
+                studentYear = new Date(review.finalized_at).getFullYear().toString();
+            }
+
             let finalCertNo = certNo || "-";
-            if (tglSelesaiFormatted.includes("2025") || (review.finalized_at && new Date(review.finalized_at).getFullYear() === 2025)) {
-                finalCertNo = finalCertNo.replace("2026", "2025");
+            if (studentYear) {
+                finalCertNo = finalCertNo.replace(/(.*)\b20\d{2}\b/, "$1" + studentYear);
             }
 
             const studentData: SertifikatPKL = {
@@ -418,9 +427,18 @@ export default function HasilPenilaianPage() {
                     }
                 }
 
+                let studentYear = "";
+                if (tglSelesaiFormatted !== "-") {
+                    const match = tglSelesaiFormatted.match(/\b(20\d{2})\b/);
+                    if (match) studentYear = match[1];
+                }
+                if (!studentYear && review.finalized_at) {
+                    studentYear = new Date(review.finalized_at).getFullYear().toString();
+                }
+
                 let finalCertNo = certNo || "-";
-                if (tglSelesaiFormatted.includes("2025") || (review.finalized_at && new Date(review.finalized_at).getFullYear() === 2025)) {
-                    finalCertNo = finalCertNo.replace("2026", "2025");
+                if (studentYear) {
+                    finalCertNo = finalCertNo.replace(/(.*)\b20\d{2}\b/, "$1" + studentYear);
                 }
 
                 const studentData: SertifikatPKL = {
