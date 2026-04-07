@@ -89,10 +89,13 @@ export default function HasilPenilaianPage() {
 
     const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
     const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
-
     const [isCertNoModalOpen, setIsCertNoModalOpen] = useState(false);
-    const [certNo, setCertNo] = useState("");
-    const [tempCertNo, setTempCertNo] = useState("");
+
+
+    const [certSeq, setCertSeq] = useState("");
+    const [certYear, setCertYear] = useState(new Date().getFullYear().toString());
+    const [tempCertSeq, setTempCertSeq] = useState("");
+    const [tempCertYear, setTempCertYear] = useState(new Date().getFullYear().toString());
 
     useEffect(() => {
         fetchFormActive();
@@ -103,11 +106,19 @@ export default function HasilPenilaianPage() {
         };
         loadJurusans();
 
-        // Load certificate number from localStorage
-        const storedCertNo = localStorage.getItem("tahun_ini_nomor_sertifikat");
-        if (storedCertNo) {
-            setCertNo(storedCertNo);
-            setTempCertNo(storedCertNo);
+        // Load certificate number from localStorage for current year
+        const currentYear = new Date().getFullYear().toString();
+        const storedConfig = localStorage.getItem(`sertifikat_config_${currentYear}`);
+        if (storedConfig) {
+            try {
+                const parsed = JSON.parse(storedConfig);
+                setCertSeq(parsed.seq || "");
+                setCertYear(parsed.year || currentYear);
+                setTempCertSeq(parsed.seq || "");
+                setTempCertYear(parsed.year || currentYear);
+            } catch (e) {
+                console.error("Failed to parse cert config", e);
+            }
         }
     }, []);
 
@@ -154,10 +165,16 @@ export default function HasilPenilaianPage() {
     const filteredReviews = reviews;
 
     const handleSaveCertNo = () => {
-        localStorage.setItem("tahun_ini_nomor_sertifikat", tempCertNo);
-        setCertNo(tempCertNo);
+        const config = { seq: tempCertSeq, year: tempCertYear };
+        localStorage.setItem(`sertifikat_config_${tempCertYear}`, JSON.stringify(config));
+        
+        // If we just saved for current year, update main state
+        if (tempCertYear === certYear) {
+            setCertSeq(tempCertSeq);
+        }
+        
         setIsCertNoModalOpen(false);
-        toast.success("Nomor sertifikat berhasil disimpan.");
+        toast.success(`Nomor sertifikat untuk tahun ${tempCertYear} berhasil disimpan.`);
     };
 
     const fetchFormActive = async () => {
@@ -304,9 +321,21 @@ export default function HasilPenilaianPage() {
                 studentYear = new Date(review.finalized_at).getFullYear().toString();
             }
 
-            let finalCertNo = certNo || "-";
+            // Get certificate number setup for that specific year
+            let finalCertNo = "-";
             if (studentYear) {
-                finalCertNo = finalCertNo.replace(/(.*)\b20\d{2}\b/, "$1" + studentYear);
+                const storedConfig = localStorage.getItem(`sertifikat_config_${studentYear}`);
+                if (storedConfig) {
+                    try {
+                        const parsed = JSON.parse(storedConfig);
+                        finalCertNo = `420/${parsed.seq || "000"}/101.6.9.19/${parsed.year || studentYear}`;
+                    } catch (e) {
+                        console.error("Failed to parse cert config", e);
+                    }
+                } else {
+                    const fallbackSeq = studentYear === certYear ? certSeq : "000";
+                    finalCertNo = `420/${fallbackSeq}/101.6.9.19/${studentYear}`;
+                }
             }
 
             const studentData: SertifikatPKL = {
@@ -436,9 +465,21 @@ export default function HasilPenilaianPage() {
                     studentYear = new Date(review.finalized_at).getFullYear().toString();
                 }
 
-                let finalCertNo = certNo || "-";
+                // Get certificate number setup for that specific year
+                let finalCertNo = "-";
                 if (studentYear) {
-                    finalCertNo = finalCertNo.replace(/(.*)\b20\d{2}\b/, "$1" + studentYear);
+                    const storedConfig = localStorage.getItem(`sertifikat_config_${studentYear}`);
+                    if (storedConfig) {
+                        try {
+                            const parsed = JSON.parse(storedConfig);
+                            finalCertNo = `420/${parsed.seq || "000"}/101.6.9.19/${parsed.year || studentYear}`;
+                        } catch (e) {
+                            console.error("Failed to parse cert config", e);
+                        }
+                    } else {
+                        const fallbackSeq = studentYear === certYear ? certSeq : "000";
+                        finalCertNo = `420/${fallbackSeq}/101.6.9.19/${studentYear}`;
+                    }
                 }
 
                 const studentData: SertifikatPKL = {
@@ -679,7 +720,8 @@ export default function HasilPenilaianPage() {
                                 <Button
                                     variant="outline"
                                     onClick={() => {
-                                        setTempCertNo(certNo);
+                                        setTempCertSeq(certSeq);
+                                        setTempCertYear(certYear);
                                         setIsCertNoModalOpen(true);
                                     }}
                                     className="w-full md:w-auto shrink-0 gap-2"
@@ -1021,18 +1063,49 @@ export default function HasilPenilaianPage() {
                             Atur Nomor Sertifikat
                         </DialogTitle>
                         <p className="text-sm text-muted-foreground mt-2">
-                            Masukkan nomor sertifikat untuk tahun ini. Nomor ini akan digunakan sebagai identitas pada sertifikat yang diunduh.
+                            Atur nomor sertifikat berdasarkan tahun lulus. Bagian <span className="font-mono font-bold">420</span> dan <span className="font-mono font-bold">101.6.9.19</span> bersifat tetap.
                         </p>
                         
-                        <div className="grid gap-4 py-4 mt-4">
+                        <div className="grid gap-6 py-4 mt-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="cert-no">Nomor Sertifikat</Label>
+                                <Label htmlFor="cert-year">Tahun Lulus</Label>
                                 <Input
-                                    id="cert-no"
-                                    value={tempCertNo}
-                                    onChange={(e) => setTempCertNo(e.target.value)}
-                                    placeholder="Contoh: 001/PKL/2024"
+                                    id="cert-year"
+                                    type="number"
+                                    value={tempCertYear}
+                                    onChange={(e) => {
+                                        const yr = e.target.value;
+                                        setTempCertYear(yr);
+                                        // Auto-load config for this year if it exists
+                                        const stored = localStorage.getItem(`sertifikat_config_${yr}`);
+                                        if (stored) {
+                                            try {
+                                                const parsed = JSON.parse(stored);
+                                                setTempCertSeq(parsed.seq || "");
+                                            } catch (e) {}
+                                        }
+                                    }}
+                                    placeholder="Contoh: 2025"
                                 />
+                            </div>
+
+                            <div className="grid gap-3">
+                                <Label>Format Nomor Sertifikat</Label>
+                                <div className="flex items-center gap-2 text-sm font-mono bg-muted p-3 rounded-md border">
+                                    <span className="text-muted-foreground">420 /</span>
+                                    <Input
+                                        id="cert-seq"
+                                        value={tempCertSeq}
+                                        onChange={(e) => setTempCertSeq(e.target.value)}
+                                        placeholder="1013"
+                                        className="h-8 w-20 px-2 text-center font-bold border-primary/30"
+                                    />
+                                    <span className="text-muted-foreground">/ 101.6.9.19 /</span>
+                                    <span className="font-bold">{tempCertYear || "YYYY"}</span>
+                                </div>
+                                <p className="text-[10px] text-muted-foreground italic">
+                                    Hasil akhir: 420/{tempCertSeq || "..."}/101.6.9.19/{tempCertYear || "..."}
+                                </p>
                             </div>
                         </div>
 
@@ -1040,7 +1113,7 @@ export default function HasilPenilaianPage() {
                             <Button variant="outline" onClick={() => setIsCertNoModalOpen(false)}>
                                 Batal
                             </Button>
-                            <Button onClick={handleSaveCertNo}>
+                            <Button onClick={handleSaveCertNo} disabled={!tempCertSeq || !tempCertYear}>
                                 Simpan Perubahan
                             </Button>
                         </div>
